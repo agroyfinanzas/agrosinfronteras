@@ -1,10 +1,10 @@
 name: auto_update
 on:
-  workflow_dispatch: # Para que lo corras a mano
+  workflow_dispatch:
   schedule:
     - cron: '0 13 * * *'
 
-permissions: # ESTO ES LO QUE FALTA
+permissions:
   contents: write
 
 jobs:
@@ -12,18 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Python
+      
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install dependencies
+          
+      - name: Instalar librerias
         run: pip install requests
-      - name: Run script
-        run: python update_data.py
-      - name: Commit and Push
+        
+      - name: Ejecutar Actualizacion
+        run: |
+          python update_data.py || (echo "EL SCRIPT FALLO" && exit 1)
+          
+      - name: Guardar Cambios en GitHub
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add index.html
-          git commit -m "Update prices" || exit 0
+          git commit -m "Update automatico" || exit 0
           git push
