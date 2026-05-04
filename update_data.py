@@ -27,34 +27,34 @@ def actualizar():
         "mag_novillo": 3050, "mag_novillito": 3360, "mag_vaquillona": 3200, "mag_ternero": 3450, "mag_ternera": 3350, "mag_vaca": 1920, "mag_conserva": 1380, "mag_toro": 1800
     }
 
-    # --- LÓGICA DE DIVISIONES ---
+    # --- CÁLCULOS TÉCNICOS ---
     
-    # 1. UREA (USD/USD): Cuántos quintales de grano para 100kg de Urea (Ref: USD 1000/tn -> USD 100/100kg)
-    costo_100kg_urea_usd = 100
-    r_u_s = costo_100kg_urea_usd / ((p["soja"] / 10) / dolar)
-    r_u_m = costo_100kg_urea_usd / ((p["maiz"] / 10) / dolar)
+    # 1. Urea (USD 100kg / USD qq Grano) -> Ref: USD 1000/tn = USD 100/100kg
+    usd_urea_100kg = 100
+    r_u_s = usd_urea_100kg / ((p["soja"] / 10) / dolar)
+    r_u_m = usd_urea_100kg / ((p["maiz"] / 10) / dolar)
 
-    # 2. GASOIL ($/$ ARS): Cuántos quintales de grano para 500 Litros (Ref: $1200/litro)
-    costo_500l_gasoil_ars = 1200 * 500
-    r_g_s = costo_500l_gasoil_ars / (p["soja"] / 10)
-    r_g_m = costo_500l_gasoil_ars / (p["maiz"] / 10)
+    # 2. Gasoil ($ 500L / $ qq Grano) -> Ref: $1200/litro
+    ars_gasoil_500l = 1200 * 500
+    r_g_s = ars_gasoil_500l / (p["soja"] / 10)
+    r_g_m = ars_gasoil_500l / (p["maiz"] / 10)
 
-    # 3. MAÍZ/CARNE (kg/kg): Cuántos kg de Maíz equivalen a 1kg de carne
-    # Precio Carne ($/kg) / Precio Maíz ($/kg) -> El maíz está en $/tn, dividimos por 1000 para llevarlo a kg.
+    # 3. Maíz/Carne ($ kg Carne / $ kg Maíz)
+    # Convertimos Maíz $/tn a $/kg dividiendo por 1000
     r_c_t = p["mag_ternero"] / (p["maiz"] / 1000)
     r_c_n = p["mag_novillo"] / (p["maiz"] / 1000)
 
     with open("index.html", "r", encoding="utf-8") as f:
         h = f.read()
 
-    # Inyección de Precios y Dólar
+    # Reemplazos básicos
     h = re.sub(r'id="valor-dolar"[^>]*>.*?<', f'id="valor-dolar">${dolar:,.2f}<', h)
     for g in ["soja", "maiz", "trigo", "girasol", "sorgo", "cebada"]:
         h = re.sub(f'id="precio-{g}"[^>]*>.*?<', f'id="precio-{g}">${p[g]:,.0f}<', h)
     for c in ["novillo", "novillito", "vaquillona", "ternero", "ternera", "vaca", "conserva", "toro"]:
         h = re.sub(f'id="mag-{c}"[^>]*>.*?<', f'id="mag-{c}">${p["mag_"+c]:,.0f}<', h)
 
-    # Inyección de Indicadores
+    # Reemplazos Indicadores
     def escribir(id_n, id_b, val, tipo):
         nonlocal h
         txt, cls = analizar(val, tipo)
