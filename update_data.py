@@ -2,13 +2,12 @@ import requests
 import re
 
 def analizar(valor, tipo):
-    # Umbrales para el semáforo (puedes ajustarlos a tu gusto)
     if "urea" in tipo:
-        if valor < 15: return "Excelente", "ind-buena"
+        if valor < 15: return "Buena", "ind-buena"
         if valor < 19: return "Regular", "ind-regular"
         return "Caro", "ind-mala"
-    if "maiz_carne" in tipo:
-        if valor > 12: return "Oportunidad", "ind-buena"
+    if "carne" in tipo:
+        if valor > 12: return "Compra", "ind-buena"
         if valor > 9: return "Equilibrio", "ind-regular"
         return "Desfavorable", "ind-mala"
     if "gasoil" in tipo:
@@ -16,27 +15,27 @@ def analizar(valor, tipo):
         return "Elevado", "ind-mala"
     return "N/A", ""
 
-def actualizar_todo():
+def actualizar():
     try:
         res = requests.get("https://api.bluelytics.com.ar/v2/latest")
         dolar = res.json()['oficial']['value_sell']
     except:
         dolar = 1382.50
 
-    # Precios de referencia
+    # Datos de mercado base
     p = {
         "soja": 430000, "maiz": 262675, "trigo": 283412, "girasol": 500000, "sorgo": 269600, "cebada": 195000,
         "mag_novillo": 3050, "mag_novillito": 3360, "mag_ternero": 3450, "mag_vaca": 1920, "mag_conserva": 1380, "mag_toro": 1800
     }
 
-    # Cálculos de Relaciones
-    r_urea_s = 100 / (p["soja"] / dolar)
-    r_urea_m = 100 / (p["maiz"] / dolar)
-    r_gas_s = (1200 * 500) / (p["soja"] / 10)
-    r_gas_m = (1200 * 500) / (p["maiz"] / 10)
-    r_carne_t = p["mag_ternero"] / (p["maiz"] / 1000)
-    r_carne_n = p["mag_novillo"] / (p["maiz"] / 1000)
-    r_glifo_s = (10 * 100) / ((p["soja"] / 10) / dolar)
+    # Cálculos
+    r_u_s = 100 / (p["soja"] / dolar)
+    r_u_m = 100 / (p["maiz"] / dolar)
+    r_g_s = (1200 * 500) / (p["soja"] / 10)
+    r_g_m = (1200 * 500) / (p["maiz"] / 10)
+    r_c_t = p["mag_ternero"] / (p["maiz"] / 1000)
+    r_c_n = p["mag_novillo"] / (p["maiz"] / 1000)
+    r_gl_s = (10 * 100) / ((p["soja"] / 10) / dolar)
 
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
@@ -48,22 +47,22 @@ def actualizar_todo():
     for c in ["novillo", "novillito", "ternero", "vaca", "conserva", "toro"]:
         html = re.sub(f'id="mag-{c}">[^<]+', f'id="mag-{c}">${p["mag_"+c]:,.0f}', html)
 
-    # Inyectar Relaciones e Indicadores (ESTO ES LO QUE TE FALTABA)
-    def inyectar(id_val, id_ind, valor, tipo):
+    # Inyectar Relaciones y Botones (Aseguramos que coincidan con el HTML)
+    def escribir(id_n, id_b, val, tipo):
         nonlocal html
-        txt, cls = analizar(valor, tipo)
-        html = re.sub(f'id="{id_val}">[^<]+', f'id="{id_val}">{valor:.1f}', html)
-        html = re.sub(f'id="{id_ind}" class="ind">[^<]+', f'id="{id_ind}" class="ind {cls}">{txt}', html)
+        txt, cls = analizar(val, tipo)
+        html = re.sub(f'id="{id_n}">[^<]+', f'id="{id_n}">{val:.1f}', html)
+        html = re.sub(f'id="{id_b}" class="ind">[^<]+', f'id="{id_b}" class="ind {cls}">{txt}', html)
 
-    inyectar("rel-urea-soja", "ind-urea-soja", r_urea_s, "urea")
-    inyectar("rel-urea-maiz", "ind-urea-maiz", r_urea_m, "urea")
-    inyectar("rel-gasoil-soja", "ind-gasoil-soja", r_gas_s, "gasoil")
-    inyectar("rel-gasoil-maiz", "ind-gasoil-maiz", r_gas_m, "gasoil")
-    inyectar("rel-maiz-ternero", "ind-maiz-ternero", r_carne_t, "maiz_carne")
-    inyectar("rel-maiz-novillo", "ind-maiz-novillo", r_carne_n, "maiz_carne")
-    inyectar("rel-glifo-soja", "ind-glifo-soja", r_glifo_s, "glifo")
+    escribir("rel-u-s", "ind-u-s", r_u_s, "urea")
+    escribir("rel-u-m", "ind-u-m", r_u_m, "urea")
+    escribir("rel-g-s", "ind-g-s", r_g_s, "gasoil")
+    escribir("rel-g-m", "ind-g-m", r_g_m, "gasoil")
+    escribir("rel-c-t", "ind-c-t", r_c_t, "carne")
+    escribir("rel-c-n", "ind-c-n", r_c_n, "carne")
+    escribir("rel-gl-s", "ind-gl-s", r_gl_s, "urea")
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
-actualizar_todo()
+actualizar()
