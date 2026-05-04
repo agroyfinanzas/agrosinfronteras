@@ -1,45 +1,45 @@
 {
   "fecha": "04/05/2026",
-  "hora": "15:40",
-  "timestamp": "2026-05-04T15:40:43.075304-03:00",
+  "hora": "15:53",
+  "timestamp": "2026-05-04T15:53:56.801565-03:00",
   "dolar": {
-    "compra": 1370.0,
-    "venta": 1382.5,
-    "fuente": "fallback"
+    "compra": 1375.0,
+    "venta": 1425.0,
+    "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
     "soja": {
       "ars": 430000,
-      "usd_tn": 311.03,
-      "usd_qq": 31.1,
+      "usd_tn": 301.75,
+      "usd_qq": 30.18,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "maiz": {
       "ars": 262675,
-      "usd_tn": 190.0,
-      "usd_qq": 19.0,
+      "usd_tn": 184.33,
+      "usd_qq": 18.43,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "trigo": {
       "ars": 283412,
-      "usd_tn": 205.0,
-      "usd_qq": 20.5,
+      "usd_tn": 198.89,
+      "usd_qq": 19.89,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "girasol": {
       "ars": 500000,
-      "usd_tn": 361.66,
-      "usd_qq": 36.17,
+      "usd_tn": 350.88,
+      "usd_qq": 35.09,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "sorgo": {
       "ars": 269600,
-      "usd_tn": 195.01,
-      "usd_qq": 19.5,
+      "usd_tn": 189.19,
+      "usd_qq": 18.92,
       "mes": "Referencia",
       "fuente": "fallback"
     }
@@ -83,17 +83,17 @@
     }
   },
   "relaciones": {
-    "soja_urea": 32.2,
-    "soja_fosfato": 19.3,
-    "soja_glifosato_100l": 1.9,
-    "soja_semilla": 2.6,
-    "maiz_urea": 52.6,
-    "maiz_fosfato": 31.6,
-    "maiz_glifosato_100l": 3.2,
-    "maiz_semilla": 7.4,
-    "trigo_urea": 48.8,
-    "trigo_fosfato": 29.3,
-    "trigo_glifosato_100l": 2.9,
+    "soja_urea": 33.1,
+    "soja_fosfato": 19.9,
+    "soja_glifosato_100l": 2.0,
+    "soja_semilla": 2.7,
+    "maiz_urea": 54.3,
+    "maiz_fosfato": 32.6,
+    "maiz_glifosato_100l": 3.3,
+    "maiz_semilla": 7.6,
+    "trigo_urea": 50.3,
+    "trigo_fosfato": 30.2,
+    "trigo_glifosato_100l": 3.0,
     "ternero_novillo": 1.16,
     "maiz_kg_novillo": 0.092,
     "soja_maiz": 1.64
