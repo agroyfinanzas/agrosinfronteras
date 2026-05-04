@@ -3,92 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agros Sin Fronteras | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Agros Sin Fronteras | Inteligencia Agropecuaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg: #0d0f0d; --card: #1a1d1a; --accent: #76c442; --text: #e0e7dc; --muted: #889488; --gold: #e8b74d; --red: #ff5f5f; }
-        body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 50px; }
-        header { padding: 40px 20px; text-align: center; border-bottom: 2px solid var(--accent); background: linear-gradient(180deg, #162411 0%, var(--bg) 100%); }
-        .logo { max-width: 250px; height: auto; margin-bottom: 10px; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin: -20px auto 30px; flex-wrap: wrap; position: sticky; top: 10px; z-index: 100; }
-        .btn { background: #1a1d1a; border: 1px solid #333; color: var(--muted); padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.8rem; transition: 0.3s; }
-        .btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(118, 196, 66, 0.4); }
-        .container { max-width: 1100px; margin: auto; padding: 0 20px; }
-        .section { display: none; animation: fadeIn 0.5s; } .active-sec { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-        .card { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid #222; position: relative; }
-        .card-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
-        .val { font-size: 2.2rem; font-weight: 900; color: #fff; display: block; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; border: 1px solid; display: inline-block; margin-top: 10px; }
-        .buena { color: var(--accent); border-color: var(--accent); background: rgba(118,196,66,0.1); }
-        .weather-card { background: #161a16; padding: 20px; border-radius: 15px; text-align: center; border: 1px solid #222; }
+        :root {
+            --bg: #0b0d0b;
+            --card-bg: #141714;
+            --accent: #76c442;
+            --text: #f0f5f0;
+            --muted: #8a968a;
+            --gold: #e8b74d;
+            --red: #ff5f5f;
+            --border: rgba(118, 196, 66, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & LOGO */
+        header {
+            background: linear-gradient(180deg, #1a2616 0%, var(--bg) 100%);
+            padding: 50px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo-img { max-width: 280px; height: auto; filter: drop-shadow(0 0 15px rgba(118,196,66,0.2)); }
+
+        /* NAVEGACIÓN */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: -25px auto 40px;
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            flex-wrap: wrap;
+            padding: 0 15px;
+        }
+        .tab-btn {
+            background: rgba(20, 23, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 14px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.75rem;
+            transition: 0.3s all;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tab-btn i { font-size: 1rem; }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(118, 196, 66, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 100px; }
+        .section { display: none; animation: slideUp 0.5s ease forwards; }
+        .section.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* GRID Y CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            position: relative;
+            transition: 0.3s;
+        }
+        .card:hover { border-color: var(--accent); transform: scale(1.02); }
+        .card-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: block; }
+        .card-value { font-size: 2.4rem; font-weight: 900; color: #fff; line-height: 1; }
+        .card-footer { margin-top: 15px; font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+
+        /* INDICADORES ESPECÍFICOS */
+        .indicator-card { border-left: 6px solid var(--accent); }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: rgba(118, 196, 66, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        /* CLIMA */
+        .weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .weather-item {
+            background: linear-gradient(145deg, #1a1d1a, #141714);
+            padding: 25px; border-radius: 20px; text-align: center; border: 1px solid var(--border);
+        }
+        .weather-city { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 10px; }
+        .weather-temp { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+
+        /* NOTICIAS */
+        .news-card {
+            display: flex; gap: 20px; background: var(--card-bg); 
+            border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px;
+        }
+        .news-icon { width: 60px; height: 60px; background: rgba(118,196,66,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.5rem; }
+        .news-content h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .news-content p { color: var(--muted); font-size: 0.9rem; }
+
+        .dolar-bar {
+            background: rgba(232, 183, 77, 0.1);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border: 1px solid var(--gold);
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <img src="logo.png" alt="ASF" class="logo" onerror="this.outerHTML='<h1 style=color:var(--accent)>AGROS SIN FRONTERAS</h1>'">
-    </header>
+
+<header>
+    <img src="logo.png" alt="Agros Sin Fronteras" class="logo-img" onerror="this.outerHTML='<h1 style=color:var(--accent);font-size:2.5rem;font-weight:900>AGROS SIN FRONTERAS</h1>'">
+</header>
+
+<div class="nav-tabs">
+    <button class="tab-btn active" onclick="openTab('granos')"><i class="fa-solid fa-wheat-awn"></i> GRANOS</button>
+    <button class="tab-btn" onclick="openTab('canuelas')"><i class="fa-solid fa-cow"></i> CAÑUELAS (MAG)</button>
+    <button class="tab-btn" onclick="openTab('insumos')"><i class="fa-solid fa-scale-balanced"></i> INSUMO/PRODUCTO</button>
+    <button class="tab-btn" onclick="openTab('clima')"><i class="fa-solid fa-cloud-sun-rain"></i> CLIMA</button>
+    <button class="tab-btn" onclick="openTab('noticias')"><i class="fa-solid fa-newspaper"></i> NOTICIAS</button>
+</div>
+
+<div class="container">
     
-    <div class="tabs">
-        <button class="btn active" onclick="tab('g', this)">GRANOS</button>
-        <button class="btn" onclick="tab('v', this)">GANADERÍA</button>
-        <button class="btn" onclick="tab('i', this)">INDICADORES</button>
-        <button class="btn" onclick="tab('c', this)">CLIMA</button>
-    </div>
-
-    <div class="container">
-        <div id="g" class="section active-sec">
-            <div style="margin-bottom:20px; color:var(--gold); font-weight: 700;">💵 DÓLAR BNA: $1.425,00</div>
-            <div class="grid">
-                <div class="card"><span class="card-title">Soja Rosario</span><span class="val">$440.000</span></div>
-                <div class="card"><span class="card-title">Maíz Rosario</span><span class="val">$270.000</span></div>
-                <div class="card"><span class="card-title">Trigo Rosario</span><span class="val">$290.000</span></div>
-                <div class="card"><span class="card-title">Girasol</span><span class="val">$510.000</span></div>
-            </div>
+    <div id="granos" class="section active">
+        <div class="dolar-bar">
+            <span style="font-weight: 700; color: var(--gold); letter-spacing: 1px;">COTIZACIÓN DÓLAR BNA (OFICIAL)</span>
+            <span style="font-size: 1.8rem; font-weight: 900; color: #fff;">$1.425,00</span>
         </div>
-
-        <div id="v" class="section">
-            <div class="grid">
-                <div class="card"><span class="card-title">Novillo MAG</span><span class="val">$3.150</span></div>
-                <div class="card"><span class="card-title">Ternero MAG</span><span class="val">$3.600</span></div>
-                <div class="card"><span class="card-title">Vaca Conserva</span><span class="val">$1.900</span></div>
-                <div class="card"><span class="card-title">Novillito</span><span class="val">$3.100</span></div>
-            </div>
-        </div>
-
-        <div id="i" class="section">
-            <div class="grid">
-                <div class="card">
-                    <span class="card-title">Urea / Soja</span>
-                    <span class="val">14.5</span>
-                    <span class="badge buena">RELACIÓN BUENA</span>
-                </div>
-                <div class="card">
-                    <span class="card-title">Carne / Maíz</span>
-                    <span class="val">13.2</span>
-                    <span class="badge buena">RELACIÓN COMPRA</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="c" class="section">
-            <div class="grid">
-                <div class="weather-card"><b>ROSARIO</b><div style="font-size: 2rem; color: var(--accent); font-weight: 900;">22°C</div></div>
-                <div class="weather-card"><b>CAÑUELAS</b><div style="font-size: 2rem; color: var(--accent); font-weight: 900;">19°C</div></div>
-                <div class="weather-card"><b>CÓRDOBA</b><div style="font-size: 2rem; color: var(--accent); font-weight: 900;">24°C</div></div>
-            </div>
+        <div class="grid">
+            <div class="card"><span class="card-label">Soja Rosario</span><div class="card-value">$442.000</div><div class="card-footer">Pizarra BCR</div></div>
+            <div class="card"><span class="card-label">Maíz Rosario</span><div class="card-value">$272.500</div><div class="card-footer">Pizarra BCR</div></div>
+            <div class="card"><span class="card-label">Trigo Rosario</span><div class="card-value">$295.000</div><div class="card-footer">Pizarra BCR</div></div>
+            <div class="card"><span class="card-label">Girasol</span><div class="card-value">$515.000</div><div class="card-footer">Referencia Mercado</div></div>
+            <div class="card"><span class="card-label">Sorgo</span><div class="card-value">$240.000</div><div class="card-footer">Referencia Mercado</div></div>
+            <div class="card"><span class="card-label">Cebada</span><div class="card-value">$225.000</div><div class="card-footer">Referencia Mercado</div></div>
         </div>
     </div>
 
-    <script>
-        function tab(id, b) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-sec'));
-            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(id).classList.add('active-sec');
-            b.classList.add('active');
-        }
-    </script>
+    <div id="canuelas" class="section">
+        <h2 style="margin-bottom: 25px; color: var(--accent);">Mercado Agroganadero de Cañuelas</h2>
+        <div class="grid">
+            <div class="card"><span class="card-label">Novillo Especial</span><div class="card-value">$3.180</div><div class="card-footer">Máximo $/kg</div></div>
+            <div class="card"><span class="card-label">Terneros</span><div class="card-value">$3.650</div><div class="card-footer">Máximo $/kg</div></div>
+            <div class="card"><span class="card-label">Vaca Conserva</span><div class="card-value">$1.950</div><div class="card-footer">Sugerido $/kg</div></div>
+            <div class="card"><span class="card-label">Vaquillonas</span><div class="card-value">$3.050</div><div class="card-footer">Máximo $/kg</div></div>
+            <div class="card"><span class="card-label">Novillitos</span><div class="card-value">$3.200</div><div class="card-footer">Máximo $/kg</div></div>
+            <div class="card"><span class="card-label">Toros</span><div class="card-value">$1.850</div><div class="card-footer">Promedio $/kg</div></div>
+        </div>
+    </div>
+
+    <div id="insumos" class="section">
+        <h2 style="margin-bottom: 25px; color: var(--accent);">Relaciones de Intercambio</h2>
+        <div class="grid">
+            <div class="card indicator-card">
+                <span class="card-label">Urea / Soja</span>
+                <div class="card-value">14.2</div>
+                <div style="margin-top:15px;"><span class="badge">Relación Buena</span></div>
+                <p style="font-size:0.8rem; margin-top:10px; color:var(--muted);">Quintales de Soja para 100kg Urea</p>
+            </div>
+            <div class="card indicator-card">
+                <span class="card-label">Carne / Maíz</span>
+                <div class="card-value">13.5</div>
+                <div style="margin-top:15px;"><span class="badge">Compra Maíz</span></div>
+                <p style="font-size:0.8rem; margin-top:10px; color:var(--muted);">Kilos de Maíz por Kilo de Ternero</p>
+            </div>
+            <div class="card indicator-card">
+                <span class="card-label">Urea / Maíz</span>
+                <div class="card-value">18.1</div>
+                <div style="margin-top:15px;"><span class="badge" style="color:var(--gold); border-color:var(--gold);">Relación Firme</span></div>
+                <p style="font-size:0.8rem; margin-top:10px; color:var(--muted);">Quintales de Maíz para 100kg Urea</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="clima" class="section">
+        <h2 style="margin-bottom: 25px; color: var(--accent);">Perspectiva Climática</h2>
+        <div class="weather-grid">
+            <div class="weather-item"><div class="weather-city">ROSARIO</div><div class="weather-temp">22°C</div><div style="color:var(--muted)">Despejado</div></div>
+            <div class="weather-item"><div class="weather-city">CAÑUELAS</div><div class="weather-temp">19°C</div><div style="color:var(--muted)">Humedad 65%</div></div>
+            <div class="weather-item"><div class="weather-city">CÓRDOBA</div><div class="weather-temp">24°C</div><div style="color:var(--muted)">Viento N 15km/h</div></div>
+            <div class="weather-item"><div class="weather-city">SALTA</div><div class="weather-temp">28°C</div><div style="color:var(--muted)">Cielo Nublado</div></div>
+            <div class="weather-item"><div class="weather-city">PEHUAJÓ</div><div class="weather-temp">18°C</div><div style="color:var(--muted)">Estable</div></div>
+            <div class="weather-item"><div class="weather-city">BAHÍA BLANCA</div><div class="weather-temp">16°C</div><div style="color:var(--muted)">Viento Sur</div></div>
+        </div>
+    </div>
+
+    <div id="noticias" class="section">
+        <h2 style="margin-bottom: 25px; color: var(--accent);">Noticias del Agro</h2>
+        <div class="news-card">
+            <div class="news-icon"><i class="fa-solid fa-chart-area"></i></div>
+            <div class="news-content">
+                <span class="badge" style="margin-bottom:10px;">Mercados</span>
+                <h3>Tendencia alcista en Chicago para el complejo soja</h3>
+                <p>Las proyecciones de cosecha en Sudamérica ajustan los stocks globales y presionan los precios al alza en las terminales locales.</p>
+            </div>
+        </div>
+        <div class="news-card">
+            <div class="news-icon"><i class="fa-solid fa-droplet"></i></div>
+            <div class="news-content">
+                <span class="badge" style="margin-bottom:10px;">Clima</span>
+                <h3>Pronóstico de lluvias para la zona núcleo</h3>
+                <p>Se esperan frentes de tormenta que traerán alivio a los lotes de maíz tardío y soja de segunda en el centro de Santa Fe y Buenos Aires.</p>
+            </div>
+        </div>
+        <div class="news-card">
+            <div class="news-icon"><i class="fa-solid fa-tractor"></i></div>
+            <div class="news-content">
+                <span class="badge" style="margin-bottom:10px;">Maquinaria</span>
+                <h3>Nuevas líneas de crédito para la compra de tractores</h3>
+                <p>Bancos oficiales lanzan tasas subsidiadas para la renovación de flota de cara a la próxima campaña de fina.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function openTab(tabId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+</script>
+
 </body>
 </html>
