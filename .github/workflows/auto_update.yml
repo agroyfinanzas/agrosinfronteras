@@ -1,21 +1,29 @@
-name: Actualizar ASF
+name: auto_update
 on:
+  workflow_dispatch: # Para que lo corras a mano
   schedule:
-    - cron: '0 13 * * *' # Corre a las 10 AM de Argentina
-  workflow_dispatch:
+    - cron: '0 13 * * *'
+
+permissions: # ESTO ES LO QUE FALTA
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - run: pip install requests
-      - run: python update_data.py
-      - run: |
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run script
+        run: python update_data.py
+      - name: Commit and Push
+        run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add index.html
-          git commit -m "Auto Update" || exit 0
+          git commit -m "Update prices" || exit 0
           git push
