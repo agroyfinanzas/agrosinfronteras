@@ -1,4 +1,4 @@
-name: auto_update
+name: Actualizar Dashboard
 on:
   workflow_dispatch:
   schedule:
@@ -12,23 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Configurar Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-          
-      - name: Instalar librerias
+      - name: Install dependencies
         run: pip install requests
-        
-      - name: Ejecutar Actualizacion
+      - name: Run Update
+        run: python update_data.py
+      - name: Commit changes
         run: |
-          python update_data.py || (echo "EL SCRIPT FALLO" && exit 1)
-          
-      - name: Guardar Cambios en GitHub
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
           git add index.html
-          git commit -m "Update automatico" || exit 0
+          git commit -m "Precios actualizados" || exit 0
           git push
