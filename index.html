@@ -6,8 +6,12 @@
 <title>Agros Sin Fronteras</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-  /* Mantengo tus estilos originales intactos */
-  :root { --verde: #2d6a1f; --verde-claro: #4caf50; --verde-neon: #76c442; --tierra: #a0522d; --dorado: #e8b74d; --dorado-claro: #f5d98b; --oscuro: #121a0e; --oscuro2: #1c2816; --gris: #2e3b28; --blanco: #f4f7f0; --rojo: #e05252; --azul: #4a90d9; }
+  :root {
+    --verde: #2d6a1f; --verde-claro: #4caf50; --verde-neon: #76c442;
+    --tierra: #a0522d; --dorado: #e8b74d; --dorado-claro: #f5d98b;
+    --oscuro: #121a0e; --oscuro2: #1c2816; --gris: #2e3b28;
+    --blanco: #f4f7f0; --rojo: #e05252; --azul: #4a90d9;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--oscuro); color: var(--blanco); font-family: 'Mulish', sans-serif; min-height: 100vh; }
   .perfil-header { background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%); border-bottom: 2px solid var(--verde-neon); padding: 0; position: relative; overflow: hidden; }
@@ -24,14 +28,26 @@
   .main { max-width: 900px; margin: 0 auto; padding: 0 16px 60px; }
   .section { display: none; padding-top: 28px; }
   .section.active { display: block; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--verde-neon); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section-sub { font-size: 0.75rem; color: #7a9b72; margin-bottom: 20px; letter-spacing: 0.5px; }
   .precios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-bottom: 30px; }
-  .precio-card { background: linear-gradient(135deg, var(--oscuro2) 0%, var(--gris) 100%); border: 1px solid rgba(118,196,66,0.2); border-radius: 12px; padding: 18px 16px; position: relative; overflow: hidden; }
+  .precio-card { background: linear-gradient(135deg, var(--oscuro2) 0%, var(--gris) 100%); border: 1px solid rgba(118,196,66,0.2); border-radius: 12px; padding: 18px 16px; position: relative; overflow: hidden; transition: transform 0.2s; }
+  .precio-card:hover { transform: translateY(-3px); }
+  .precio-emoji { font-size: 1.6rem; margin-bottom: 6px; }
+  .precio-cultivo { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7a9b72; margin-bottom: 4px; }
   .precio-valor { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--blanco); line-height: 1; }
+  .tabla-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(118,196,66,0.15); margin-bottom: 28px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead tr { background: linear-gradient(90deg, var(--verde) 0%, #2a5e18 100%); }
+  thead th { padding: 12px 14px; text-align: left; font-size: 0.7rem; color: var(--blanco); text-transform: uppercase; }
+  tbody td { padding: 11px 14px; color: #c8d9c0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .precio-top { color: var(--dorado); font-weight: 700; }
   .tc-badge { background: var(--gris); border: 1px solid rgba(118,196,66,0.2); border-radius: 8px; padding: 8px 16px; font-size: 0.75rem; color: #7a9b72; display: inline-flex; gap: 8px; margin-bottom: 20px; }
   .tc-val { color: var(--dorado); font-weight: 700; }
-  .ip-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 14px; padding: 20px; margin-bottom: 16px;}
+  .ip-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
   .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
   .ip-qty { font-weight: 700; color: var(--blanco); }
+  footer { text-align: center; padding: 20px; font-size: 0.7rem; color: #4a6040; border-top: 1px solid var(--gris); margin-top: 40px; }
 </style>
 </head>
 <body>
@@ -43,50 +59,70 @@
     <div class="perfil-texto">
       <div class="perfil-nombre">Agros Sin Fronteras</div>
       <div class="perfil-handle">@agrosinfronterasok</div>
-      <div class="perfil-bio">🌱 Información agropecuaria automatizada · Datos al instante.</div>
+      <div class="perfil-bio">🌱 Información agropecuaria automatizada · Rosario · Cañuelas.</div>
     </div>
   </div>
 </div>
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('granos')">🌾 Pizarra</div>
+  <div class="tab" onclick="showTab('ganaderia')">🐄 Ganadería</div>
   <div class="tab" onclick="showTab('insumos')">⚗️ Insumo/Prod</div>
 </div>
 
 <div class="main">
   <div class="section active" id="granos">
+    <div class="section-title">🌾 Pizarra de Granos · Rosario</div>
     <div class="tc-badge">
       💵 TC BNA Dólar Divisa: <span id="valor-dolar" class="tc-val">$1.382,50</span>
     </div>
-
     <div class="precios-grid">
       <div class="precio-card">
         <div class="precio-emoji">🟡</div>
-        <div>Soja Rosario</div>
+        <div class="precio-cultivo">Soja</div>
         <div id="precio-soja" class="precio-valor">$430.000</div>
       </div>
       <div class="precio-card">
         <div class="precio-emoji">🌽</div>
-        <div>Maíz Rosario</div>
+        <div class="precio-cultivo">Maíz</div>
         <div id="precio-maiz" class="precio-valor">$262.675</div>
       </div>
     </div>
   </div>
 
+  <div class="section" id="ganaderia">
+    <div class="section-title">🐄 Hacienda · Mercado Agroganadero</div>
+    <div class="tabla-wrapper">
+      <table>
+        <thead>
+          <tr><th>Categoría</th><th>Tope $/kg</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>🐂 Novillo</td><td id="mag-novillo" class="precio-top">$3.050</td></tr>
+          <tr><td>🐄 Ternero</td><td id="mag-ternero" class="precio-top">$3.450</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="section" id="insumos">
+    <div class="section-title">⚗️ Relaciones Insumo / Producto</div>
     <div class="ip-card">
-      <h3>Relación Urea / Grano</h3>
       <div class="ip-row">
-        <span>Soja (qq para 100kg Urea)</span>
+        <span>Urea (qq Soja/100kg)</span>
         <span id="rel-urea-soja" class="ip-qty">18.0</span>
       </div>
       <div class="ip-row">
-        <span>Maíz (qq para 100kg Urea)</span>
+        <span>Urea (qq Maíz/100kg)</span>
         <span id="rel-urea-maiz" class="ip-qty">22.0</span>
       </div>
     </div>
   </div>
 </div>
+
+<footer>
+  Agros Sin Fronteras · Actualización automática vía GitHub Actions
+</footer>
 
 <script>
   function showTab(id) {
