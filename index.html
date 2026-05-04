@@ -12,10 +12,10 @@
             --muted: #8a968a; --gold: #e8b74d; --red: #ff5f5f; --border: rgba(118, 196, 66, 0.15);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; line-height: 1.6; }
         
         header { padding: 40px; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #1a2616 0%, var(--bg) 100%); }
-        .logo-img { max-width: 250px; cursor: pointer; }
+        .logo-img { max-width: 250px; }
 
         .nav-tabs { display: flex; justify-content: center; gap: 8px; margin: -25px auto 30px; position: sticky; top: 10px; z-index: 1000; flex-wrap: wrap; }
         .tab-btn { background: rgba(20,23,20,0.9); border: 1px solid var(--border); color: var(--muted); padding: 12px 18px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.7rem; transition: 0.3s; }
@@ -26,28 +26,32 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 25px; border: 1px solid var(--border); }
-        .card-val { font-size: 2rem; font-weight: 900; color: #fff; margin: 10px 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 25px; border: 1px solid var(--border); transition: 0.3s; }
+        .card:hover { border-color: var(--accent); }
+        .card-val { font-size: 1.8rem; font-weight: 900; color: #fff; margin: 10px 0; }
         
-        /* CALCULADORA (OPCIÓN 2) */
-        .calc-container { background: #1a1d1a; padding: 30px; border-radius: 20px; border: 2px solid var(--accent); margin-top: 20px; }
+        /* COTIZACIÓN USD BNA */
+        .quote-bar { display: flex; justify-content: space-around; background: #1a1d1a; padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--gold); flex-wrap: wrap; gap: 10px; }
+        .quote-item { text-align: center; min-width: 150px; }
+        .quote-label { font-size: 0.7rem; color: var(--gold); font-weight: 700; display: block; text-transform: uppercase; }
+        .quote-val { font-size: 1.4rem; font-weight: 900; }
+
+        /* CALCULADORA TÉCNICA */
+        .calc-container { background: #1a1d1a; padding: 30px; border-radius: 20px; border: 1px solid var(--accent); margin-top: 20px; }
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
-        .input-group input { width: 100%; background: #0b0d0b; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 1rem; }
-        .res-box { background: var(--accent); color: #000; padding: 20px; border-radius: 10px; text-align: center; margin-top: 20px; }
+        .input-group label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; }
+        .input-group input, .input-group select { width: 100%; background: #0b0d0b; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
+        .res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .res-box { padding: 20px; border-radius: 10px; text-align: center; }
+        .res-main { background: var(--accent); color: #000; }
+        .res-sec { background: rgba(255,255,255,0.05); border: 1px solid #333; }
 
-        /* NOTICIAS (RE-DIRECCIÓN) */
-        .news-link { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: inherit; border: 1px solid var(--border); transition: 0.2s; }
-        .news-link:hover { border-color: var(--accent); background: #1c211c; }
-
-        /* FLETES (OPCIÓN 5) */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; color: var(--accent); font-size: 0.7rem; padding: 10px; border-bottom: 1px solid #333; }
-        td { padding: 12px 10px; font-size: 0.9rem; border-bottom: 1px solid #222; }
-
-        .alert-box { padding: 15px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; margin-bottom: 20px; border-left: 5px solid; }
-        .alert-buy { background: rgba(118,196,66,0.1); border-color: var(--accent); color: var(--accent); }
+        /* CLIMA Y NOTICIAS */
+        .weather-card { background: #161a16; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .news-link { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 12px; text-decoration: none; color: inherit; border: 1px solid var(--border); transition: 0.2s; }
+        .news-link:hover { border-color: var(--accent); transform: translateX(5px); }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; border: 1px solid var(--accent); color: var(--accent); background: rgba(118,196,66,0.1); }
     </style>
 </head>
 <body>
@@ -57,70 +61,111 @@
 </header>
 
 <div class="nav-tabs">
-    <button class="tab-btn active" onclick="openTab('granos', this)"><i class="fa-solid fa-chart-line"></i> MERCADOS</button>
-    <button class="tab-btn" onclick="openTab('calculadora', this)"><i class="fa-solid fa-calculator"></i> MARGENES</button>
-    <button class="tab-btn" onclick="openTab('logistica', this)"><i class="fa-solid fa-truck-front"></i> LOGÍSTICA</button>
-    <button class="tab-btn" onclick="openTab('noticias', this)"><i class="fa-solid fa-globe"></i> PORTALES</button>
+    <button class="tab-btn active" onclick="openTab('granos', this)">MERCADOS</button>
+    <button class="tab-btn" onclick="openTab('relaciones', this)">RELACIONES</button>
+    <button class="tab-btn" onclick="openTab('calculadora', this)">MARGEN BRUTO</button>
+    <button class="tab-btn" onclick="openTab('clima', this)">CLIMA</button>
+    <button class="tab-btn" onclick="openTab('noticias', this)">PORTALES</button>
 </div>
 
 <div class="container">
 
     <div id="granos" class="section active">
-        <div id="smart-alert" class="alert-box alert-buy">
-            <i class="fa-solid fa-circle-info"></i> ESTRATEGIA: La relación Urea/Maíz sugiere compra anticipada de fertilizante.
+        <div class="quote-bar">
+            <div class="quote-item">
+                <span class="quote-label">DÓLAR BNA (OFICIAL)</span>
+                <span id="val-dolar" class="quote-val">--</span>
+            </div>
+            <div class="quote-item">
+                <span class="quote-label">ACTUALIZACIÓN</span>
+                <span style="color: var(--accent); font-weight: 900;">DIARIA AUTOMÁTICA</span>
+            </div>
         </div>
         <div class="grid">
-            <div class="card"><span style="color:var(--gold); font-size:0.7rem; font-weight:900;">DÓLAR BNA</span><div class="card-val" id="val-dolar">$1,419.00</div></div>
-            <div class="card"><span>SOJA ROSARIO</span><div class="card-val" id="val-soja">$440,000</div></div>
-            <div class="card"><span>MAIZ ROSARIO</span><div class="card-val" id="val-maiz">$270,000</div></div>
+            <div class="card"><span>SOJA ROSARIO</span><div class="card-val" id="val-soja">--</div></div>
+            <div class="card"><span>MAIZ ROSARIO</span><div class="card-val" id="val-maiz">--</div></div>
+            <div class="card"><span>TRIGO ROSARIO</span><div class="card-val" id="val-trigo">--</div></div>
+            <div class="card"><span>SORGO ROSARIO</span><div class="card-val" id="val-sorgo">--</div></div>
+            <div class="card"><span>CEBADA ROSARIO</span><div class="card-val" id="val-cebada">--</div></div>
+        </div>
+    </div>
+
+    <div id="relaciones" class="section">
+        <div class="grid">
+            <div class="card"><span>MAÍZ / KG NOVILLO</span><div class="card-val" id="ratio-c-n">--</div><span class="badge">KG MAÍZ / KG CARNE</span></div>
+            <div class="card"><span>MAÍZ / UREA</span><div class="card-val" id="ratio-u-m">--</div><span class="badge">QQ MAÍZ / 100KG UREA</span></div>
+            <div class="card"><span>SOJA / MAÍZ</span><div class="card-val" id="ratio-s-m">--</div><span class="badge">TON SOJA / TON MAÍZ</span></div>
         </div>
     </div>
 
     <div id="calculadora" class="section">
         <div class="calc-container">
-            <h2 style="color:var(--accent); margin-bottom:20px;">Calculadora de Margen Bruto</h2>
-            <div class="grid" style="grid-template-columns: 1fr 1fr;">
-                <div class="input-group">
-                    <label>RINDE ESTIMADO (QQ/HA)</label>
-                    <input type="number" id="rinde" value="30" oninput="calcular()">
+            <h2 style="color:var(--accent); margin-bottom:20px; font-size: 1.1rem;">Simulador Técnico de Margen Bruto</h2>
+            
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="card" style="background: rgba(0,0,0,0.2);">
+                    <span class="quote-label">Producción</span>
+                    <div class="input-group">
+                        <label>Grano</label>
+                        <select id="calc-grano" onchange="calcular()">
+                            <option value="soja">Soja</option>
+                            <option value="maiz">Maíz</option>
+                            <option value="trigo">Trigo</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Rinde (qq/ha)</label>
+                        <input type="number" id="rinde" value="30" oninput="calcular()">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>GASTOS COMERCIALES (%)</label>
-                    <input type="number" id="gastos" value="15" oninput="calcular()">
+
+                <div class="card" style="background: rgba(0,0,0,0.2);">
+                    <span class="quote-label">Costos Fijos (u$s)</span>
+                    <div class="input-group">
+                        <label>Alquiler (u$s/ha)</label>
+                        <input type="number" id="alquiler" value="500" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Labores + Semilla (u$s/ha)</label>
+                        <input type="number" id="labores" value="250" oninput="calcular()">
+                    </div>
+                </div>
+
+                <div class="card" style="background: rgba(0,0,0,0.2);">
+                    <span class="quote-label">Variables</span>
+                    <div class="input-group">
+                        <label>Flete (u$s/tn)</label>
+                        <input type="number" id="flete" value="45" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Comisión (%)</label>
+                        <input type="number" id="gastos-com" value="8" oninput="calcular()">
+                    </div>
                 </div>
             </div>
-            <div class="res-box">
-                <span style="font-size: 0.8rem; font-weight: 700;">INGRESO NETO ESTIMADO</span>
-                <div id="res-final" style="font-size: 2rem; font-weight: 900;">$ 0.00</div>
+
+            <div class="res-grid">
+                <div class="res-box res-main">
+                    <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase;">Margen Bruto Proyectado</span>
+                    <div id="mb-ha" style="font-size: 1.8rem; font-weight: 900;">u$s 0.00</div>
+                </div>
+                <div class="res-box res-sec">
+                    <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase;">Rinde Indiferencia</span>
+                    <div id="rinde-indif" style="font-size: 1.8rem; font-weight: 900; color: var(--gold);">0.0 qq</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="logistica" class="section">
-        <div class="card">
-            <h2 style="color:var(--accent);">Tarifas de Flete Referencia</h2>
-            <table>
-                <thead><tr><th>DISTANCIA</th><th>TARIFA $/TN</th><th>INCIDENCIA</th></tr></thead>
-                <tbody>
-                    <tr><td>0 - 10 km</td><td>$ 8.500</td><td style="color:var(--red);">Alta</td></tr>
-                    <tr><td>100 km</td><td>$ 22.400</td><td style="color:var(--gold);">Media</td></tr>
-                    <tr><td>300 km</td><td>$ 48.900</td><td style="color:var(--accent);">Baja</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <div id="clima" class="section">
+        <div class="grid" id="weather-container">--</div>
     </div>
 
     <div id="noticias" class="section">
-        <h2 style="margin-bottom:20px; color:var(--accent);">Portales Recomendados</h2>
-        <a href="https://www.infocampo.com.ar" target="_blank" class="news-link">
-            <span>INFOCAMPO</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-        <a href="https://www.lanacion.com.ar/economia/campo/" target="_blank" class="news-link">
-            <span>LA NACION CAMPO</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-        <a href="https://www.bcr.com.ar/es/mercados/pizarras" target="_blank" class="news-link">
-            <span>BOLSA DE COMERCIO ROSARIO</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
+        <h2 style="color:var(--accent); margin-bottom: 20px; font-size: 1.1rem;">Portales de Referencia</h2>
+        <a href="https://www.infocampo.com.ar" target="_blank" class="news-link"><span>INFOCAMPO</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <a href="https://www.lanacion.com.ar/economia/campo/" target="_blank" class="news-link"><span>LA NACION CAMPO</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <a href="https://www.bcr.com.ar" target="_blank" class="news-link"><span>BOLSA DE COMERCIO ROSARIO</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
     </div>
 
 </div>
@@ -134,13 +179,35 @@
     }
 
     function calcular() {
-        const precioSoja = 440000;
-        const rinde = document.getElementById('rinde').value;
-        const gastos = document.getElementById('gastos').value;
-        const total = (precioSoja * rinde) * (1 - (gastos/100));
-        document.getElementById('res-final').innerText = "$ " + total.toLocaleString('es-AR');
+        const grano = document.getElementById('calc-grano').value;
+        const dolarTxt = document.getElementById('val-dolar').innerText;
+        const dolar = parseFloat(dolarTxt.replace(/[^0-9.]/g, '')) || 1;
+        
+        const precioArsTxt = document.getElementById('val-' + grano).innerText;
+        const precioArs = parseFloat(precioArsTxt.replace(/[^0-9]/g, '')) || 0;
+        const precioUsdQq = (precioArs / dolar); 
+        
+        const rinde = parseFloat(document.getElementById('rinde').value) || 0;
+        const alquiler = parseFloat(document.getElementById('alquiler').value) || 0;
+        const labores = parseFloat(document.getElementById('labores').value) || 0;
+        const fleteTn = parseFloat(document.getElementById('flete').value) || 0;
+        const gcom = parseFloat(document.getElementById('gastos-com').value) || 0;
+
+        const ingresoUsd = precioUsdQq * rinde;
+        const costoFlete = (fleteTn / 10) * rinde;
+        const costoCom = ingresoUsd * (gcom / 100);
+        
+        const mb = ingresoUsd - alquiler - labores - costoFlete - costoCom;
+        
+        const margenNetoQq = precioUsdQq - (fleteTn / 10) - (precioUsdQq * (gcom/100));
+        const indif = (alquiler + labores) / margenNetoQq;
+
+        document.getElementById('mb-ha').innerText = "u$s " + mb.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('rinde-indif').innerText = (isFinite(indif) && indif > 0) ? indif.toFixed(1) + " qq" : "0.0 qq";
     }
-    calcular(); // Inicializar
+    
+    // Esperar a que el script de python inyecte datos para calcular
+    setTimeout(calcular, 2000);
 </script>
 </body>
 </html>
