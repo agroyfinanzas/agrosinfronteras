@@ -15,7 +15,6 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--oscuro); color: var(--blanco); font-family: 'Mulish', sans-serif; min-height: 100vh; }
   
-  /* HEADER & PERFIL */
   .perfil-header { background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%); border-bottom: 2px solid var(--verde-neon); padding: 0; position: relative; overflow: hidden; }
   .cover-band { height: 90px; background: linear-gradient(90deg, var(--verde) 0%, #3a7d22 40%, var(--dorado) 100%); position: relative; overflow: hidden; }
   .perfil-info { display: flex; align-items: flex-end; gap: 20px; padding: 0 30px 20px; position: relative; margin-top: -40px; }
@@ -25,41 +24,34 @@
   .perfil-handle { color: var(--dorado); font-size: 0.82rem; font-weight: 600; letter-spacing: 1px; margin-top: 2px; }
   .perfil-bio { margin-top: 8px; font-size: 0.85rem; color: #b8c9b0; line-height: 1.5; max-width: 500px; }
 
-  /* TABS NAVEGACIÓN */
   .tabs { display: flex; border-bottom: 2px solid var(--gris); background: var(--oscuro2); position: sticky; top: 0; z-index: 100; overflow-x: auto; }
   .tab { padding: 14px 22px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; color: #7a9b72; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
   .tab.active { color: var(--verde-neon); border-bottom-color: var(--verde-neon); }
 
-  /* CONTENIDO PRINCIPAL */
   .main { max-width: 900px; margin: 0 auto; padding: 0 16px 60px; }
   .section { display: none; padding-top: 28px; }
   .section.active { display: block; }
   .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--verde-neon); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
 
-  /* GRID DE PRECIOS - PIZARRA */
   .precios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 30px; }
   .precio-card { background: linear-gradient(135deg, var(--oscuro2) 0%, var(--gris) 100%); border: 1px solid rgba(118,196,66,0.2); border-radius: 12px; padding: 18px 16px; transition: transform 0.2s; }
-  .precio-card:hover { transform: translateY(-3px); }
   .precio-emoji { font-size: 1.6rem; margin-bottom: 6px; }
   .precio-cultivo { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7a9b72; margin-bottom: 4px; }
   .precio-valor { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; color: var(--blanco); line-height: 1; }
 
-  /* TABLA GANADERÍA CAÑUELAS */
   .tabla-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(118,196,66,0.15); margin-bottom: 28px; }
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   thead tr { background: linear-gradient(90deg, var(--verde) 0%, #2a5e18 100%); }
   thead th { padding: 12px 14px; text-align: left; font-size: 0.7rem; color: var(--blanco); text-transform: uppercase; }
   tbody td { padding: 11px 14px; color: #c8d9c0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .precio-top { color: var(--dorado); font-weight: 700; font-family: 'Mulish', sans-serif; }
+  .precio-top { color: var(--dorado); font-weight: 700; }
 
-  /* PANEL DE INDICADORES / SEMÁFOROS */
   .ip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
   .ip-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 14px; padding: 20px; }
   .ip-card h3 { font-size: 0.8rem; color: var(--verde-neon); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid var(--gris); padding-bottom: 5px; }
   .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
   .ip-qty { font-weight: 700; color: var(--blanco); margin-right: 8px; }
 
-  /* CLASES PARA EL SEMÁFORO (INYECTADAS POR EL ROBOT) */
   .ind { padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; min-width: 65px; text-align: center; }
   .ind-buena { background: rgba(118,196,66,0.15); color: var(--verde-neon); border-color: var(--verde-neon); }
   .ind-regular { background: rgba(232,183,77,0.15); color: var(--dorado); border-color: var(--dorado); }
@@ -68,7 +60,7 @@
   .tc-badge { background: var(--gris); border: 1px solid rgba(118,196,66,0.2); border-radius: 8px; padding: 8px 16px; font-size: 0.75rem; color: #7a9b72; display: inline-flex; gap: 8px; margin-bottom: 20px; }
   .tc-val { color: var(--dorado); font-weight: 700; }
 
-  footer { text-align: center; padding: 30px; font-size: 0.75rem; color: #4a6040; border-top: 1px solid var(--gris); margin-top: 40px; line-height: 1.6; }
+  footer { text-align: center; padding: 30px; font-size: 0.75rem; color: #4a6040; border-top: 1px solid var(--gris); margin-top: 40px; }
 </style>
 </head>
 <body>
@@ -80,7 +72,7 @@
     <div class="perfil-texto">
       <div class="perfil-nombre">Agros Sin Fronteras</div>
       <div class="perfil-handle">@agrosinfronterasok</div>
-      <div class="perfil-bio">🌱 Tablero de Decisiones Agropecuarias · Rosario · Cañuelas · Indicadores en tiempo real.</div>
+      <div class="perfil-bio">🌱 Tablero de Decisiones Agropecuarias · Rosario · Cañuelas · Indicadores.</div>
     </div>
   </div>
 </div>
@@ -101,8 +93,8 @@
       <div class="precio-card"><div class="precio-emoji">🌽</div><div class="precio-cultivo">Maíz</div><div id="precio-maiz" class="precio-valor">$262.675</div></div>
       <div class="precio-card"><div class="precio-emoji">🌾</div><div class="precio-cultivo">Trigo</div><div id="precio-trigo" class="precio-valor">$283.412</div></div>
       <div class="precio-card"><div class="precio-emoji">🌻</div><div class="precio-cultivo">Girasol</div><div id="precio-girasol" class="precio-valor">$500.000</div></div>
-      <div class="precio-card"><div class="emoji">🍪</div><div class="precio-cultivo">Sorgo</div><div id="precio-sorgo" class="precio-valor">$269.600</div></div>
-      <div class="precio-card"><div class="emoji">🌱</div><div class="precio-cultivo">Cebada</div><div id="precio-cebada" class="precio-valor">$195.000</div></div>
+      <div class="precio-card"><div class="precio-emoji">🍪</div><div class="precio-cultivo">Sorgo</div><div id="precio-sorgo" class="precio-valor">$269.600</div></div>
+      <div class="precio-card"><div class="precio-emoji">🌱</div><div class="precio-cultivo">Cebada</div><div id="precio-cebada" class="precio-valor">$195.000</div></div>
     </div>
   </div>
 
@@ -128,22 +120,22 @@
     <div class="ip-grid">
       <div class="ip-card">
         <h3>🧪 Fertilizantes (Urea)</h3>
-        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-urea-soja" class="ip-qty">--</span><span id="ind-urea-soja" class="ind ind-buena">Excelente</span></div></div>
-        <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-urea-maiz" class="ip-qty">--</span><span id="ind-urea-maiz" class="ind ind-buena">Excelente</span></div></div>
+        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-u-s" class="ip-qty">--</span><span id="ind-u-s" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-u-m" class="ip-qty">--</span><span id="ind-u-m" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
         <h3>⛽ Combustible (Gasoil)</h3>
-        <div class="ip-row"><span>Soja (qq/500L)</span><div><span id="rel-gasoil-soja" class="ip-qty">--</span><span id="ind-gasoil-soja" class="ind ind-mala">Elevado</span></div></div>
-        <div class="ip-row"><span>Maíz (qq/500L)</span><div><span id="rel-gasoil-maiz" class="ip-qty">--</span><span id="ind-gasoil-maiz" class="ind ind-mala">Elevado</span></div></div>
+        <div class="ip-row"><span>Soja (qq/500L)</span><div><span id="rel-g-s" class="ip-qty">--</span><span id="ind-g-s" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Maíz (qq/500L)</span><div><span id="rel-g-m" class="ip-qty">--</span><span id="ind-g-m" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
         <h3>🥩 Relación Carne/Maíz</h3>
-        <div class="ip-row"><span>Kg Maíz p/ 1kg Ternero</span><div><span id="rel-maiz-ternero" class="ip-qty">--</span><span id="ind-maiz-ternero" class="ind ind-buena">Oportunidad</span></div></div>
-        <div class="ip-row"><span>Kg Maíz p/ 1kg Novillo</span><div><span id="rel-maiz-novillo" class="ip-qty">--</span><span id="ind-maiz-novillo" class="ind ind-regular">Equilibrio</span></div></div>
+        <div class="ip-row"><span>Kg Maíz p/ 1kg Ternero</span><div><span id="rel-c-t" class="ip-qty">--</span><span id="ind-c-t" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Kg Maíz p/ 1kg Novillo</span><div><span id="rel-c-n" class="ip-qty">--</span><span id="ind-c-n" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
         <h3>⚗️ Defensivos (Glifo)</h3>
-        <div class="ip-row"><span>Soja (qq/100L)</span><div><span id="rel-glifo-soja" class="ip-qty">--</span><span id="ind-glifo-soja" class="ind ">N/A</span></div></div>
+        <div class="ip-row"><span>Soja (qq/100L)</span><div><span id="rel-gl-s" class="ip-qty">--</span><span id="ind-gl-s" class="ind">--</span></div></div>
       </div>
     </div>
   </div>
