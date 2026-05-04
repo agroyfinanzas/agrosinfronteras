@@ -1,26 +1,28 @@
 name: Actualizar Precios Agro
 on:
   schedule:
-    - cron: '0 12 * * *' # Corre a las 09:00 AM hora Argentina cada día
-  workflow_dispatch: # Botón manual para probarlo ahora
+    - cron: '0 12 * * *'
+  workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Install dependencies
-        run: pip install requests
-      - name: Run Update Script
+      - name: Instalar herramientas
+        run: pip install requests beautifulsoup4
+      - name: Ejecutar Robot
         run: python update_data.py
-      - name: Save changes
+      - name: Guardar cambios
         run: |
           git config --global user.name 'AgroBot'
           git config --global user.email 'bot@agros.com'
           git add index.html
-          git commit -m "Precios del día actualizados" || echo "No hay cambios"
+          git commit -m "Actualización automática de mercados" || echo "Sin cambios"
           git push
