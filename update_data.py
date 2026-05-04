@@ -7,8 +7,9 @@ def analizar(valor, tipo):
         if valor < 19: return "Regular", "ind-regular"
         return "Caro", "ind-mala"
     if "carne" in tipo:
-        if valor > 12: return "Compra", "ind-buena"
-        if valor > 9: return "Equilibrio", "ind-regular"
+        # Favorable para el ganadero si 1kg de carne compra mucho maíz
+        if valor > 12: return "Favorable", "ind-buena"
+        if valor > 10: return "Equilibrio", "ind-regular"
         return "Desfavorable", "ind-mala"
     if "gas" in tipo:
         if valor < 14: return "Barato", "ind-buena"
@@ -22,39 +23,40 @@ def actualizar():
     except:
         dolar = 1382.50
 
+    # Precios pizarra y MAG
     p = {
         "soja": 430000, "maiz": 262675, "trigo": 283412, "girasol": 500000, "sorgo": 269600, "cebada": 195000,
         "mag_novillo": 3050, "mag_novillito": 3360, "mag_vaquillona": 3200, "mag_ternero": 3450, "mag_ternera": 3350, "mag_vaca": 1920, "mag_conserva": 1380, "mag_toro": 1800
     }
 
-    # --- CÁLCULOS TÉCNICOS ---
+    # --- CÁLCULOS ---
     
-    # 1. Urea (USD 100kg / USD qq Grano) -> Ref: USD 1000/tn = USD 100/100kg
-    usd_urea_100kg = 100
-    r_u_s = usd_urea_100kg / ((p["soja"] / 10) / dolar)
-    r_u_m = usd_urea_100kg / ((p["maiz"] / 10) / dolar)
+    # 1. Urea (USD/USD): qq de grano para 100kg Urea (Base USD 1000/tn)
+    costo_100kg_urea_usd = 100
+    r_u_s = costo_100kg_urea_usd / ((p["soja"] / 10) / dolar)
+    r_u_m = costo_100kg_urea_usd / ((p["maiz"] / 10) / dolar)
 
-    # 2. Gasoil ($ 500L / $ qq Grano) -> Ref: $1200/litro
-    ars_gasoil_500l = 1200 * 500
-    r_g_s = ars_gasoil_500l / (p["soja"] / 10)
-    r_g_m = ars_gasoil_500l / (p["maiz"] / 10)
+    # 2. Gasoil ($/$ ARS): qq de grano para 500L (Base $1200/litro)
+    costo_500l_gasoil_ars = 1200 * 500
+    r_g_s = costo_500l_gasoil_ars / (p["soja"] / 10)
+    r_g_m = costo_500l_gasoil_ars / (p["maiz"] / 10)
 
-    # 3. Maíz/Carne ($ kg Carne / $ kg Maíz)
-    # Convertimos Maíz $/tn a $/kg dividiendo por 1000
+    # 3. Carne/Maíz (kg/kg): kg de Maíz que compras con 1kg de Carne
+    # $/kg Carne / $/kg Maíz
     r_c_t = p["mag_ternero"] / (p["maiz"] / 1000)
     r_c_n = p["mag_novillo"] / (p["maiz"] / 1000)
 
     with open("index.html", "r", encoding="utf-8") as f:
         h = f.read()
 
-    # Reemplazos básicos
+    # Reemplazos de Precios
     h = re.sub(r'id="valor-dolar"[^>]*>.*?<', f'id="valor-dolar">${dolar:,.2f}<', h)
     for g in ["soja", "maiz", "trigo", "girasol", "sorgo", "cebada"]:
         h = re.sub(f'id="precio-{g}"[^>]*>.*?<', f'id="precio-{g}">${p[g]:,.0f}<', h)
     for c in ["novillo", "novillito", "vaquillona", "ternero", "ternera", "vaca", "conserva", "toro"]:
         h = re.sub(f'id="mag-{c}"[^>]*>.*?<', f'id="mag-{c}">${p["mag_"+c]:,.0f}<', h)
 
-    # Reemplazos Indicadores
+    # Reemplazos de Indicadores
     def escribir(id_n, id_b, val, tipo):
         nonlocal h
         txt, cls = analizar(val, tipo)
@@ -71,4 +73,5 @@ def actualizar():
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(h)
 
-actualizar()
+if __name__ == "__main__":
+    actualizar()
