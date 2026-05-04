@@ -43,14 +43,14 @@
 <div class="tabs"><div class="tab active" onclick="showTab('granos')">🌾 Pizarra</div><div class="tab" onclick="showTab('ganaderia')">🐄 Ganadería</div><div class="tab" onclick="showTab('insumos')">📊 Indicadores</div></div>
 <div class="main">
   <div class="section active" id="granos">
-    <div style="margin-bottom:20px;">💵 Dólar BNA: <span id="valor-dolar" style="color:var(--dorado); font-weight:900;">$1.382,50</span></div>
+    <div style="margin-bottom:20px;">💵 Dólar BNA: <span id="valor-dolar">$1,416.00</span></div>
     <div class="precios-grid">
-      <div class="p-card"><div class="p-icon">🟡</div><div>Soja</div><div id="precio-soja" class="p-val">$430.000</div></div>
-      <div class="p-card"><div class="p-icon">🌽</div><div>Maíz</div><div id="precio-maiz" class="p-val">$262.675</div></div>
-      <div class="p-card"><div class="p-icon">🌾</div><div>Trigo</div><div id="precio-trigo" class="p-val">$283.412</div></div>
-      <div class="p-card"><div class="p-icon">🌻</div><div>Girasol</div><div id="precio-girasol" class="p-val">$500.000</div></div>
-      <div class="p-card"><div class="p-icon">🍪</div><div>Sorgo</div><div id="precio-sorgo" class="p-val">$269.600</div></div>
-      <div class="p-card"><div class="p-icon">🌱</div><div>Cebada</div><div id="precio-cebada" class="p-val">$195.000</div></div>
+      <div class="p-card"><div class="p-icon">🟡</div><div>Soja</div><div id="precio-soja">$430,000</div></div>
+      <div class="p-card"><div class="p-icon">🌽</div><div>Maíz</div><div id="precio-maiz">$262,675</div></div>
+      <div class="p-card"><div class="p-icon">🌾</div><div>Trigo</div><div id="precio-trigo">$283,412</div></div>
+      <div class="p-card"><div class="p-icon">🌻</div><div>Girasol</div><div id="precio-girasol">$500,000</div></div>
+      <div class="p-card"><div class="p-icon">🍪</div><div>Sorgo</div><div id="precio-sorgo">$269,600</div></div>
+      <div class="p-card"><div class="p-icon">🌱</div><div>Cebada</div><div id="precio-cebada">$195,000</div></div>
     </div>
   </div>
 
@@ -59,14 +59,14 @@
       <table>
         <thead><tr><th>Categoría</th><th>Tope $/kg</th></tr></thead>
         <tbody>
-          <tr><td>🐂 Novillos</td><td id="mag-novillo" style="color:var(--dorado); font-weight:bold;">$3.050</td></tr>
-          <tr><td>🐂 Novillitos</td><td id="mag-novillito" style="color:var(--dorado); font-weight:bold;">$3.360</td></tr>
-          <tr><td>🐄 Vaquillonas</td><td id="mag-vaquillona" style="color:var(--dorado); font-weight:bold;">$3.200</td></tr>
-          <tr><td>🐄 Terneros</td><td id="mag-ternero" style="color:var(--dorado); font-weight:bold;">$3.450</td></tr>
-          <tr><td>🐄 Terneras</td><td id="mag-ternera" style="color:var(--dorado); font-weight:bold;">$3.350</td></tr>
-          <tr><td>🐮 Vacas</td><td id="mag-vaca" style="color:var(--dorado); font-weight:bold;">$1.920</td></tr>
-          <tr><td>🐮 Vaca Conserva</td><td id="mag-conserva" style="color:var(--dorado); font-weight:bold;">$1.380</td></tr>
-          <tr><td>🐃 Toros</td><td id="mag-toro" style="color:var(--dorado); font-weight:bold;">$1.800</td></tr>
+          <tr><td>🐂 Novillos</td><td id="mag-novillo">$3,050</td></tr>
+          <tr><td>🐂 Novillitos</td><td id="mag-novillito">$3,360</td></tr>
+          <tr><td>🐄 Vaquillonas</td><td id="mag-vaquillona">$3,200</td></tr>
+          <tr><td>🐄 Terneros</td><td id="mag-ternero">$3,450</td></tr>
+          <tr><td>🐄 Terneras</td><td id="mag-ternera">$3,350</td></tr>
+          <tr><td>🐮 Vacas</td><td id="mag-vaca">$1,920</td></tr>
+          <tr><td>🐮 Vaca Conserva</td><td id="mag-conserva">$1,380</td></tr>
+          <tr><td>🐃 Toros</td><td id="mag-toro">$1,800</td></tr>
         </tbody>
       </table>
     </div>
@@ -76,18 +76,18 @@
     <div class="ip-grid">
       <div class="ip-card">
         <h3>🧪 Fertilizantes</h3>
-        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-u-s">--</span><span id="ind-u-s" class="ind">--</span></div></div>
-        <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-u-m">--</span><span id="ind-u-m" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-u-s" class="ip-qty">0.3</span><span id="ind-u-s" class="ind ind-buena">Buena</span></div></div>
+        <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-u-m" class="ip-qty">0.5</span><span id="ind-u-m" class="ind ind-buena">Buena</span></div></div>
       </div>
       <div class="ip-card">
         <h3>⛽ Combustible</h3>
-        <div class="ip-row"><span>Soja (qq/500L)</span><div><span id="rel-g-s">--</span><span id="ind-g-s" class="ind">--</span></div></div>
-        <div class="ip-row"><span>Maíz (qq/500L)</span><div><span id="rel-g-m">--</span><span id="ind-g-m" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Soja (qq/500L)</span><div><span id="rel-g-s" class="ip-qty">14.0</span><span id="ind-g-s" class="ind ind-buena">Barato</span></div></div>
+        <div class="ip-row"><span>Maíz (qq/500L)</span><div><span id="rel-g-m" class="ip-qty">22.8</span><span id="ind-g-m" class="ind ind-mala">Elevado</span></div></div>
       </div>
       <div class="ip-card">
         <h3>🥩 Carne/Maíz</h3>
-        <div class="ip-row"><span>Ternero (kg Maíz)</span><div><span id="rel-c-t">--</span><span id="ind-c-t" class="ind">--</span></div></div>
-        <div class="ip-row"><span>Novillo (kg Maíz)</span><div><span id="rel-c-n">--</span><span id="ind-c-n" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Ternero (kg Maíz)</span><div><span id="rel-c-t" class="ip-qty">13.1</span><span id="ind-c-t" class="ind ind-buena">Compra</span></div></div>
+        <div class="ip-row"><span>Novillo (kg Maíz)</span><div><span id="rel-c-n" class="ip-qty">11.6</span><span id="ind-c-n" class="ind ind-regular">Equilibrio</span></div></div>
       </div>
     </div>
   </div>
