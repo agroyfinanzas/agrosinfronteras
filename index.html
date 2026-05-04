@@ -3,259 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agros Sin Fronteras | Inteligencia Agropecuaria</title>
+    <title>ASF | Intelligence Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #0b0d0b;
-            --card-bg: #141714;
-            --accent: #76c442;
-            --text: #f0f5f0;
-            --muted: #8a968a;
-            --gold: #e8b74d;
-            --red: #ff5f5f;
-            --border: rgba(118, 196, 66, 0.15);
+            --bg: #0b0d0b; --card-bg: #141714; --accent: #76c442; --text: #f0f5f0;
+            --muted: #8a968a; --gold: #e8b74d; --red: #ff5f5f; --border: rgba(118, 196, 66, 0.15);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* HEADER & LOGO */
-        header {
-            background: linear-gradient(180deg, #1a2616 0%, var(--bg) 100%);
-            padding: 50px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
-        .logo-img { max-width: 280px; height: auto; filter: drop-shadow(0 0 15px rgba(118,196,66,0.2)); }
-
-        /* NAVEGACIÓN */
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: -25px auto 40px;
-            position: sticky;
-            top: 20px;
-            z-index: 1000;
-            flex-wrap: wrap;
-            padding: 0 15px;
-        }
-        .tab-btn {
-            background: rgba(20, 23, 20, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 14px 24px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.75rem;
-            transition: 0.3s all;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .tab-btn i { font-size: 1rem; }
-        .tab-btn.active {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-            box-shadow: 0 8px 20px rgba(118, 196, 66, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 100px; }
-        .section { display: none; animation: slideUp 0.5s ease forwards; }
-        .section.active { display: block; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* GRID Y CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; }
         
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid var(--border);
-            position: relative;
-            transition: 0.3s;
-        }
-        .card:hover { border-color: var(--accent); transform: scale(1.02); }
-        .card-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: block; }
-        .card-value { font-size: 2.4rem; font-weight: 900; color: #fff; line-height: 1; }
-        .card-footer { margin-top: 15px; font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+        header { padding: 40px; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #1a2616 0%, var(--bg) 100%); }
+        .logo-img { max-width: 250px; cursor: pointer; }
 
-        /* INDICADORES ESPECÍFICOS */
-        .indicator-card { border-left: 6px solid var(--accent); }
-        .badge {
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            background: rgba(118, 196, 66, 0.1);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-        }
+        .nav-tabs { display: flex; justify-content: center; gap: 8px; margin: -25px auto 30px; position: sticky; top: 10px; z-index: 1000; flex-wrap: wrap; }
+        .tab-btn { background: rgba(20,23,20,0.9); border: 1px solid var(--border); color: var(--muted); padding: 12px 18px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.7rem; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px rgba(118,196,66,0.3); }
 
-        /* CLIMA */
-        .weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-        .weather-item {
-            background: linear-gradient(145deg, #1a1d1a, #141714);
-            padding: 25px; border-radius: 20px; text-align: center; border: 1px solid var(--border);
-        }
-        .weather-city { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 10px; }
-        .weather-temp { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+        .container { max-width: 1200px; margin: auto; padding: 0 20px 100px; }
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* NOTICIAS */
-        .news-card {
-            display: flex; gap: 20px; background: var(--card-bg); 
-            border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px;
-        }
-        .news-icon { width: 60px; height: 60px; background: rgba(118,196,66,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.5rem; }
-        .news-content h3 { font-size: 1.1rem; margin-bottom: 8px; }
-        .news-content p { color: var(--muted); font-size: 0.9rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 25px; border: 1px solid var(--border); }
+        .card-val { font-size: 2rem; font-weight: 900; color: #fff; margin: 10px 0; }
+        
+        /* CALCULADORA (OPCIÓN 2) */
+        .calc-container { background: #1a1d1a; padding: 30px; border-radius: 20px; border: 2px solid var(--accent); margin-top: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
+        .input-group input { width: 100%; background: #0b0d0b; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 1rem; }
+        .res-box { background: var(--accent); color: #000; padding: 20px; border-radius: 10px; text-align: center; margin-top: 20px; }
 
-        .dolar-bar {
-            background: rgba(232, 183, 77, 0.1);
-            padding: 20px 30px;
-            border-radius: 15px;
-            border: 1px solid var(--gold);
-            margin-bottom: 35px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* NOTICIAS (RE-DIRECCIÓN) */
+        .news-link { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: inherit; border: 1px solid var(--border); transition: 0.2s; }
+        .news-link:hover { border-color: var(--accent); background: #1c211c; }
+
+        /* FLETES (OPCIÓN 5) */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; color: var(--accent); font-size: 0.7rem; padding: 10px; border-bottom: 1px solid #333; }
+        td { padding: 12px 10px; font-size: 0.9rem; border-bottom: 1px solid #222; }
+
+        .alert-box { padding: 15px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; margin-bottom: 20px; border-left: 5px solid; }
+        .alert-buy { background: rgba(118,196,66,0.1); border-color: var(--accent); color: var(--accent); }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="logo.png" alt="Agros Sin Fronteras" class="logo-img" onerror="this.outerHTML='<h1 style=color:var(--accent);font-size:2.5rem;font-weight:900>AGROS SIN FRONTERAS</h1>'">
+    <img src="logo.png" class="logo-img" alt="ASF" onerror="this.outerHTML='<h1 style=color:var(--accent)>AGROS SIN FRONTERAS</h1>'">
 </header>
 
 <div class="nav-tabs">
-    <button class="tab-btn active" onclick="openTab('granos')"><i class="fa-solid fa-wheat-awn"></i> GRANOS</button>
-    <button class="tab-btn" onclick="openTab('canuelas')"><i class="fa-solid fa-cow"></i> CAÑUELAS (MAG)</button>
-    <button class="tab-btn" onclick="openTab('insumos')"><i class="fa-solid fa-scale-balanced"></i> INSUMO/PRODUCTO</button>
-    <button class="tab-btn" onclick="openTab('clima')"><i class="fa-solid fa-cloud-sun-rain"></i> CLIMA</button>
-    <button class="tab-btn" onclick="openTab('noticias')"><i class="fa-solid fa-newspaper"></i> NOTICIAS</button>
+    <button class="tab-btn active" onclick="openTab('granos', this)"><i class="fa-solid fa-chart-line"></i> MERCADOS</button>
+    <button class="tab-btn" onclick="openTab('calculadora', this)"><i class="fa-solid fa-calculator"></i> MARGENES</button>
+    <button class="tab-btn" onclick="openTab('logistica', this)"><i class="fa-solid fa-truck-front"></i> LOGÍSTICA</button>
+    <button class="tab-btn" onclick="openTab('noticias', this)"><i class="fa-solid fa-globe"></i> PORTALES</button>
 </div>
 
 <div class="container">
-    
+
     <div id="granos" class="section active">
-        <div class="dolar-bar">
-            <span style="font-weight: 700; color: var(--gold); letter-spacing: 1px;">COTIZACIÓN DÓLAR BNA (OFICIAL)</span>
-            <span style="font-size: 1.8rem; font-weight: 900; color: #fff;">$1.425,00</span>
+        <div id="smart-alert" class="alert-box alert-buy">
+            <i class="fa-solid fa-circle-info"></i> ESTRATEGIA: La relación Urea/Maíz sugiere compra anticipada de fertilizante.
         </div>
         <div class="grid">
-            <div class="card"><span class="card-label">Soja Rosario</span><div class="card-value">$442.000</div><div class="card-footer">Pizarra BCR</div></div>
-            <div class="card"><span class="card-label">Maíz Rosario</span><div class="card-value">$272.500</div><div class="card-footer">Pizarra BCR</div></div>
-            <div class="card"><span class="card-label">Trigo Rosario</span><div class="card-value">$295.000</div><div class="card-footer">Pizarra BCR</div></div>
-            <div class="card"><span class="card-label">Girasol</span><div class="card-value">$515.000</div><div class="card-footer">Referencia Mercado</div></div>
-            <div class="card"><span class="card-label">Sorgo</span><div class="card-value">$240.000</div><div class="card-footer">Referencia Mercado</div></div>
-            <div class="card"><span class="card-label">Cebada</span><div class="card-value">$225.000</div><div class="card-footer">Referencia Mercado</div></div>
+            <div class="card"><span style="color:var(--gold); font-size:0.7rem; font-weight:900;">DÓLAR BNA</span><div class="card-val" id="val-dolar">$1.425,00</div></div>
+            <div class="card"><span>SOJA ROSARIO</span><div class="card-val" id="val-soja">$440.000</div></div>
+            <div class="card"><span>MAIZ ROSARIO</span><div class="card-val" id="val-maiz">$270.000</div></div>
         </div>
     </div>
 
-    <div id="canuelas" class="section">
-        <h2 style="margin-bottom: 25px; color: var(--accent);">Mercado Agroganadero de Cañuelas</h2>
-        <div class="grid">
-            <div class="card"><span class="card-label">Novillo Especial</span><div class="card-value">$3.180</div><div class="card-footer">Máximo $/kg</div></div>
-            <div class="card"><span class="card-label">Terneros</span><div class="card-value">$3.650</div><div class="card-footer">Máximo $/kg</div></div>
-            <div class="card"><span class="card-label">Vaca Conserva</span><div class="card-value">$1.950</div><div class="card-footer">Sugerido $/kg</div></div>
-            <div class="card"><span class="card-label">Vaquillonas</span><div class="card-value">$3.050</div><div class="card-footer">Máximo $/kg</div></div>
-            <div class="card"><span class="card-label">Novillitos</span><div class="card-value">$3.200</div><div class="card-footer">Máximo $/kg</div></div>
-            <div class="card"><span class="card-label">Toros</span><div class="card-value">$1.850</div><div class="card-footer">Promedio $/kg</div></div>
-        </div>
-    </div>
-
-    <div id="insumos" class="section">
-        <h2 style="margin-bottom: 25px; color: var(--accent);">Relaciones de Intercambio</h2>
-        <div class="grid">
-            <div class="card indicator-card">
-                <span class="card-label">Urea / Soja</span>
-                <div class="card-value">14.2</div>
-                <div style="margin-top:15px;"><span class="badge">Relación Buena</span></div>
-                <p style="font-size:0.8rem; margin-top:10px; color:var(--muted);">Quintales de Soja para 100kg Urea</p>
+    <div id="calculadora" class="section">
+        <div class="calc-container">
+            <h2 style="color:var(--accent); margin-bottom:20px;">Calculadora de Margen Bruto</h2>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="input-group">
+                    <label>RINDE ESTIMADO (QQ/HA)</label>
+                    <input type="number" id="rinde" value="30" oninput="calcular()">
+                </div>
+                <div class="input-group">
+                    <label>GASTOS COMERCIALES (%)</label>
+                    <input type="number" id="gastos" value="15" oninput="calcular()">
+                </div>
             </div>
-            <div class="card indicator-card">
-                <span class="card-label">Carne / Maíz</span>
-                <div class="card-value">13.5</div>
-                <div style="margin-top:15px;"><span class="badge">Compra Maíz</span></div>
-                <p style="font-size:0.8rem; margin-top:10px; color:var(--muted);">Kilos de Maíz por Kilo de Ternero</p>
-            </div>
-            <div class="card indicator-card">
-                <span class="card-label">Urea / Maíz</span>
-                <div class="card-value">18.1</div>
-                <div style="margin-top:15px;"><span class="badge" style="color:var(--gold); border-color:var(--gold);">Relación Firme</span></div>
-                <p style="font-size:0.8rem; margin-top:10px; color:var(--muted);">Quintales de Maíz para 100kg Urea</p>
+            <div class="res-box">
+                <span style="font-size: 0.8rem; font-weight: 700;">INGRESO NETO ESTIMADO</span>
+                <div id="res-final" style="font-size: 2rem; font-weight: 900;">$ 0.00</div>
             </div>
         </div>
     </div>
 
-    <div id="clima" class="section">
-        <h2 style="margin-bottom: 25px; color: var(--accent);">Perspectiva Climática</h2>
-        <div class="weather-grid">
-            <div class="weather-item"><div class="weather-city">ROSARIO</div><div class="weather-temp">22°C</div><div style="color:var(--muted)">Despejado</div></div>
-            <div class="weather-item"><div class="weather-city">CAÑUELAS</div><div class="weather-temp">19°C</div><div style="color:var(--muted)">Humedad 65%</div></div>
-            <div class="weather-item"><div class="weather-city">CÓRDOBA</div><div class="weather-temp">24°C</div><div style="color:var(--muted)">Viento N 15km/h</div></div>
-            <div class="weather-item"><div class="weather-city">SALTA</div><div class="weather-temp">28°C</div><div style="color:var(--muted)">Cielo Nublado</div></div>
-            <div class="weather-item"><div class="weather-city">PEHUAJÓ</div><div class="weather-temp">18°C</div><div style="color:var(--muted)">Estable</div></div>
-            <div class="weather-item"><div class="weather-city">BAHÍA BLANCA</div><div class="weather-temp">16°C</div><div style="color:var(--muted)">Viento Sur</div></div>
+    <div id="logistica" class="section">
+        <div class="card">
+            <h2 style="color:var(--accent);">Tarifas de Flete Referencia</h2>
+            <table>
+                <thead><tr><th>DISTANCIA</th><th>TARIFA $/TN</th><th>INCIDENCIA</th></tr></thead>
+                <tbody>
+                    <tr><td>0 - 10 km</td><td>$ 8.500</td><td style="color:var(--red);">Alta</td></tr>
+                    <tr><td>100 km</td><td>$ 22.400</td><td style="color:var(--gold);">Media</td></tr>
+                    <tr><td>300 km</td><td>$ 48.900</td><td style="color:var(--accent);">Baja</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <div id="noticias" class="section">
-        <h2 style="margin-bottom: 25px; color: var(--accent);">Noticias del Agro</h2>
-        <div class="news-card">
-            <div class="news-icon"><i class="fa-solid fa-chart-area"></i></div>
-            <div class="news-content">
-                <span class="badge" style="margin-bottom:10px;">Mercados</span>
-                <h3>Tendencia alcista en Chicago para el complejo soja</h3>
-                <p>Las proyecciones de cosecha en Sudamérica ajustan los stocks globales y presionan los precios al alza en las terminales locales.</p>
-            </div>
-        </div>
-        <div class="news-card">
-            <div class="news-icon"><i class="fa-solid fa-droplet"></i></div>
-            <div class="news-content">
-                <span class="badge" style="margin-bottom:10px;">Clima</span>
-                <h3>Pronóstico de lluvias para la zona núcleo</h3>
-                <p>Se esperan frentes de tormenta que traerán alivio a los lotes de maíz tardío y soja de segunda en el centro de Santa Fe y Buenos Aires.</p>
-            </div>
-        </div>
-        <div class="news-card">
-            <div class="news-icon"><i class="fa-solid fa-tractor"></i></div>
-            <div class="news-content">
-                <span class="badge" style="margin-bottom:10px;">Maquinaria</span>
-                <h3>Nuevas líneas de crédito para la compra de tractores</h3>
-                <p>Bancos oficiales lanzan tasas subsidiadas para la renovación de flota de cara a la próxima campaña de fina.</p>
-            </div>
-        </div>
+        <h2 style="margin-bottom:20px; color:var(--accent);">Portales Recomendados</h2>
+        <a href="https://www.infocampo.com.ar" target="_blank" class="news-link">
+            <span>INFOCAMPO</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.lanacion.com.ar/economia/campo/" target="_blank" class="news-link">
+            <span>LA NACION CAMPO</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.bcr.com.ar/es/mercados/pizarras" target="_blank" class="news-link">
+            <span>BOLSA DE COMERCIO ROSARIO</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
     </div>
 
 </div>
 
 <script>
-    function openTab(tabId) {
+    function openTab(id, btn) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
     }
-</script>
 
+    function calcular() {
+        const precioSoja = 440000;
+        const rinde = document.getElementById('rinde').value;
+        const gastos = document.getElementById('gastos').value;
+        const total = (precioSoja * rinde) * (1 - (gastos/100));
+        document.getElementById('res-final').innerText = "$ " + total.toLocaleString('es-AR');
+    }
+    calcular(); // Inicializar
+</script>
 </body>
 </html>
