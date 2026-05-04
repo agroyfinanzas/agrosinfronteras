@@ -2,18 +2,22 @@ import requests
 import re
 
 def analizar(valor, tipo):
+    if "tn" in tipo: # Urea/Soja tn/tn
+        if valor < 2.1: return "Barata", "ind-buena"
+        if valor < 2.5: return "Normal", "ind-regular"
+        return "Cara", "ind-mala"
+    if "unit" in tipo: # Gasoil lt / Maíz kg
+        if valor < 6.0: return "Favorable", "ind-buena"
+        return "Caro", "ind-mala"
     if "urea" in tipo:
         if valor < 15: return "Buena", "ind-buena"
-        if valor < 19: return "Regular", "ind-regular"
-        return "Caro", "ind-mala"
+        return "Cara", "ind-mala"
     if "carne" in tipo:
-        # Favorable para el ganadero si 1kg de carne compra mucho maíz
         if valor > 12: return "Favorable", "ind-buena"
-        if valor > 10: return "Equilibrio", "ind-regular"
-        return "Desfavorable", "ind-mala"
+        return "Mala", "ind-mala"
     if "gas" in tipo:
-        if valor < 14: return "Barato", "ind-buena"
-        return "Elevado", "ind-mala"
+        if valor < 14: return "Barata", "ind-buena"
+        return "Elevada", "ind-mala"
     return "N/A", ""
 
 def actualizar():
@@ -21,51 +25,56 @@ def actualizar():
         res = requests.get("https://api.bluelytics.com.ar/v2/latest")
         dolar = res.json()['oficial']['value_sell']
     except:
-        dolar = 1382.50
+        dolar = 1385.00
 
-    # Precios pizarra y MAG
     p = {
-        "soja": 430000, "maiz": 262675, "trigo": 283412, "girasol": 500000, "sorgo": 269600, "cebada": 195000,
-        "mag_novillo": 3050, "mag_novillito": 3360, "mag_vaquillona": 3200, "mag_ternero": 3450, "mag_ternera": 3350, "mag_vaca": 1920, "mag_conserva": 1380, "mag_toro": 1800
+        "soja": 435000, "maiz": 265000, "trigo": 285000, "girasol": 510000, "sorgo": 270000, "cebada": 198000,
+        "mag_novillo": 3100, "mag_novillito": 3400, "mag_vaquillona": 3250, "mag_ternero": 3500, "mag_ternera": 3400, "mag_vaca": 1950, "mag_conserva": 1400, "mag_toro": 1850
     }
 
-    # --- CÁLCULOS ---
+    # --- MATEMÁTICA DE INTERCAMBIO ---
     
-    # 1. Urea (USD/USD): qq de grano para 100kg Urea (Base USD 1000/tn)
-    costo_100kg_urea_usd = 100
-    r_u_s = costo_100kg_urea_usd / ((p["soja"] / 10) / dolar)
-    r_u_m = costo_100kg_urea_usd / ((p["maiz"] / 10) / dolar)
+    # Precios Insumos
+    urea_usd_tn = 1000
+    gasoil_ars_lt = 1250
+    gasoil_usd_lt = gasoil_ars_lt / dolar
+    
+    # Precios Granos
+    soja_usd_tn = p["soja"] / dolar
+    maiz_usd_tn = p["maiz"] / dolar
+    maiz_usd_kg = maiz_usd_tn / 1000
 
-    # 2. Gasoil ($/$ ARS): qq de grano para 500L (Base $1200/litro)
-    costo_500l_gasoil_ars = 1200 * 500
-    r_g_s = costo_500l_gasoil_ars / (p["soja"] / 10)
-    r_g_m = costo_500l_gasoil_ars / (p["maiz"] / 10)
+    # Relaciones solicitadas
+    rel_u_s_tn = urea_usd_tn / soja_usd_tn      # (Urea usd/tn) / (Soja usd/tn)
+    rel_g_m_unit = gasoil_usd_lt / maiz_usd_kg  # (Gasoil usd/lt) / (Maiz usd/kg)
 
-    # 3. Carne/Maíz (kg/kg): kg de Maíz que compras con 1kg de Carne
-    # $/kg Carne / $/kg Maíz
-    r_c_t = p["mag_ternero"] / (p["maiz"] / 1000)
-    r_c_n = p["mag_novillo"] / (p["maiz"] / 1000)
+    # Relaciones de Poder de Compra (qq y kg)
+    r_u_s = 100 / (soja_usd_tn / 10)            # qq Soja para 100kg Urea
+    r_g_m = (gasoil_ars_lt * 500) / (p["maiz"] / 10) # qq Maíz para 500L Gasoil
+    r_c_t = p["mag_ternero"] / (p["maiz"] / 1000)    # kg Maíz por 1kg Ternero
+    r_c_n = p["mag_novillo"] / (p["maiz"] / 1000)    # kg Maíz por 1kg Novillo
 
     with open("index.html", "r", encoding="utf-8") as f:
         h = f.read()
 
-    # Reemplazos de Precios
+    # Inyección de Dólar y Pizarra
     h = re.sub(r'id="valor-dolar"[^>]*>.*?<', f'id="valor-dolar">${dolar:,.2f}<', h)
     for g in ["soja", "maiz", "trigo", "girasol", "sorgo", "cebada"]:
         h = re.sub(f'id="precio-{g}"[^>]*>.*?<', f'id="precio-{g}">${p[g]:,.0f}<', h)
     for c in ["novillo", "novillito", "vaquillona", "ternero", "ternera", "vaca", "conserva", "toro"]:
         h = re.sub(f'id="mag-{c}"[^>]*>.*?<', f'id="mag-{c}">${p["mag_"+c]:,.0f}<', h)
 
-    # Reemplazos de Indicadores
+    # Función para inyectar indicadores
     def escribir(id_n, id_b, val, tipo):
         nonlocal h
         txt, cls = analizar(val, tipo)
-        h = re.sub(f'id="{id_n}"[^>]*>.*?<', f'id="{id_n}" class="ip-qty">{val:.1f}<', h)
+        h = re.sub(f'id="{id_n}"[^>]*>.*?<', f'id="{id_n}" class="ip-qty">{val:.2f}<', h)
         h = re.sub(f'id="{id_b}"[^>]*>.*?<', f'id="{id_b}" class="ind {cls}">{txt}<', h)
 
+    # Inyectar todos los indicadores
+    escribir("rel-u-s-tn", "ind-u-s-tn", rel_u_s_tn, "tn")
     escribir("rel-u-s", "ind-u-s", r_u_s, "urea")
-    escribir("rel-u-m", "ind-u-m", r_u_m, "urea")
-    escribir("rel-g-s", "ind-g-s", r_g_s, "gas")
+    escribir("rel-g-m-unit", "ind-g-m-unit", rel_g_m_unit, "unit")
     escribir("rel-g-m", "ind-g-m", r_g_m, "gas")
     escribir("rel-c-t", "ind-c-t", r_c_t, "carne")
     escribir("rel-c-n", "ind-c-n", r_c_n, "carne")
