@@ -43,13 +43,13 @@
   .precio-cultivo { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7a9b72; margin-bottom: 4px; }
   .precio-valor { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; color: var(--blanco); line-height: 1; }
 
-  /* TABLAS */
+  /* TABLAS GANADERÍA */
   .tabla-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(118,196,66,0.15); margin-bottom: 28px; }
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   thead tr { background: linear-gradient(90deg, var(--verde) 0%, #2a5e18 100%); }
   thead th { padding: 12px 14px; text-align: left; font-size: 0.7rem; color: var(--blanco); text-transform: uppercase; }
   tbody td { padding: 11px 14px; color: #c8d9c0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .precio-top { color: var(--dorado); font-weight: 700; }
+  .precio-top { color: var(--dorado); font-weight: 700; font-family: 'Mulish', sans-serif; }
 
   /* INDICADORES */
   .ip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
@@ -58,8 +58,8 @@
   .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
   .ip-qty { font-weight: 700; color: var(--blanco); margin-right: 8px; }
 
-  /* SEMAFOROS */
-  .ind { padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; }
+  /* SEMÁFOROS */
+  .ind { padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; min-width: 65px; text-align: center; }
   .ind-buena { background: rgba(118,196,66,0.15); color: var(--verde-neon); border-color: var(--verde-neon); }
   .ind-regular { background: rgba(232,183,77,0.15); color: var(--dorado); border-color: var(--dorado); }
   .ind-mala { background: rgba(224,82,82,0.15); color: var(--rojo); border-color: var(--rojo); }
@@ -67,7 +67,7 @@
   .tc-badge { background: var(--gris); border: 1px solid rgba(118,196,66,0.2); border-radius: 8px; padding: 8px 16px; font-size: 0.75rem; color: #7a9b72; display: inline-flex; gap: 8px; margin-bottom: 20px; }
   .tc-val { color: var(--dorado); font-weight: 700; }
 
-  footer { text-align: center; padding: 30px; font-size: 0.75rem; color: #4a6040; border-top: 1px solid var(--gris); margin-top: 40px; }
+  footer { text-align: center; padding: 30px; font-size: 0.75rem; color: #4a6040; border-top: 1px solid var(--gris); margin-top: 40px; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -91,7 +91,6 @@
 </div>
 
 <div class="main">
-  
   <div class="section active" id="granos">
     <div class="section-title">🌾 Mercados Rosario</div>
     <div class="tc-badge">💵 TC BNA Dólar Divisa: <span id="valor-dolar" class="tc-val">$1.382,50</span></div>
@@ -127,7 +126,7 @@
     <div class="ip-grid">
       <div class="ip-card">
         <h3>🧪 Fertilizantes (Urea)</h3>
-        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-urea-soja" class="ip-qty">--</span><span id="ind-urea-soja" class="ind ind-buena">Buena</span></div></div>
+        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-urea-soja" class="ip-qty">--</span><span id="ind-urea-soja" class="ind">--</span></div></div>
         <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-urea-maiz" class="ip-qty">--</span><span id="ind-urea-maiz" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
@@ -137,7 +136,7 @@
       </div>
       <div class="ip-card">
         <h3>🥩 Relación Carne/Maíz</h3>
-        <div class="ip-row"><span>Kg Maíz p/ 1kg Ternero</span><div><span id="rel-maiz-ternero" class="ip-qty">--</span><span id="ind-maiz-ternero" class="ind ind-buena">Compra</span></div></div>
+        <div class="ip-row"><span>Kg Maíz p/ 1kg Ternero</span><div><span id="rel-maiz-ternero" class="ip-qty">--</span><span id="ind-maiz-ternero" class="ind">--</span></div></div>
         <div class="ip-row"><span>Kg Maíz p/ 1kg Novillo</span><div><span id="rel-maiz-novillo" class="ip-qty">--</span><span id="ind-maiz-novillo" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
@@ -146,10 +145,9 @@
       </div>
     </div>
   </div>
-
 </div>
 
-<footer>Agros Sin Fronteras · Actualización automática con GitHub Actions</footer>
+<footer>Agros Sin Fronteras · Actualización automática vía GitHub Actions</footer>
 
 <script>
   function showTab(id) {
