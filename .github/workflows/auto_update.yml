@@ -1,27 +1,21 @@
-name: Actualizar Dashboard ASF
+name: Actualizar ASF
 on:
   schedule:
-    - cron: '0 12 * * *' # Corre todos los días a las 9 AM Argentina
-  workflow_dispatch: # Permite correrlo a mano cuando quieras
-
+    - cron: '0 13 * * *' # Corre a las 10 AM de Argentina
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout código
-        uses: actions/checkout@v3
-      - name: Configurar Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Instalar dependencias
-        run: pip install requests
-      - name: Correr script
-        run: python update_data.py
-      - name: Guardar cambios
-        run: |
-          git config --global user.name 'ASF-Bot'
-          git config --global user.email 'bot@agrosinfronteras.com'
+      - run: pip install requests
+      - run: python update_data.py
+      - run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add index.html
-          git commit -m "Actualización automática de precios" || exit 0
+          git commit -m "Auto Update" || exit 0
           git push
