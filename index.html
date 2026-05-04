@@ -3,66 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agros Sin Fronteras</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<title>Agros Sin Fronteras | Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
-  :root { --verde: #2d6a1f; --verde-claro: #4caf50; --verde-neon: #76c442; --tierra: #a0522d; --dorado: #e8b74d; --oscuro: #121a0e; --oscuro2: #1c2816; --gris: #2e3b28; --blanco: #f4f7f0; --rojo: #e05252; }
+  :root { 
+    --bg: #0b0f0a; --card-bg: #161d14; --accent: #76c442; 
+    --text: #e0e7dc; --muted: #7a9b72; --gold: #e8b74d; --red: #ff5f5f;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--oscuro); color: var(--blanco); font-family: 'Mulish', sans-serif; min-height: 100vh; }
-  .perfil-header { background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%); border-bottom: 2px solid var(--verde-neon); padding: 25px; text-align: center; }
-  .tabs { display: flex; border-bottom: 2px solid var(--gris); background: var(--oscuro2); position: sticky; top: 0; z-index: 100; overflow-x: auto; }
-  .tab { padding: 14px 22px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #7a9b72; border-bottom: 3px solid transparent; white-space: nowrap; }
-  .tab.active { color: var(--verde-neon); border-bottom-color: var(--verde-neon); }
-  .main { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
-  .section { display: none; }
+  body { 
+    background-color: var(--bg); color: var(--text); 
+    font-family: 'Mulish', sans-serif; line-height: 1.6;
+  }
+  
+  /* HEADER CON GRADIENTE */
+  header { 
+    background: linear-gradient(135deg, #1a2e10 0%, #0b0f0a 100%);
+    padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(118,196,66,0.2);
+  }
+  header h1 { 
+    font-size: 2.2rem; font-weight: 900; letter-spacing: -1px; color: var(--accent);
+    text-shadow: 0 0 20px rgba(118,196,66,0.3);
+  }
+  
+  /* NAVEGACIÓN ESTILO CAPSULA */
+  .tabs { 
+    display: flex; justify-content: center; gap: 10px; margin: -25px auto 30px;
+    position: sticky; top: 10px; z-index: 100;
+  }
+  .tab { 
+    background: rgba(22, 29, 20, 0.8); backdrop-filter: blur(10px);
+    padding: 12px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 700;
+    cursor: pointer; border: 1px solid rgba(255,255,255,0.1); color: var(--muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tab.active { background: var(--accent); color: #000; border-color: var(--accent); transform: scale(1.05); }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 20px 100px; }
+  .section { display: none; animation: fadeIn 0.5s ease; }
   .section.active { display: block; }
-  .p-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
-  .p-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 10px; padding: 15px; text-align: center; }
-  .p-val { font-family: 'Bebas Neue'; font-size: 1.5rem; color: var(--blanco); }
-  .tabla-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid rgba(118,196,66,0.15); }
-  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  thead { background: var(--verde); }
-  th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .ip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-  .ip-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 12px; padding: 15px; }
-  .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .ip-qty { font-weight: 900; color: #fff; font-size: 1.1rem; }
-  .calc-desc { font-size: 0.65rem; color: var(--dorado); margin-bottom: 10px; display: block; font-weight: 600; text-transform: uppercase; line-height: 1.2; }
-  .ind { padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; min-width: 65px; text-align: center; border: 1px solid transparent; }
-  .ind-buena { background: rgba(118,196,66,0.1); color: var(--verde-neon); border-color: var(--verde-neon); }
-  .ind-regular { background: rgba(232,183,77,0.1); color: var(--dorado); border-color: var(--dorado); }
-  .ind-mala { background: rgba(224,82,82,0.1); color: var(--rojo); border-color: var(--rojo); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+  .card { 
+    background: var(--card-bg); padding: 20px; border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+  .card-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+  .card-val { font-size: 1.6rem; font-weight: 900; margin-top: 5px; color: #fff; }
+
+  /* TABLAS MODERNAS */
+  .table-card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: rgba(118,196,66,0.1); padding: 15px; text-align: left; font-size: 0.8rem; color: var(--accent); }
+  td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  tr:last-child td { border: none; }
+
+  /* INDICADORES */
+  .ip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .ip-card { background: var(--card-bg); padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); }
+  .ip-header { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .ip-header h3 { color: var(--gold); font-size: 0.9rem; margin-bottom: 5px; }
+  .ip-header p { font-size: 0.7rem; color: var(--muted); }
+  
+  .ip-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+  .ip-row span { font-size: 0.85rem; color: var(--text); }
+  .ip-data { text-align: right; }
+  .ip-num { font-weight: 900; font-size: 1.2rem; display: block; margin-bottom: 4px; }
+
+  /* BADGES */
+  .badge { 
+    padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 900; 
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .ind-buena { background: rgba(118,196,66,0.2); color: var(--accent); border: 1px solid var(--accent); }
+  .ind-regular { background: rgba(232,183,77,0.2); color: var(--gold); border: 1px solid var(--gold); }
+  .ind-mala { background: rgba(255,95,95,0.2); color: var(--red); border: 1px solid var(--red); }
+
+  .dolar-box { 
+    background: rgba(232,183,77,0.1); border: 1px solid var(--gold);
+    padding: 15px; border-radius: 12px; margin-bottom: 20px; display: inline-block;
+  }
 </style>
 </head>
 <body>
-<div class="perfil-header"><h1 style="font-family:'Bebas Neue'; color:var(--verde-neon); letter-spacing: 2px; font-size: 2.2rem;">AGROS SIN FRONTERAS</h1></div>
+
+<header>
+  <h1>AGROS SIN FRONTERAS</h1>
+</header>
+
 <div class="tabs">
   <div class="tab active" onclick="showTab('granos')">🌾 Pizarra</div>
   <div class="tab" onclick="showTab('ganaderia')">🐄 Ganadería</div>
-  <div class="tab" onclick="showTab('insumos')">📊 Insumo/Producto</div>
+  <div class="tab" onclick="showTab('insumos')">📊 Análisis Insumo/Producto</div>
 </div>
-<div class="main">
+
+<div class="container">
   <div class="section active" id="granos">
-    <div style="margin-bottom:15px; font-size: 0.9rem;">💵 Dólar BNA: <span id="valor-dolar" style="color:var(--dorado); font-weight:900;">--</span></div>
-    <div class="p-grid">
-      <div class="p-card"><div>Soja</div><div id="precio-soja" class="p-val">--</div></div>
-      <div class="p-card"><div>Maíz</div><div id="precio-maiz" class="p-val">--</div></div>
-      <div class="p-card"><div>Trigo</div><div id="precio-trigo" class="p-val">--</div></div>
-      <div class="p-card"><div>Girasol</div><div id="precio-girasol" class="p-val">--</div></div>
-      <div class="p-card"><div>Sorgo</div><div id="precio-sorgo" class="p-val">--</div></div>
-      <div class="p-card"><div>Cebada</div><div id="precio-cebada" class="p-val">--</div></div>
+    <div class="dolar-box">
+      <span style="font-size: 0.7rem; color: var(--gold); font-weight: 700;">💵 DÓLAR BNA OFICIAL</span>
+      <div id="valor-dolar" style="font-size: 1.4rem; font-weight: 900;">--</div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="card-label">Soja</div><div id="precio-soja" class="card-val">--</div></div>
+      <div class="card"><div class="card-label">Maíz</div><div id="precio-maiz" class="card-val">--</div></div>
+      <div class="card"><div class="card-label">Trigo</div><div id="precio-trigo" class="card-val">--</div></div>
+      <div class="card"><div class="card-label">Girasol</div><div id="precio-girasol" class="card-val">--</div></div>
+      <div class="card"><div class="card-label">Sorgo</div><div id="precio-sorgo" class="card-val">--</div></div>
+      <div class="card"><div class="card-label">Cebada</div><div id="precio-cebada" class="card-val">--</div></div>
     </div>
   </div>
 
   <div class="section" id="ganaderia">
-    <div class="tabla-wrapper">
+    <div class="table-card">
       <table>
-        <thead><tr><th>Categoría</th><th>$/kg</th></tr></thead>
+        <thead><tr><th>Categoría (MAG)</th><th>$/kg Vivo</th></tr></thead>
         <tbody>
-          <tr><td>Novillos</td><td id="mag-novillo">--</td></tr>
+          <tr><td>Novillos</td><td id="mag-novillo" style="font-weight: 900; color: var(--gold);">--</td></tr>
           <tr><td>Novillitos</td><td id="mag-novillito">--</td></tr>
           <tr><td>Vaquillonas</td><td id="mag-vaquillona">--</td></tr>
-          <tr><td>Terneros</td><td id="mag-ternero">--</td></tr>
+          <tr><td>Terneros</td><td id="mag-ternero" style="font-weight: 900; color: var(--gold);">--</td></tr>
           <tr><td>Terneras</td><td id="mag-ternera">--</td></tr>
           <tr><td>Vacas</td><td id="mag-vaca">--</td></tr>
           <tr><td>Conserva</td><td id="mag-conserva">--</td></tr>
@@ -75,26 +138,24 @@
   <div class="section" id="insumos">
     <div class="ip-grid">
       <div class="ip-card">
-        <h3 style="font-size:0.8rem; margin-bottom:5px;">🧪 RELACIÓN UREA</h3>
-        <span class="calc-desc">Comparativa internacional y poder de compra</span>
-        <div class="ip-row"><span>Urea/Soja [USD tn / USD tn]</span><div><span id="rel-u-s-tn" class="ip-qty">--</span><span id="ind-u-s-tn" class="ind">--</span></div></div>
-        <div class="ip-row"><span>Soja [qq Soja / 100kg Urea]</span><div><span id="rel-u-s" class="ip-qty">--</span><span id="ind-u-s" class="ind">--</span></div></div>
+        <div class="ip-header"><h3>🧪 ESTRATEGIA UREA</h3><p>Costo de fertilización en kilos de producto</p></div>
+        <div class="ip-row"><span>Urea/Soja [USD tn/tn]</span><div class="ip-data"><span id="rel-u-s-tn" class="ip-num">--</span><span id="ind-u-s-tn" class="badge">--</span></div></div>
+        <div class="ip-row"><span>Canje Soja [qq/100kg]</span><div class="ip-data"><span id="rel-u-s" class="ip-num">--</span><span id="ind-u-s" class="badge">--</span></div></div>
       </div>
       <div class="ip-card">
-        <h3 style="font-size:0.8rem; margin-bottom:5px;">⛽ RELACIÓN GASOIL</h3>
-        <span class="calc-desc">Costo energético por kilo de grano</span>
-        <div class="ip-row"><span>Gasoil/Maíz [USD lt / USD kg]</span><div><span id="rel-g-m-unit" class="ip-qty">--</span><span id="ind-g-m-unit" class="ind">--</span></div></div>
-        <div class="ip-row"><span>Maíz [qq Maíz / 500L Gasoil]</span><div><span id="rel-g-m" class="ip-qty">--</span><span id="ind-g-m" class="ind">--</span></div></div>
+        <div class="ip-header"><h3>⛽ ESTRATEGIA ENERGÍA</h3><p>Relación gasoil frente al kilo de grano</p></div>
+        <div class="ip-row"><span>Gasoil/Maíz [USD lt/kg]</span><div class="ip-data"><span id="rel-g-m-unit" class="ip-num">--</span><span id="ind-g-m-unit" class="badge">--</span></div></div>
+        <div class="ip-row"><span>Canje Maíz [qq/500L]</span><div class="ip-data"><span id="rel-g-m" class="ip-num">--</span><span id="ind-g-m" class="badge">--</span></div></div>
       </div>
       <div class="ip-card">
-        <h3 style="font-size:0.8rem; margin-bottom:5px;">🥩 RELACIÓN CARNE/MAÍZ</h3>
-        <span class="calc-desc">Kilos de Maíz comprados con 1kg de carne</span>
-        <div class="ip-row"><span>Ternero [kg Maíz / kg Carne]</span><div><span id="rel-c-t" class="ip-qty">--</span><span id="ind-c-t" class="ind">--</span></div></div>
-        <div class="ip-row"><span>Novillo [kg Maíz / kg Carne]</span><div><span id="rel-c-n" class="ip-qty">--</span><span id="ind-c-n" class="ind">--</span></div></div>
+        <div class="ip-header"><h3>🥩 RELACIÓN CARNE/MAÍZ</h3><p>Capacidad de compra de la hacienda viva</p></div>
+        <div class="ip-row"><span>Ternero [kg Maíz/kg Carne]</span><div class="ip-data"><span id="rel-c-t" class="ip-num">--</span><span id="ind-c-t" class="badge">--</span></div></div>
+        <div class="ip-row"><span>Novillo [kg Maíz/kg Carne]</span><div class="ip-data"><span id="rel-c-n" class="ip-num">--</span><span id="ind-c-n" class="badge">--</span></div></div>
       </div>
     </div>
   </div>
 </div>
+
 <script>
   function showTab(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
