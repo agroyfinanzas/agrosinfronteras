@@ -1,28 +1,27 @@
-name: Actualizar Precios Agro
+name: Actualizar Dashboard ASF
 on:
   schedule:
-    - cron: '0 12 * * *'
-  workflow_dispatch:
+    - cron: '0 12 * * *' # Corre todos los días a las 9 AM Argentina
+  workflow_dispatch: # Permite correrlo a mano cuando quieras
 
 jobs:
-  update:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Checkout código
+        uses: actions/checkout@v3
+      - name: Configurar Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
-      - name: Instalar herramientas
-        run: pip install requests beautifulsoup4
-      - name: Ejecutar Robot
+          python-version: '3.x'
+      - name: Instalar dependencias
+        run: pip install requests
+      - name: Correr script
         run: python update_data.py
       - name: Guardar cambios
         run: |
-          git config --global user.name 'AgroBot'
-          git config --global user.email 'bot@agros.com'
+          git config --global user.name 'ASF-Bot'
+          git config --global user.email 'bot@agrosinfronteras.com'
           git add index.html
-          git commit -m "Actualización automática de mercados" || echo "Sin cambios"
+          git commit -m "Actualización automática de precios" || exit 0
           git push
