@@ -6,19 +6,12 @@
 <title>Agros Sin Fronteras</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --verde: #2d6a1f; --verde-claro: #4caf50; --verde-neon: #76c442;
-    --tierra: #a0522d; --dorado: #e8b74d; --dorado-claro: #f5d98b;
-    --oscuro: #121a0e; --oscuro2: #1c2816; --gris: #2e3b28;
-    --blanco: #f4f7f0; --rojo: #e05252; --azul: #4a90d9;
-  }
+  :root { --verde: #2d6a1f; --verde-claro: #4caf50; --verde-neon: #76c442; --tierra: #a0522d; --dorado: #e8b74d; --oscuro: #121a0e; --oscuro2: #1c2816; --gris: #2e3b28; --blanco: #f4f7f0; --rojo: #e05252; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--oscuro); color: var(--blanco); font-family: 'Mulish', sans-serif; min-height: 100vh; }
-  .perfil-header { background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%); border-bottom: 2px solid var(--verde-neon); padding: 0; position: relative; overflow: hidden; }
+  .perfil-header { background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%); border-bottom: 2px solid var(--verde-neon); padding: 0 0 20px 0; position: relative; }
   .cover-band { height: 90px; background: linear-gradient(90deg, var(--verde) 0%, #3a7d22 40%, var(--dorado) 100%); }
-  .perfil-info { display: flex; align-items: flex-end; gap: 20px; padding: 0 30px 20px; position: relative; margin-top: -40px; }
-  .avatar { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--verde-neon); background: linear-gradient(135deg, var(--verde) 0%, var(--dorado) 100%); display: flex; align-items: center; justify-content: center; font-size: 38px; flex-shrink: 0; box-shadow: 0 0 20px rgba(118,196,66,0.4); }
-  .perfil-nombre { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--verde-neon); line-height: 1; }
+  .avatar { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--verde-neon); background: #1a2e10; display: flex; align-items: center; justify-content: center; font-size: 38px; margin: -45px 0 0 30px; position: relative; }
   .tabs { display: flex; border-bottom: 2px solid var(--gris); background: var(--oscuro2); position: sticky; top: 0; z-index: 100; overflow-x: auto; }
   .tab { padding: 14px 22px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #7a9b72; border-bottom: 3px solid transparent; white-space: nowrap; }
   .tab.active { color: var(--verde-neon); border-bottom-color: var(--verde-neon); }
@@ -26,50 +19,35 @@
   .section { display: none; padding-top: 28px; }
   .section.active { display: block; }
   .precios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 30px; }
-  .precio-card { background: linear-gradient(135deg, var(--oscuro2) 0%, var(--gris) 100%); border: 1px solid rgba(118,196,66,0.2); border-radius: 12px; padding: 18px 16px; }
-  .precio-valor { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; color: var(--blanco); }
-  .tabla-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(118,196,66,0.15); margin-bottom: 28px; }
+  .p-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 12px; padding: 18px 16px; }
+  .p-val { font-family: 'Bebas Neue'; font-size: 1.7rem; color: var(--blanco); }
+  .tabla-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(118,196,66,0.15); }
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  thead tr { background: linear-gradient(90deg, var(--verde) 0%, #2a5e18 100%); }
-  thead th { padding: 12px 14px; text-align: left; color: var(--blanco); }
-  tbody td { padding: 11px 14px; color: #c8d9c0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  thead { background: var(--verde); }
+  th, td { padding: 12px; text-align: left; }
   .ip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
   .ip-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 14px; padding: 20px; }
-  .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
-  .ip-qty { font-weight: 700; color: var(--blanco); margin-right: 8px; }
-  .ind { padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; border: 1px solid transparent; min-width: 65px; text-align: center; }
+  .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .ip-qty { font-weight: 900; color: #fff; margin-right: 8px; }
+  .ind { padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; min-width: 65px; text-align: center; border: 1px solid transparent; }
   .ind-buena { background: rgba(118,196,66,0.15); color: var(--verde-neon); border-color: var(--verde-neon); }
   .ind-regular { background: rgba(232,183,77,0.15); color: var(--dorado); border-color: var(--dorado); }
   .ind-mala { background: rgba(224,82,82,0.15); color: var(--rojo); border-color: var(--rojo); }
-  footer { text-align: center; padding: 30px; font-size: 0.75rem; color: #4a6040; border-top: 1px solid var(--gris); margin-top: 40px; }
 </style>
 </head>
 <body>
-<div class="perfil-header">
-  <div class="cover-band"></div>
-  <div class="perfil-info">
-    <div class="avatar">🌾</div>
-    <div class="perfil-texto">
-      <div class="perfil-nombre">Agros Sin Fronteras</div>
-      <div style="color:var(--dorado); font-size:0.8rem;">@agrosinfronterasok</div>
-    </div>
-  </div>
-</div>
-<div class="tabs">
-  <div class="tab active" onclick="showTab('granos')">🌾 Pizarra</div>
-  <div class="tab" onclick="showTab('ganaderia')">🐄 Ganadería</div>
-  <div class="tab" onclick="showTab('insumos')">📊 Indicadores</div>
-</div>
+<div class="perfil-header"><div class="cover-band"></div><div class="avatar">🌾</div><div style="padding-left:30px; margin-top:10px;"><h1 style="font-family:'Bebas Neue'; color:var(--verde-neon);">Agros Sin Fronteras</h1></div></div>
+<div class="tabs"><div class="tab active" onclick="showTab('granos')">🌾 Pizarra</div><div class="tab" onclick="showTab('ganaderia')">🐄 Ganadería</div><div class="tab" onclick="showTab('insumos')">📊 Indicadores</div></div>
 <div class="main">
   <div class="section active" id="granos">
-    <div style="margin-bottom:15px;">💵 Dólar BNA: <span id="valor-dolar">$1,416.00</span></div>
+    <div style="margin-bottom:20px;">💵 Dólar BNA: <span id="valor-dolar" style="color:var(--dorado); font-weight:900;">$1.382,50</span></div>
     <div class="precios-grid">
-      <div class="precio-card"><div>Soja</div><div id="precio-soja">$430,000</div></div>
-      <div class="precio-card"><div>Maíz</div><div id="precio-maiz">$262,675</div></div>
-      <div class="precio-card"><div>Trigo</div><div id="precio-trigo">$283,412</div></div>
-      <div class="precio-card"><div>Girasol</div><div id="precio-girasol">$500,000</div></div>
-      <div class="precio-card"><div>Sorgo</div><div id="precio-sorgo">$269,600</div></div>
-      <div class="precio-card"><div>Cebada</div><div id="precio-cebada">$195,000</div></div>
+      <div class="p-card"><div>Soja</div><div id="precio-soja" class="p-val">$430.000</div></div>
+      <div class="p-card"><div>Maíz</div><div id="precio-maiz" class="p-val">$262.675</div></div>
+      <div class="p-card"><div>Trigo</div><div id="precio-trigo" class="p-val">$283.412</div></div>
+      <div class="p-card"><div>Girasol</div><div id="precio-girasol" class="p-val">$500.000</div></div>
+      <div class="p-card"><div>Sorgo</div><div id="precio-sorgo" class="p-val">$269.600</div></div>
+      <div class="p-card"><div>Cebada</div><div id="precio-cebada" class="p-val">$195.000</div></div>
     </div>
   </div>
   <div class="section" id="ganaderia">
@@ -77,12 +55,9 @@
       <table>
         <thead><tr><th>Categoría</th><th>Tope $/kg</th></tr></thead>
         <tbody>
-          <tr><td>🐂 Novillo Gordo</td><td id="mag-novillo">$3,050</td></tr>
-          <tr><td>🐄 Novillito</td><td id="mag-novillito">$3,360</td></tr>
-          <tr><td>🐄 Ternero/a</td><td id="mag-ternero">$3,450</td></tr>
-          <tr><td>🐮 Vaca Consumo</td><td id="mag-vaca">$1,920</td></tr>
-          <tr><td>🐮 Conserva Buena</td><td id="mag-conserva">$1,380</td></tr>
-          <tr><td>🐃 Toro</td><td id="mag-toro">$1,800</td></tr>
+          <tr><td>🐂 Novillo</td><td id="mag-novillo" style="color:var(--dorado); font-weight:bold;">$3.050</td></tr>
+          <tr><td>🐄 Ternero</td><td id="mag-ternero" style="color:var(--dorado); font-weight:bold;">$3.450</td></tr>
+          <tr><td>🐮 Vaca</td><td id="mag-vaca" style="color:var(--dorado); font-weight:bold;">$1.920</td></tr>
         </tbody>
       </table>
     </div>
@@ -90,24 +65,23 @@
   <div class="section" id="insumos">
     <div class="ip-grid">
       <div class="ip-card">
-        <h3>🧪 Urea (Fertilizante)</h3>
-        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-u-s" class="ip-qty">0.3</span><span id="ind-u-s" class="ind ind-buena">Buena</span></div></div>
-        <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-u-m" class="ip-qty">0.5</span><span id="ind-u-m" class="ind ind-buena">Buena</span></div></div>
+        <h3>🧪 Fertilizantes</h3>
+        <div class="ip-row"><span>Soja (qq/100kg)</span><div><span id="rel-u-s">--</span><span id="ind-u-s" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Maíz (qq/100kg)</span><div><span id="rel-u-m">--</span><span id="ind-u-m" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
-        <h3>⛽ Gasoil (Combustible)</h3>
-        <div class="ip-row"><span>Soja (qq/500L)</span><div><span id="rel-g-s" class="ip-qty">14.0</span><span id="ind-g-s" class="ind ind-buena">Barato</span></div></div>
-        <div class="ip-row"><span>Maíz (qq/500L)</span><div><span id="rel-g-m" class="ip-qty">22.8</span><span id="ind-g-m" class="ind ind-mala">Elevado</span></div></div>
+        <h3>⛽ Combustible</h3>
+        <div class="ip-row"><span>Soja (qq/500L)</span><div><span id="rel-g-s">--</span><span id="ind-g-s" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Maíz (qq/500L)</span><div><span id="rel-g-m">--</span><span id="ind-g-m" class="ind">--</span></div></div>
       </div>
       <div class="ip-card">
-        <h3>🥩 Carne / Maíz</h3>
-        <div class="ip-row"><span>Maíz p/ 1kg Ternero</span><div><span id="rel-c-t" class="ip-qty">13.1</span><span id="ind-c-t" class="ind ind-buena">Compra</span></div></div>
-        <div class="ip-row"><span>Maíz p/ 1kg Novillo</span><div><span id="rel-c-n" class="ip-qty">11.6</span><span id="ind-c-n" class="ind ind-regular">Equilibrio</span></div></div>
+        <h3>🥩 Carne/Maíz</h3>
+        <div class="ip-row"><span>Ternero (kg Maíz)</span><div><span id="rel-c-t">--</span><span id="ind-c-t" class="ind">--</span></div></div>
+        <div class="ip-row"><span>Novillo (kg Maíz)</span><div><span id="rel-c-n">--</span><span id="ind-c-n" class="ind">--</span></div></div>
       </div>
     </div>
   </div>
 </div>
-<footer>Agros Sin Fronteras</footer>
 <script>
   function showTab(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
