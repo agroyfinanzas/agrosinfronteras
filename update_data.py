@@ -1,41 +1,51 @@
 import requests
 import re
+import os
+
+CIUDADES = {"Rosario": (-32.9, -60.6), "Cañuelas": (-35.0, -58.7), "Córdoba": (-31.4, -64.1)}
 
 def update():
-    # 1. Valores por defecto (Para que nunca aparezca --)
-    dolar = 1430.0
-    precios = {
-        "soja": 440000, "maiz": 270000, "trigo": 290000, "girasol": 510000,
-        "novillo": 3150, "ternero": 3600, "vaca": 1900
+    try:
+        # Buscamos el Oficial de BNA
+        res = requests.get("https://api.bluelytics.com.ar/v2/latest", timeout=15).json()
+        dolar = res['oficial']['value_sell']
+    except: dolar = 1435.0
+
+    p = {
+        "soja": 445000, "maiz": 275000, "trigo": 298000, 
+        "sorgo": 238000, "cebada": 225000, "novillo": 3190
     }
 
-    # 2. Intentar buscar precios reales
-    try:
-        r = requests.get("https://api.bluelytics.com.ar/v2/latest", timeout=10).json()
-        dolar = r['oficial']['value_sell']
-    except:
-        pass 
+    # Relaciones
+    r_maiz_novillo = p["novillo"] / (p["maiz"] / 1000)
+    r_urea_maiz = 550 / ((p["maiz"]/10)/dolar) # Urea USD 550 ref.
+    r_soja_maiz = p["soja"] / p["maiz"]
 
-    # 3. Leer el HTML
+    if not os.path.exists("index.html"): return
+
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
-    # 4. Inyectar Dólar
+    # Inyección
     html = re.sub(r'id="val-dolar">.*?<', f'id="val-dolar">${dolar:,.2f}<', html)
-    
-    # 5. Inyectar Precios de Granos y Carne
-    for k, v in precios.items():
+    for k, v in p.items():
         html = re.sub(f'id="val-{k}">.*?<', f'id="val-{k}">${v:,.0f}<', html)
 
-    # 6. Inyectar Indicadores
-    ratio = 105 / ((precios["soja"]/10)/dolar)
-    html = re.sub(r'id="ratio-u-s">.*?<', f'id="ratio-u-s">{ratio:.1f}<', html)
-    html = re.sub(r'id="badge-u-s"[^>]*>.*?<', f'id="badge-u-s" class="badge buena">BUENA<', html)
+    html = re.sub(r'id="ratio-c-n">.*?<', f'id="ratio-c-n">{r_maiz_novillo:.1f}<', html)
+    html = re.sub(r'id="ratio-u-m">.*?<', f'id="ratio-u-m">{r_urea_maiz:.1f}<', html)
+    html = re.sub(r'id="ratio-s-m">.*?<', f'id="ratio-s-m">{r_soja_maiz:.2f}<', html)
 
-    # 7. Guardar
+    # Clima
+    w_html = ""
+    for c, coord in CIUDADES.items():
+        try:
+            t = requests.get(f"https://api.open-meteo.com/v1/forecast?latitude={coord[0]}&longitude={coord[1]}&current_weather=true").json()['current_weather']['temperature']
+            w_html += f'<div class="weather-card"><b>{c}</b><div style="font-size:1.5rem;color:var(--accent);font-weight:900;">{t}°C</div></div>'
+        except: pass
+    html = re.sub(r'id="weather-container">.*?</div>', f'id="weather-container">{w_html}</div>', html, flags=re.DOTALL)
+
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("Dashboard actualizado correctamente.")
 
 if __name__ == "__main__":
     update()
