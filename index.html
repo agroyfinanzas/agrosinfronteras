@@ -2,62 +2,55 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agro Sin Fronteras | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Agros Sin Fronteras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0d0f0d; --card: #1a1d1a; --accent: #76c442; --text: #e0e7dc; --muted: #889488; --gold: #e8b74d; --red: #ff5f5f; }
+        :root { --bg: #0d0f0d; --card: #1a1d1a; --accent: #76c442; --text: #e0e7dc; --gold: #e8b74d; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; }
-        header { padding: 30px; text-align: center; border-bottom: 2px solid var(--accent); background: linear-gradient(180deg, #162411 0%, var(--bg) 100%); }
+        header { padding: 30px; text-align: center; border-bottom: 2px solid var(--accent); }
         .logo { max-width: 200px; height: auto; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin: -20px auto 30px; flex-wrap: wrap; }
-        .btn { background: #1a1d1a; border: 1px solid #333; color: var(--muted); padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+        .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; }
+        .btn { background: #1a1d1a; border: 1px solid #333; color: #888; padding: 10px 20px; border-radius: 50px; cursor: pointer; }
         .btn.active { background: var(--accent); color: #000; }
-        .container { max-width: 1100px; margin: auto; padding: 0 20px 100px; }
+        .container { max-width: 1000px; margin: auto; padding: 20px; }
         .section { display: none; } .active-sec { display: block; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; }
-        .card-title { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .card { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid #222; }
         .val { font-size: 1.8rem; font-weight: 900; display: block; margin-top: 5px; color: #fff; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; border: 1px solid; margin-top: 10px; display: inline-block; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 900; border: 1px solid; margin-top: 10px; display: inline-block; }
         .buena { color: var(--accent); border-color: var(--accent); }
-        .regular { color: var(--gold); border-color: var(--gold); }
-        .mala { color: var(--red); border-color: var(--red); }
-        .weather-card { background: #161a16; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #222; }
     </style>
 </head>
 <body>
-    <header><img src="logo.png" alt="ASF" class="logo" onerror="this.outerHTML='<h1>AGROS SIN FRONTERAS</h1>'"></header>
+    <header>
+        <img src="logo.png" alt="ASF" class="logo" onerror="this.outerHTML='<h1>AGROS SIN FRONTERAS</h1>'">
+    </header>
     <div class="tabs">
         <button class="btn active" onclick="tab('g', this)">GRANOS</button>
         <button class="btn" onclick="tab('v', this)">GANADERÍA</button>
         <button class="btn" onclick="tab('i', this)">INDICADORES</button>
-        <button class="btn" onclick="tab('c', this)">CLIMA</button>
     </div>
     <div class="container">
         <div id="g" class="section active-sec">
-            <div style="margin-bottom:20px; color:var(--gold)">💵 DÓLAR BNA: <span id="val-dolar">$1,419.00</span></div>
+            <div style="margin-bottom:20px; color:var(--gold)">💵 DÓLAR: <span id="val-dolar">--</span></div>
             <div class="grid">
-                <div class="card"><span class="card-title">Soja</span><span id="val-soja" class="val">--</span></div>
-                <div class="card"><span class="card-title">Maíz</span><span id="val-maiz" class="val">--</span></div>
-                <div class="card"><span class="card-title">Trigo</span><span id="val-trigo" class="val">--</span></div>
-                <div class="card"><span class="card-title">Girasol</span><span id="val-girasol" class="val">--</span></div>
+                <div class="card">SOJA <span id="val-soja" class="val">--</span></div>
+                <div class="card">MAÍZ <span id="val-maiz" class="val">--</span></div>
+                <div class="card">TRIGO <span id="val-trigo" class="val">--</span></div>
             </div>
         </div>
         <div id="v" class="section">
             <div class="grid">
-                <div class="card"><span class="card-title">Novillo</span><span id="val-novillo" class="val">--</span></div>
-                <div class="card"><span class="card-title">Ternero</span><span id="val-ternero" class="val">--</span></div>
-                <div class="card"><span class="card-title">Vaca</span><span id="val-vaca" class="val">--</span></div>
+                <div class="card">NOVILLO <span id="val-novillo" class="val">--</span></div>
+                <div class="card">TERNERO <span id="val-ternero" class="val">--</span></div>
+                <div class="card">VACA <span id="val-vaca" class="val">--</span></div>
             </div>
         </div>
         <div id="i" class="section">
             <div class="grid">
-                <div class="card"><span class="card-title">Urea / Soja</span><span id="ratio-u-s" class="val">--</span><span id="badge-u-s" class="badge buena">BUENA</span></div>
-                <div class="card"><span class="card-title">Urea / Maíz</span><span id="ratio-u-m" class="val">--</span><span id="badge-u-m" class="badge buena">BUENA</span></div>
+                <div class="card">UREA/SOJA <span id="ratio-u-s" class="val">--</span><span id="badge-u-s" class="badge">--</span></div>
             </div>
         </div>
-        <div id="c" class="section"><div class="grid" id="weather-container"><div class="weather-card"><b>ROSARIO</b><div>22°C</div></div><div class="weather-card"><b>CAÑUELAS</b><div>20°C</div></div></div></div>
     </div>
     <script>
         function tab(id, b) {
