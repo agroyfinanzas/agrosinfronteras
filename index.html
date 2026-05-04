@@ -3,115 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agros Sin Fronteras | Dashboard Oficial</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>Agros Sin Fronteras | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #0d0f0d; --card-bg: #1a1d1a; --accent: #76c442;
-            --text: #e0e7dc; --muted: #889488; --gold: #e8b74d; --red: #ff5f5f;
-        }
+        :root { --bg: #0d0f0d; --card-bg: #1a1d1a; --accent: #76c442; --text: #e0e7dc; --muted: #889488; --gold: #e8b74d; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; }
-        
-        header { 
-            background: linear-gradient(180deg, #162411 0%, var(--bg) 100%);
-            padding: 30px 20px; text-align: center; border-bottom: 2px solid var(--accent);
-        }
+        header { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, #162411 0%, var(--bg) 100%); border-bottom: 2px solid var(--accent); }
         .logo-img { max-width: 250px; height: auto; }
-
-        .nav-tabs {
-            display: flex; justify-content: center; gap: 10px; margin: -20px auto 30px;
-            position: sticky; top: 20px; z-index: 1000; flex-wrap: wrap;
-        }
-        .tab-btn {
-            background: rgba(26, 29, 26, 0.95); border: 1px solid rgba(255,255,255,0.1);
-            color: var(--muted); padding: 10px 20px; border-radius: 50px;
-            cursor: pointer; font-weight: 700; font-size: 0.75rem; transition: 0.3s;
-        }
+        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin: -20px auto 30px; flex-wrap: wrap; }
+        .tab-btn { background: #1a1d1a; border: 1px solid rgba(255,255,255,0.1); color: var(--muted); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.75rem; }
         .tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 100px; }
-        .section { display: none; animation: fadeIn 0.5s ease; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .section { display: none; } .section.active { display: block; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
         .card-title { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
-        .card-value { font-size: 1.8rem; font-weight: 900; color: #fff; }
-
-        /* INDICADORES */
-        .indicator-box { background: var(--card-bg); border-radius: 15px; padding: 25px; border: 1px solid rgba(118,196,66,0.1); }
-        .ind-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .badge { padding: 4px 10px; border-radius: 5px; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; border: 1px solid transparent; }
+        .card-value { font-size: 2rem; font-weight: 900; }
+        .badge { padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; font-weight: 900; border: 1px solid; }
         .buena { color: var(--accent); border-color: var(--accent); }
-        .regular { color: var(--gold); border-color: var(--gold); }
-        .mala { color: var(--red); border-color: var(--red); }
-
-        /* CLIMA */
-        .weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
-        .weather-card { background: #161a16; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
+        .weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .weather-card { background: #161a16; padding: 15px; border-radius: 12px; text-align: center; }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="logo.png" alt="Agros Sin Fronteras" class="logo-img" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block';">
-    <div id="alt-logo" style="display:none; font-size: 1.5rem; font-weight: 900; color: var(--accent);">AGROS SIN FRONTERAS</div>
+    <img src="logo.png" alt="ASF" class="logo-img" onerror="this.outerHTML='<h1 style=color:var(--accent)>AGROS SIN FRONTERAS</h1>'">
 </header>
 
 <div class="nav-tabs">
-    <button class="tab-btn active" onclick="openTab('mercado')">🌾 GRANOS</button>
-    <button class="tab-btn" onclick="openTab('ganaderia')">🐄 GANADERÍA</button>
-    <button class="tab-btn" onclick="openTab('indicadores')">📊 INDICADORES</button>
-    <button class="tab-btn" onclick="openTab('clima')">🌤️ CLIMA</button>
+    <button class="tab-btn active" onclick="show('granos', this)">GRANOS</button>
+    <button class="tab-btn" onclick="show('ganaderia', this)">GANADERÍA</button>
+    <button class="tab-btn" onclick="show('indicadores', this)">INDICADORES</button>
+    <button class="tab-btn" onclick="show('clima', this)">CLIMA</button>
+    <button class="tab-btn" onclick="show('articulos', this)">ARTÍCULOS</button>
 </div>
 
 <div class="container">
-    <div id="mercado" class="section active">
-        <div style="margin-bottom: 20px; color: var(--gold); font-weight: 700;">💵 DÓLAR OFICIAL: <span id="val-dolar">$1,416.00</span></div>
+    <div id="granos" class="section active">
+        <div style="margin-bottom:20px; color:var(--gold)">💵 DÓLAR: <span id="val-dolar">$1.400,00</span></div>
         <div class="grid">
-            <div class="card"><div class="card-title">Soja Rosario</div><div id="val-soja" class="card-value">--</div></div>
-            <div class="card"><div class="card-title">Maíz Rosario</div><div id="val-maiz" class="card-value">--</div></div>
-            <div class="card"><div class="card-title">Trigo Rosario</div><div id="val-trigo" class="card-value">--</div></div>
+            <div class="card"><div class="card-title">Soja Rosario</div><div id="val-soja" class="card-value">$435.000</div></div>
+            <div class="card"><div class="card-title">Maíz Rosario</div><div id="val-maiz" class="card-value">$265.000</div></div>
         </div>
     </div>
 
     <div id="ganaderia" class="section">
         <div class="grid">
-            <div class="card"><div class="card-title">Novillo MAG</div><div id="val-novillo" class="card-value">--</div></div>
-            <div class="card"><div class="card-title">Ternero MAG</div><div id="val-ternero" class="card-value">--</div></div>
-            <div class="card"><div class="card-title">Vaca Conserva</div><div id="val-vaca" class="card-value">--</div></div>
+            <div class="card"><div class="card-title">Novillo MAG</div><div id="val-novillo" class="card-value">$3.100</div></div>
+            <div class="card"><div class="card-title">Ternero MAG</div><div id="val-ternero" class="card-value">$3.600</div></div>
         </div>
     </div>
 
     <div id="indicadores" class="section">
         <div class="grid">
-            <div class="indicator-box">
-                <h3 style="color:var(--accent); margin-bottom:15px; font-size:0.9rem;">RELACIÓN UREA / GRANO</h3>
-                <div class="ind-row"><span>Soja (qq)</span><div><span id="ratio-u-s" style="font-weight:900; margin-right:10px;">--</span><span id="badge-u-s" class="badge buena">BUENA</span></div></div>
-                <div class="ind-row"><span>Maíz (qq)</span><div><span id="ratio-u-m" style="font-weight:900; margin-right:10px;">--</span><span id="badge-u-m" class="badge buena">BUENA</span></div></div>
-            </div>
-            <div class="indicator-box">
-                <h3 style="color:var(--gold); margin-bottom:15px; font-size:0.9rem;">RELACIÓN CARNE / MAÍZ</h3>
-                <div class="ind-row"><span>Ternero (kg)</span><div><span id="ratio-c-t" style="font-weight:900; margin-right:10px;">--</span><span id="badge-c-t" class="badge buena">COMPRA</span></div></div>
-                <div class="ind-row"><span>Novillo (kg)</span><div><span id="ratio-c-n" style="font-weight:900; margin-right:10px;">--</span><span id="badge-c-n" class="badge mala">VENTA</span></div></div>
+            <div class="card">
+                <div class="card-title">Urea / Soja</div>
+                <div id="ratio-u-s" class="card-value">14.5</div>
+                <span id="badge-u-s" class="badge buena">BUENA</span>
             </div>
         </div>
     </div>
 
     <div id="clima" class="section">
-        <div class="weather-grid" id="weather-container"><div class="weather-card"><div style="font-size:0.6rem; color:var(--muted);">ROSARIO</div><div style="font-weight:900;">18.0°C</div></div><div class="weather-card"><div style="font-size:0.6rem; color:var(--muted);">CAÑUELAS</div><div style="font-weight:900;">18.0°C</div></div><div class="weather-card"><div style="font-size:0.6rem; color:var(--muted);">CÓRDOBA</div><div style="font-weight:900;">18.9°C</div></div><div class="weather-card"><div style="font-size:0.6rem; color:var(--muted);">PEHUAJÓ</div><div style="font-weight:900;">18.0°C</div></div><div class="weather-card"><div style="font-size:0.6rem; color:var(--muted);">SALTA</div><div style="font-weight:900;">20.5°C</div></div><div class="weather-card"><div style="font-size:0.6rem; color:var(--muted);">B. BLANCA</div><div style="font-weight:900;">18.6°C</div></div></div>
+        <div class="weather-grid" id="weather-container">
+            </div>
+    </div>
+
+    <div id="articulos" class="section">
+        <div class="grid">
+            <div class="card">
+                <div class="card-title" style="color:var(--accent)">ARTÍCULO DESTACADO</div>
+                <h3 style="margin:10px 0">Perspectivas Cosecha 2026</h3>
+                <p style="font-size:0.8rem; color:var(--muted)">Análisis de mercado para la próxima campaña...</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function openTab(tabId) {
+    function show(id, btn) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
     }
 </script>
 </body>
