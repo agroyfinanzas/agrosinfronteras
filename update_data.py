@@ -9,10 +9,10 @@ def analizar(valor, tipo):
     if "carne" in tipo:
         if valor > 12: return "Compra", "ind-buena"
         if valor > 9: return "Equilibrio", "ind-regular"
-        return "Desfavorable", "ind-mala"
+        return "Mala", "ind-mala"
     if "gas" in tipo:
         if valor < 14: return "Barato", "ind-buena"
-        return "Elevado", "ind-mala"
+        return "Caro", "ind-mala"
     return "N/A", ""
 
 def actualizar():
@@ -22,12 +22,9 @@ def actualizar():
     except:
         dolar = 1382.50
 
-    # Diccionario de precios actualizado
     p = {
         "soja": 430000, "maiz": 262675, "trigo": 283412, "girasol": 500000, "sorgo": 269600, "cebada": 195000,
-        "mag_novillo": 3050, "mag_novillito": 3360, "mag_vaquillona": 3200, 
-        "mag_ternero": 3450, "mag_ternera": 3350, "mag_vaca": 1920, 
-        "mag_conserva": 1380, "mag_toro": 1800
+        "mag_novillo": 3050, "mag_novillito": 3360, "mag_vaquillona": 3200, "mag_ternero": 3450, "mag_ternera": 3350, "mag_vaca": 1920, "mag_conserva": 1380, "mag_toro": 1800
     }
 
     # Cálculos
@@ -45,12 +42,10 @@ def actualizar():
     h = re.sub(r'id="valor-dolar"[^>]*>.*?<', f'id="valor-dolar">${dolar:,.2f}<', h)
     for g in ["soja", "maiz", "trigo", "girasol", "sorgo", "cebada"]:
         h = re.sub(f'id="precio-{g}"[^>]*>.*?<', f'id="precio-{g}">${p[g]:,.0f}<', h)
-    
-    # Inyección de todas las categorías de MAG
     for c in ["novillo", "novillito", "vaquillona", "ternero", "ternera", "vaca", "conserva", "toro"]:
         h = re.sub(f'id="mag-{c}"[^>]*>.*?<', f'id="mag-{c}">${p["mag_"+c]:,.0f}<', h)
 
-    # Inyección de Indicadores
+    # Inyección de Indicadores (Nombre exacto)
     def escribir(id_n, id_b, val, tipo):
         nonlocal h
         txt, cls = analizar(val, tipo)
