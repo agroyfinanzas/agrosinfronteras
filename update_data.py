@@ -1,7 +1,7 @@
 import requests
 import re
 
-# Configuración extendida
+# Configuración de Ciudades
 CIUDADES = {
     "Rosario": (-32.9, -60.6), "Cañuelas": (-35.0, -58.7), 
     "Córdoba": (-31.4, -64.1), "Pehuajó": (-35.8, -61.8),
@@ -28,50 +28,49 @@ def analyze_ratio(val, tipo):
 def update():
     try:
         dolar = requests.get("https://api.bluelytics.com.ar/v2/latest").json()['oficial']['value_sell']
-    except: dolar = 1420.0
+    except: dolar = 1425.0
 
-    # PRECIOS DEL DÍA (Personalizables)
+    # DATOS DE MERCADO (Precios referenciales)
     p = {
-        "soja": 435000, "maiz": 268000, "trigo": 290000, "girasol": 350000, "sorgo": 240000, "cebada": 220000,
+        "soja": 435000, "maiz": 268000, "trigo": 290000, "girasol": 510000, "sorgo": 240000, "cebada": 220000,
         "novillo": 3150, "ternero": 3550, "vaca": 1900, "vaquillona": 3000, "novillito": 3100, "toro": 1800
     }
 
-    # RATIOS
-    r_u_s = 105 / ((p["soja"]/10)/dolar)
+    # RATIOS TÉCNICOS
+    r_u_s = 105 / ((p["soja"]/10)/dolar) # Urea USD 105 vs 10qq Soja
     r_u_m = 105 / ((p["maiz"]/10)/dolar)
     r_u_t = 105 / ((p["trigo"]/10)/dolar)
-    r_c_t = p["ternero"] / (p["maiz"]/1000)
+    r_c_t = p["ternero"] / (p["maiz"]/1000) # kg maiz por kg carne
     r_c_n = p["novillo"] / (p["maiz"]/1000)
-    r_g_m = 12.5 # Valor de referencia
+    r_g_m = 13.2 # Referencia Gasoil/Maíz
 
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
-    # Inyección de Dolar y Precios
+    # Reemplazo de Dólar y Granos
     html = re.sub(r'id="val-dolar">.*?<', f'id="val-dolar">${dolar:,.2f}<', html)
     for k, v in p.items():
         html = re.sub(f'id="val-{k}">.*?<', f'id="val-{k}">${v:,.0f}<', html)
 
-    # Inyección de Ratios y Etiquetas
+    # Reemplazo de Indicadores
     ratios = {
         "u-s": (r_u_s, "urea"), "u-m": (r_u_m, "urea"), "u-t": (r_u_t, "urea"),
-        "c-t": (r_c_t, "carne"), "c-n": (r_c_n, "carne"), "g-m": (r_g_m, "gasoil")
+        "c-t": (r_c_t, "carne"), "c-n": (r_c_n, "carne"), "g-m": (r_g_m, "urea")
     }
-    for r_id, (val, tipo) in ratios.items():
+    for rid, (val, tipo) in ratios.items():
         txt, cls = analyze_ratio(val, tipo)
-        html = re.sub(f'id="ratio-{r_id}">.*?<', f'id="ratio-{r_id}">{val:.1f}<', html)
-        html = re.sub(f'id="badge-{r_id}"[^>]*>.*?<', f'id="badge-{r_id}" class="badge {cls}">{txt}<', html)
+        html = re.sub(f'id="ratio-{rid}">.*?<', f'id="ratio-{rid}">{val:.1f}<', html)
+        html = re.sub(f'id="badge-{rid}"[^>]*>.*?<', f'id="badge-{rid}" class="badge {cls}">{txt}<', html)
 
-    # Inyección de Clima
+    # Reemplazo de Clima
     w_html = ""
     for city, coords in CIUDADES.items():
         t = get_weather(coords[0], coords[1])
-        w_html += f'<div class="weather-card"><div style="font-size:0.7rem; color:var(--muted);">{city.upper()}</div><div class="weather-temp">{t}°C</div></div>'
+        w_html += f'<div class="weather-card"><div style="font-size:0.7rem; color:var(--muted);">{city.upper()}</div><div style="font-size:1.8rem; font-weight:900; color:var(--accent);">{t}°C</div></div>'
     html = re.sub(r'id="weather-container">.*?</div>', f'id="weather-container">{w_html}</div>', html, flags=re.DOTALL)
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("Dashboard Agros Sin Fronteras Actualizado.")
 
 if __name__ == "__main__":
     update()
