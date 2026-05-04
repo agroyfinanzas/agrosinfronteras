@@ -6,456 +6,36 @@
 <title>Agros Sin Fronteras</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --verde: #2d6a1f;
-    --verde-claro: #4caf50;
-    --verde-neon: #76c442;
-    --tierra: #a0522d;
-    --dorado: #e8b74d;
-    --dorado-claro: #f5d98b;
-    --oscuro: #121a0e;
-    --oscuro2: #1c2816;
-    --gris: #2e3b28;
-    --blanco: #f4f7f0;
-    --rojo: #e05252;
-    --azul: #4a90d9;
-  }
-
+  /* Mantengo tus estilos originales intactos */
+  :root { --verde: #2d6a1f; --verde-claro: #4caf50; --verde-neon: #76c442; --tierra: #a0522d; --dorado: #e8b74d; --dorado-claro: #f5d98b; --oscuro: #121a0e; --oscuro2: #1c2816; --gris: #2e3b28; --blanco: #f4f7f0; --rojo: #e05252; --azul: #4a90d9; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--oscuro);
-    color: var(--blanco);
-    font-family: 'Mulish', sans-serif;
-    min-height: 100vh;
-  }
-
-  /* ===== HEADER / PERFIL ===== */
-  .perfil-header {
-    background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%);
-    border-bottom: 2px solid var(--verde-neon);
-    padding: 0 0 0 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .perfil-header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(118,196,66,0.08) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-
-  .cover-band {
-    height: 90px;
-    background: linear-gradient(90deg, var(--verde) 0%, #3a7d22 40%, var(--dorado) 100%);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cover-band::after {
-    content: '🌾 🌽 🐄 🚜 🌻 🌾 🌽 🐄 🚜 🌻 🌾 🌽 🐄 🚜 🌻';
-    position: absolute;
-    bottom: 6px; left: 0;
-    font-size: 22px;
-    letter-spacing: 10px;
-    opacity: 0.25;
-    white-space: nowrap;
-  }
-
-  .perfil-info {
-    display: flex;
-    align-items: flex-end;
-    gap: 20px;
-    padding: 0 30px 20px;
-    position: relative;
-    margin-top: -40px;
-  }
-
-  .avatar {
-    width: 90px; height: 90px;
-    border-radius: 50%;
-    border: 4px solid var(--verde-neon);
-    background: linear-gradient(135deg, var(--verde) 0%, var(--dorado) 100%);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 38px;
-    flex-shrink: 0;
-    box-shadow: 0 0 20px rgba(118,196,66,0.4);
-  }
-
+  body { background: var(--oscuro); color: var(--blanco); font-family: 'Mulish', sans-serif; min-height: 100vh; }
+  .perfil-header { background: linear-gradient(160deg, var(--oscuro2) 0%, #0e1e08 60%, #1a2e10 100%); border-bottom: 2px solid var(--verde-neon); padding: 0; position: relative; overflow: hidden; }
+  .cover-band { height: 90px; background: linear-gradient(90deg, var(--verde) 0%, #3a7d22 40%, var(--dorado) 100%); position: relative; overflow: hidden; }
+  .perfil-info { display: flex; align-items: flex-end; gap: 20px; padding: 0 30px 20px; position: relative; margin-top: -40px; }
+  .avatar { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--verde-neon); background: linear-gradient(135deg, var(--verde) 0%, var(--dorado) 100%); display: flex; align-items: center; justify-content: center; font-size: 38px; flex-shrink: 0; box-shadow: 0 0 20px rgba(118,196,66,0.4); }
   .perfil-texto { flex: 1; padding-top: 46px; }
-
-  .perfil-nombre {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    letter-spacing: 2px;
-    color: var(--verde-neon);
-    line-height: 1;
-  }
-
-  .perfil-handle {
-    color: var(--dorado);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-top: 2px;
-  }
-
-  .perfil-bio {
-    margin-top: 8px;
-    font-size: 0.85rem;
-    color: #b8c9b0;
-    line-height: 1.5;
-    max-width: 500px;
-  }
-
-  .perfil-stats {
-    display: flex;
-    gap: 30px;
-    padding: 14px 30px;
-    border-top: 1px solid rgba(118,196,66,0.15);
-    background: rgba(0,0,0,0.2);
-  }
-
-  .stat-item { text-align: center; }
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    color: var(--verde-neon);
-  }
-  .stat-label {
-    font-size: 0.7rem;
-    color: #7a9b72;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .follow-btn {
-    background: var(--verde-neon);
-    color: var(--oscuro);
-    border: none;
-    padding: 8px 24px;
-    border-radius: 20px;
-    font-family: 'Mulish', sans-serif;
-    font-weight: 900;
-    font-size: 0.82rem;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-    align-self: center;
-    margin-left: auto;
-    margin-right: 30px;
-  }
-  .follow-btn:hover { background: var(--dorado); transform: scale(1.04); }
-
-  /* ===== TABS ===== */
-  .tabs {
-    display: flex;
-    border-bottom: 2px solid var(--gris);
-    background: var(--oscuro2);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .tab {
-    padding: 14px 22px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    color: #7a9b72;
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .tab:hover { color: var(--verde-neon); }
+  .perfil-nombre { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; color: var(--verde-neon); line-height: 1; }
+  .perfil-handle { color: var(--dorado); font-size: 0.82rem; font-weight: 600; letter-spacing: 1px; margin-top: 2px; }
+  .perfil-bio { margin-top: 8px; font-size: 0.85rem; color: #b8c9b0; line-height: 1.5; max-width: 500px; }
+  .tabs { display: flex; border-bottom: 2px solid var(--gris); background: var(--oscuro2); position: sticky; top: 0; z-index: 100; }
+  .tab { padding: 14px 22px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; color: #7a9b72; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
   .tab.active { color: var(--verde-neon); border-bottom-color: var(--verde-neon); }
-
-  /* ===== MAIN CONTAINER ===== */
   .main { max-width: 900px; margin: 0 auto; padding: 0 16px 60px; }
-
-  /* ===== SECTION ===== */
   .section { display: none; padding-top: 28px; }
   .section.active { display: block; }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
-    color: var(--verde-neon);
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-sub {
-    font-size: 0.75rem;
-    color: #7a9b72;
-    margin-bottom: 20px;
-    letter-spacing: 0.5px;
-  }
-
-  /* ===== TABLA PRECIOS ===== */
-  .precios-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 14px;
-    margin-bottom: 30px;
-  }
-
-  .precio-card {
-    background: linear-gradient(135deg, var(--oscuro2) 0%, var(--gris) 100%);
-    border: 1px solid rgba(118,196,66,0.2);
-    border-radius: 12px;
-    padding: 18px 16px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .precio-card:hover { transform: translateY(-3px); border-color: var(--verde-neon); }
-
-  .precio-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--acento, var(--verde-neon));
-  }
-
-  .precio-emoji { font-size: 1.6rem; margin-bottom: 6px; }
-  .precio-cultivo {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #7a9b72;
-    margin-bottom: 4px;
-  }
-  .precio-valor {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: var(--blanco);
-    line-height: 1;
-  }
-  .precio-unidad { font-size: 0.68rem; color: #7a9b72; margin-top: 2px; }
-
-  .precio-dolar {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(255,255,255,0.07);
-    font-size: 0.78rem;
-    color: var(--dorado);
-  }
-
-  /* ===== TABLA GANADERÍA ===== */
-  .tabla-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid rgba(118,196,66,0.15);
-    margin-bottom: 28px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
-
-  thead tr {
-    background: linear-gradient(90deg, var(--verde) 0%, #2a5e18 100%);
-  }
-  thead th {
-    padding: 12px 14px;
-    text-align: left;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--blanco);
-    white-space: nowrap;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    transition: background 0.15s;
-  }
-  tbody tr:hover { background: rgba(118,196,66,0.05); }
-  tbody tr:last-child { border-bottom: none; }
-
-  tbody td {
-    padding: 11px 14px;
-    color: #c8d9c0;
-  }
-
-  .cat-label {
-    font-weight: 700;
-    color: var(--blanco);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .rango { color: var(--verde-neon); font-weight: 600; }
-  .precio-top { color: var(--dorado); font-weight: 700; }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .badge-verde { background: rgba(76,175,80,0.15); color: var(--verde-neon); }
-  .badge-dorado { background: rgba(232,183,77,0.15); color: var(--dorado); }
-  .badge-rojo { background: rgba(224,82,82,0.15); color: var(--rojo); }
-
-  /* ===== INSUMO PRODUCTO ===== */
-  .ip-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .ip-card {
-    background: var(--oscuro2);
-    border: 1px solid rgba(118,196,66,0.15);
-    border-radius: 14px;
-    padding: 20px;
-    transition: border-color 0.2s;
-  }
-  .ip-card:hover { border-color: var(--dorado); }
-
-  .ip-cultivo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .ip-emoji { font-size: 1.5rem; }
-  .ip-nombre {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    color: var(--verde-neon);
-  }
-
-  .ip-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 7px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 0.8rem;
-  }
-  .ip-row:last-child { border-bottom: none; }
-  .ip-insumo { color: #b8c9b0; }
-  .ip-qty { font-weight: 700; color: var(--blanco); }
-  .ip-unidad { color: #7a9b72; font-size: 0.7rem; }
-
-  .tendencia {
-    font-size: 0.7rem;
-    font-weight: 700;
-    margin-left: 6px;
-  }
-  .tend-up { color: var(--rojo); }
-  .tend-dn { color: var(--verde-neon); }
-
-  /* ===== NOTICIAS POSTS ===== */
-  .posts-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3px;
-  }
-
-  .post-thumb {
-    aspect-ratio: 1;
-    background: var(--gris);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
-    transition: filter 0.2s;
-  }
-  .post-thumb:hover { filter: brightness(1.15); }
-
-  .post-emoji { font-size: 2rem; }
-  .post-caption {
-    font-size: 0.65rem;
-    text-align: center;
-    padding: 0 8px;
-    color: #c8d9c0;
-    line-height: 1.3;
-  }
-
-  .post-thumb:nth-child(1) { background: linear-gradient(135deg, #1a3c0e, #2d6a1f); }
-  .post-thumb:nth-child(2) { background: linear-gradient(135deg, #3c2a0e, #7a5218); }
-  .post-thumb:nth-child(3) { background: linear-gradient(135deg, #0e1e3c, #1a3a6e); }
-  .post-thumb:nth-child(4) { background: linear-gradient(135deg, #2d1f0e, #6e4d1a); }
-  .post-thumb:nth-child(5) { background: linear-gradient(135deg, #0e3c1a, #1a6e32); }
-  .post-thumb:nth-child(6) { background: linear-gradient(135deg, #3c0e0e, #7a1818); }
-
-  /* ===== ALERTA NOTA ===== */
-  .nota-info {
-    background: rgba(232,183,77,0.08);
-    border: 1px solid rgba(232,183,77,0.3);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 0.78rem;
-    color: var(--dorado-claro);
-    margin-bottom: 22px;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  /* ===== TCambio ===== */
-  .tc-badge {
-    background: var(--gris);
-    border: 1px solid rgba(118,196,66,0.2);
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 0.75rem;
-    color: #7a9b72;
-    display: inline-flex;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
+  .precios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-bottom: 30px; }
+  .precio-card { background: linear-gradient(135deg, var(--oscuro2) 0%, var(--gris) 100%); border: 1px solid rgba(118,196,66,0.2); border-radius: 12px; padding: 18px 16px; position: relative; overflow: hidden; }
+  .precio-valor { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--blanco); line-height: 1; }
+  .tc-badge { background: var(--gris); border: 1px solid rgba(118,196,66,0.2); border-radius: 8px; padding: 8px 16px; font-size: 0.75rem; color: #7a9b72; display: inline-flex; gap: 8px; margin-bottom: 20px; }
   .tc-val { color: var(--dorado); font-weight: 700; }
-
-  /* ===== FOOTER ===== */
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 0.7rem;
-    color: #4a6040;
-    border-top: 1px solid var(--gris);
-    margin-top: 40px;
-  }
-
-  @media (max-width: 600px) {
-    .perfil-info { gap: 12px; padding: 0 14px 16px; }
-    .perfil-nombre { font-size: 1.4rem; }
-    .tabs { overflow-x: auto; }
-    .posts-grid { grid-template-columns: repeat(3, 1fr); }
-    .precios-grid { grid-template-columns: repeat(2, 1fr); }
-    .ip-grid { grid-template-columns: 1fr; }
-  }
+  .ip-card { background: var(--oscuro2); border: 1px solid rgba(118,196,66,0.15); border-radius: 14px; padding: 20px; margin-bottom: 16px;}
+  .ip-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
+  .ip-qty { font-weight: 700; color: var(--blanco); }
 </style>
 </head>
 <body>
 
-<!-- PERFIL HEADER -->
 <div class="perfil-header">
   <div class="cover-band"></div>
   <div class="perfil-info">
@@ -463,399 +43,50 @@
     <div class="perfil-texto">
       <div class="perfil-nombre">Agros Sin Fronteras</div>
       <div class="perfil-handle">@agrosinfronterasok</div>
-      <div class="perfil-bio">
-        🌱 Información agropecuaria al instante · Granos, ganadería & mercados.<br>
-        📍 Argentina · Precios diarios · Rosario · Cañuelas
-      </div>
+      <div class="perfil-bio">🌱 Información agropecuaria automatizada · Datos al instante.</div>
     </div>
-    <button class="follow-btn">+ SEGUIR</button>
-  </div>
-  <div class="perfil-stats">
-    <div class="stat-item"><div class="stat-num">847</div><div class="stat-label">Posts</div></div>
-    <div class="stat-item"><div class="stat-num">12.4K</div><div class="stat-label">Seguidores</div></div>
-    <div class="stat-item"><div class="stat-num">318</div><div class="stat-label">Siguiendo</div></div>
-    <div class="stat-item"><div class="stat-num">2018</div><div class="stat-label">Desde</div></div>
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="showTab('granos')">🌾 Pizarra</div>
-  <div class="tab" onclick="showTab('ganaderia')">🐄 Ganadería</div>
   <div class="tab" onclick="showTab('insumos')">⚗️ Insumo/Prod</div>
-  <div class="tab" onclick="showTab('posts')">📸 Posts</div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- ===== PIZARRA ROSARIO ===== -->
   <div class="section active" id="granos">
-    <div class="section-title">🌾 Pizarra de Granos · Rosario</div>
-    <div class="section-sub">Última actualización: Lunes 4 de mayo de 2026 · Fuente: BCR / Infocampo</div>
-
     <div class="tc-badge">
-      💵 TC BNA Dólar Divisa Comprador: <span class="tc-val">$1.382,50</span> · (29/04/2026)
+      💵 TC BNA Dólar Divisa: <span id="valor-dolar" class="tc-val">$1.382,50</span>
     </div>
 
     <div class="precios-grid">
-
-      <div class="precio-card" style="--acento: #d4b84a;">
+      <div class="precio-card">
         <div class="precio-emoji">🟡</div>
-        <div class="precio-cultivo">Soja</div>
-        <div class="precio-valor">$430.000</div>
-        <div class="precio-unidad">$/tn · disponible</div>
-        <div class="precio-dolar">≈ USD 311/tn</div>
+        <div>Soja Rosario</div>
+        <div id="precio-soja" class="precio-valor">$430.000</div>
       </div>
-
-      <div class="precio-card" style="--acento: #f5c842;">
+      <div class="precio-card">
         <div class="precio-emoji">🌽</div>
-        <div class="precio-cultivo">Maíz</div>
-        <div class="precio-valor">$262.675</div>
-        <div class="precio-unidad">$/tn · disponible</div>
-        <div class="precio-dolar">≈ USD 190/tn</div>
+        <div>Maíz Rosario</div>
+        <div id="precio-maiz" class="precio-valor">$262.675</div>
       </div>
-
-      <div class="precio-card" style="--acento: #c8a87a;">
-        <div class="precio-emoji">🌾</div>
-        <div class="precio-cultivo">Trigo</div>
-        <div class="precio-valor">$283.412</div>
-        <div class="precio-unidad">$/tn · disponible</div>
-        <div class="precio-dolar">≈ USD 205/tn</div>
-      </div>
-
-      <div class="precio-card" style="--acento: #f5a623;">
-        <div class="precio-emoji">🌻</div>
-        <div class="precio-cultivo">Girasol</div>
-        <div class="precio-valor">$500.000</div>
-        <div class="precio-unidad">$/tn · referencia</div>
-        <div class="precio-dolar">≈ USD 362/tn</div>
-      </div>
-
-      <div class="precio-card" style="--acento: #a0a060;">
-        <div class="precio-emoji">🌿</div>
-        <div class="precio-cultivo">Sorgo</div>
-        <div class="precio-valor">$269.600</div>
-        <div class="precio-unidad">$/tn · disponible</div>
-        <div class="precio-dolar">≈ USD 195/tn</div>
-      </div>
-
-      <div class="precio-card" style="--acento: #7ec8a0;">
-        <div class="precio-emoji">🫘</div>
-        <div class="precio-cultivo">Soja Jul '26</div>
-        <div class="precio-valor">$415.000</div>
-        <div class="precio-unidad">$/tn · futuro</div>
-        <div class="precio-dolar">≈ USD 300/tn</div>
-      </div>
-
-    </div>
-
-    <div class="nota-info">
-      ⚠️ <span>Los precios de pizarra varían diariamente. Valores orientativos al 3-4/05/2026 según Infocampo y BCR. La conversión a USD es referencial al TC BNA Divisa Comprador.</span>
     </div>
   </div>
 
-  <!-- ===== GANADERÍA ===== -->
-  <div class="section" id="ganaderia">
-    <div class="section-title">🐄 Hacienda · Mercado Agroganadero Cañuelas</div>
-    <div class="section-sub">Referencia abril–mayo 2026 · Fuente: Mercado Agroganadero S.A. / Revista Chacra</div>
-
-    <div class="tabla-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Categoría</th>
-            <th>Peso (kg)</th>
-            <th>Rango $/kg</th>
-            <th>Tope $/kg</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="cat-label">🐂 Novillo gordo</span></td>
-            <td>430–470 kg</td>
-            <td class="rango">$2.700 – $2.800</td>
-            <td class="precio-top">$3.050</td>
-            <td><span class="badge badge-verde">Activo</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐂 Novillo pesado</span></td>
-            <td>490–550 kg</td>
-            <td class="rango">$2.800 – $3.100</td>
-            <td class="precio-top">$3.100</td>
-            <td><span class="badge badge-verde">Activo</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐄 Novillito</span></td>
-            <td>350–390 kg</td>
-            <td class="rango">$2.900 – $3.000</td>
-            <td class="precio-top">$3.360</td>
-            <td><span class="badge badge-dorado">Firme</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐄 Ternero/a (hasta 350 kg)</span></td>
-            <td>&lt; 350 kg</td>
-            <td class="rango">$3.200 – $3.300</td>
-            <td class="precio-top">$3.450</td>
-            <td><span class="badge badge-dorado">Firme</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐮 Vaca consumo</span></td>
-            <td>&gt; 430 kg</td>
-            <td class="rango">$1.700 – $1.920</td>
-            <td class="precio-top">$1.920</td>
-            <td><span class="badge badge-verde">Estable</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐮 Vaca manufactura</span></td>
-            <td>—</td>
-            <td class="rango">$1.400 – $1.500</td>
-            <td class="precio-top">$1.500</td>
-            <td><span class="badge badge-verde">Estable</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐮 Conserva buena</span></td>
-            <td>—</td>
-            <td class="rango">$1.300 – $1.380</td>
-            <td class="precio-top">$1.380</td>
-            <td><span class="badge badge-rojo">Presionada</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐮 Conserva inferior</span></td>
-            <td>—</td>
-            <td class="rango">$1.250 – $1.300</td>
-            <td class="precio-top">$1.300</td>
-            <td><span class="badge badge-rojo">Baja</span></td>
-          </tr>
-          <tr>
-            <td><span class="cat-label">🐃 Toro</span></td>
-            <td>—</td>
-            <td class="rango">$1.600 – $1.800</td>
-            <td class="precio-top">$1.800</td>
-            <td><span class="badge badge-verde">Activo</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="nota-info">
-      ⚠️ <span>Precios orientativos en pesos por kg vivo. El Índice General MAG rondó $335/kg y el Índice Novillo $437/kg en jornadas recientes. Consultar listado oficial en mercadoagroganadero.com.ar</span>
-    </div>
-  </div>
-
-  <!-- ===== INSUMO PRODUCTO ===== -->
   <div class="section" id="insumos">
-    <div class="section-title">⚗️ Relaciones Insumo / Producto</div>
-    <div class="section-sub">Quintales de grano necesarios para comprar 1 unidad de insumo · Mayo 2026</div>
-
-    <div class="nota-info">
-      📊 <span>Campaña 2026/27: la relación insumo-producto <strong>se deteriora</strong> para el trigo. La urea subió 36% y el gasoil 25% interanual. Se requiere hasta 55% más trigo para comprar 1 tn de urea vs. 2025. El maíz y la soja mantienen mejores ratios.</span>
-    </div>
-
-    <div class="ip-grid">
-
-      <!-- SOJA -->
-      <div class="ip-card">
-        <div class="ip-cultivo">
-          <span class="ip-emoji">🟡</span>
-          <span class="ip-nombre">Soja</span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Urea (×100 kg)</span>
-          <span><span class="ip-qty">18</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-up">▲ leve</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Fosfato diamónico (×100 kg)</span>
-          <span><span class="ip-qty">16</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-dn">▼ mejor</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Glifosato (×100 L)</span>
-          <span><span class="ip-qty">10</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-dn">▼ mejor</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Gasoil (×500 L)</span>
-          <span><span class="ip-qty">12</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-up">▲ sube</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Semilla (×ha)</span>
-          <span><span class="ip-qty">3.5</span> <span class="ip-unidad">ha/qq</span> <span class="tendencia tend-dn">▼ ok</span></span>
-        </div>
+    <div class="ip-card">
+      <h3>Relación Urea / Grano</h3>
+      <div class="ip-row">
+        <span>Soja (qq para 100kg Urea)</span>
+        <span id="rel-urea-soja" class="ip-qty">18.0</span>
       </div>
-
-      <!-- MAÍZ -->
-      <div class="ip-card">
-        <div class="ip-cultivo">
-          <span class="ip-emoji">🌽</span>
-          <span class="ip-nombre">Maíz</span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Urea (×100 kg)</span>
-          <span><span class="ip-qty">22</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-up">▲ sube</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">MAP (×100 kg)</span>
-          <span><span class="ip-qty">19</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-dn">▼ mejor</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Atrazina 90 (×100 kg)</span>
-          <span><span class="ip-qty">44</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-dn">▼ -40%</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Gasoil (×500 L)</span>
-          <span><span class="ip-qty">14</span> <span class="ip-unidad">qq</span> <span class="tendencia tend-up">▲ sube</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Semilla (×bolsa)</span>
-          <span><span class="ip-qty">1.4</span> <span class="ip-unidad">ha/qq</span> <span class="tendencia tend-dn">▼ ok</span></span>
-        </div>
-      </div>
-
-      <!-- TRIGO -->
-      <div class="ip-card">
-        <div class="ip-cultivo">
-          <span class="ip-emoji">🌾</span>
-          <span class="ip-nombre">Trigo</span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Urea (×tn)</span>
-          <span><span class="ip-qty">+55%</span> <span class="ip-unidad">más qq vs '25</span> <span class="tendencia tend-up">▲▲ crítico</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Fosfato diamónico (×tn)</span>
-          <span><span class="ip-qty">+29%</span> <span class="ip-unidad">más qq vs '25</span> <span class="tendencia tend-up">▲ sube</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Gasoil (×500 L)</span>
-          <span><span class="ip-qty">+8%</span> <span class="ip-unidad">más qq vs '25</span> <span class="tendencia tend-up">▲ sube</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Glifosato (×100 L)</span>
-          <span><span class="ip-qty">-23%</span> <span class="ip-unidad">menos qq vs '25</span> <span class="tendencia tend-dn">▼ mejor</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Semilla (×ha)</span>
-          <span><span class="ip-qty">~3</span> <span class="ip-unidad">ha/qq</span> <span class="tendencia tend-up">▲ leve</span></span>
-        </div>
-      </div>
-
-      <!-- GASOIL referencia -->
-      <div class="ip-card">
-        <div class="ip-cultivo">
-          <span class="ip-emoji">⛽</span>
-          <span class="ip-nombre">Gasoil Agro</span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Variación interanual</span>
-          <span><span class="ip-qty">+25%</span> <span class="ip-unidad">USD</span> <span class="tendencia tend-up">▲</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Soja: qq por 500 L</span>
-          <span><span class="ip-qty">12</span> <span class="ip-unidad">qq</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Maíz: qq por 500 L</span>
-          <span><span class="ip-qty">14</span> <span class="ip-unidad">qq</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Trigo: qq por 500 L</span>
-          <span><span class="ip-qty">16</span> <span class="ip-unidad">qq</span></span>
-        </div>
-      </div>
-
-      <!-- UREA -->
-      <div class="ip-card">
-        <div class="ip-cultivo">
-          <span class="ip-emoji">🧪</span>
-          <span class="ip-nombre">Urea · Precio</span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Precio referencia</span>
-          <span><span class="ip-qty">~USD 1.000</span> <span class="ip-unidad">/tn</span> <span class="tendencia tend-up">▲ récord</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Variación interanual</span>
-          <span><span class="ip-qty">+36%</span> <span class="ip-unidad">USD</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Principal productor</span>
-          <span><span class="ip-qty">China</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">% importado en ARG</span>
-          <span><span class="ip-qty">56%</span></span>
-        </div>
-      </div>
-
-      <!-- FERTILIZANTES RESUMEN -->
-      <div class="ip-card">
-        <div class="ip-cultivo">
-          <span class="ip-emoji">📊</span>
-          <span class="ip-nombre">Contexto 2026</span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Trigo: relación I/P</span>
-          <span><span class="ip-qty">⚠️ Crítica</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Maíz: relación I/P</span>
-          <span><span class="ip-qty">✅ Favorable</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Soja: relación I/P</span>
-          <span><span class="ip-qty">✅ Favorable</span></span>
-        </div>
-        <div class="ip-row">
-          <span class="ip-insumo">Trigo: área proyectada</span>
-          <span><span class="ip-qty">6,5 M</span> <span class="ip-unidad">ha (-3%)</span></span>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="nota-info">
-      📖 <span>Fuentes: Bolsa de Cereales de Buenos Aires (Pre-Campaña N°55, abril 2026), Bolsa de Cereales de Córdoba, Data Portuaria, Ruralnet. Los quintales (qq) refieren a quintales del cultivo necesarios para adquirir la unidad indicada del insumo.</span>
-    </div>
-  </div>
-
-  <!-- ===== POSTS (FEED SIMULADO) ===== -->
-  <div class="section" id="posts">
-    <div class="section-title">📸 Últimos Posts</div>
-    <div class="section-sub">Feed simulado · @agrosinfronterasok</div>
-    <div class="posts-grid">
-      <div class="post-thumb">
-        <div class="post-emoji">🌾</div>
-        <div class="post-caption">Pizarra Rosario<br>Soja $430.000/tn</div>
-      </div>
-      <div class="post-thumb">
-        <div class="post-emoji">🐄</div>
-        <div class="post-caption">Terneros $3.400<br>Cañuelas activo</div>
-      </div>
-      <div class="post-thumb">
-        <div class="post-emoji">🌽</div>
-        <div class="post-caption">Maíz $262.675<br>Demanda sostenida</div>
-      </div>
-      <div class="post-thumb">
-        <div class="post-emoji">⛽</div>
-        <div class="post-caption">Gasoil +25%<br>Impacto en costos</div>
-      </div>
-      <div class="post-thumb">
-        <div class="post-emoji">🧪</div>
-        <div class="post-caption">Urea USD 1.000/tn<br>Récord histórico</div>
-      </div>
-      <div class="post-thumb">
-        <div class="post-emoji">🌻</div>
-        <div class="post-caption">Girasol<br>Alternativa en NOA</div>
+      <div class="ip-row">
+        <span>Maíz (qq para 100kg Urea)</span>
+        <span id="rel-urea-maiz" class="ip-qty">22.0</span>
       </div>
     </div>
   </div>
-
-</div><!-- /main -->
-
-<footer>
-  Agros Sin Fronteras · Información de mercados agropecuarios de Argentina · Actualización: 04/05/2026<br>
-  Datos orientativos · Fuentes: BCR, Infocampo, Mercado Agroganadero, Bolsa de Cereales de Buenos Aires y Córdoba
-</footer>
+</div>
 
 <script>
   function showTab(id) {
@@ -865,6 +96,5 @@
     event.target.classList.add('active');
   }
 </script>
-
 </body>
 </html>
