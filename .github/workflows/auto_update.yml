@@ -1,4 +1,4 @@
-name: Actualizar Dashboard
+name: SINCRONIZAR DASHBOARD
 on:
   workflow_dispatch:
   schedule:
@@ -11,19 +11,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout código
+        uses: actions/checkout@v3
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install dependencies
+      - name: Instalar librerías
         run: pip install requests
-      - name: Run Update
+      - name: Ejecutar Script de Precios
         run: python update_data.py
-      - name: Commit changes
+      - name: Guardar cambios en el repositorio
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
+          git config --global user.name 'ASF-Robot'
+          git config --global user.email 'robot@agrosinfronteras.com'
           git add index.html
           git commit -m "Precios actualizados" || exit 0
           git push
