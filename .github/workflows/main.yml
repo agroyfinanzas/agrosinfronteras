@@ -1,0 +1,23 @@
+name: Actualizar Dashboard
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * *'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - run: pip install requests
+      - run: python update_data.py
+      - run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add index.html
+          git commit -m "update" || exit 0
+          git push origin main
