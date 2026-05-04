@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASF | Intelligence Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b0d0b;
+            --card-bg: #141714;
+            --card-bg2: #1a1d1a;
+            --accent: #76c442;
+            --accent-dim: rgba(118,196,66,0.12);
+            --text: #f0f5f0;
+            --muted: #7a8a7a;
+            --gold: #e8b74d;
+            --red: #ff5f5f;
+            --border: rgba(118,196,66,0.15);
+            --border-gold: rgba(232,183,77,0.25);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; line-height: 1.6; }
+
+        /* ── HEADER ── */
+        header { padding: 32px 20px; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #1a2616 0%, var(--bg) 100%); }
+        .logo-img { max-width: 220px; }
+        .header-sub { font-size: 0.65rem; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; }
+
+        /* ── TICKER ── */
+        .ticker { background: rgba(118,196,66,0.08); border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); overflow: hidden; height: 34px; display: flex; align-items: center; }
+        .ticker-label { background: var(--accent); color: #000; font-size: 0.6rem; font-weight: 900; padding: 0 14px; height: 100%; display: flex; align-items: center; white-space: nowrap; letter-spacing: 2px; flex-shrink: 0; }
+        .ticker-track { display: flex; animation: ticker 40s linear infinite; white-space: nowrap; }
+        @keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+        .ticker-item { font-size: 0.7rem; padding: 0 22px; display: inline-flex; align-items: center; gap: 7px; color: var(--text); }
+        .ticker-item b { color: var(--accent); }
+        .ticker-sep { color: var(--border); }
+
+        /* ── NAV ── */
+        .nav-tabs { display: flex; justify-content: center; gap: 8px; padding: 20px 20px 10px; flex-wrap: wrap; position: sticky; top: 0; z-index: 999; background: rgba(11,13,11,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+        .tab-btn { background: rgba(20,23,20,0.9); border: 1px solid var(--border); color: var(--muted); padding: 10px 18px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.65rem; letter-spacing: 1px; transition: 0.25s; font-family: 'Montserrat', sans-serif; }
+        .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 18px rgba(118,196,66,0.35); }
+
+        /* ── LAYOUT ── */
+        .container { max-width: 1200px; margin: auto; padding: 28px 20px 100px; }
+        .section { display: none; animation: fadeIn 0.35s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+        /* ── STATUS BAR ── */
+        .status-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg2); border: 1px solid var(--border-gold); border-radius: 12px; padding: 12px 20px; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+        .status-item { text-align: center; }
+        .status-label { font-size: 0.6rem; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; }
+        .status-val { font-size: 1.25rem; font-weight: 900; color: #fff; }
+        .status-val.accent { color: var(--accent); font-size: 0.75rem; }
+        .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; animation: pulse 2s infinite; margin-right: 6px; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* ── CARDS ── */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+        .card { background: var(--card-bg); border-radius: 14px; padding: 22px; border: 1px solid var(--border); transition: 0.25s; position: relative; overflow: hidden; }
+        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .card::after { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0; transition:.3s; }
+        .card:hover::after { opacity:1; }
+
+        .card-label { font-size: 0.6rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+        .card-val { font-size: 1.7rem; font-weight: 900; color: #fff; margin: 8px 0 4px; line-height: 1; }
+        .card-sub { font-size: 0.65rem; color: var(--muted); }
+        .card-usd { font-size: 0.75rem; font-weight: 700; color: var(--gold); margin-top: 4px; }
+        .card-badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.58rem; font-weight: 900; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-dim); margin-top: 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge-gold { border-color: var(--gold); color: var(--gold); background: rgba(232,183,77,0.1); }
+        .badge-red { border-color: var(--red); color: var(--red); background: rgba(255,95,95,0.1); }
+
+        /* ── HACIENDA ── */
+        .had-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+        .had-table tr { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background .15s; }
+        .had-table tr:hover { background: rgba(118,196,66,0.04); }
+        .had-table td { padding: 9px 4px; font-size: 0.75rem; }
+        .had-table td:first-child { color: var(--muted); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .had-table td.prom { color: var(--accent); font-weight: 900; font-size: 0.85rem; }
+        .had-table td.rng { color: var(--muted); font-size: 0.65rem; }
+
+        /* ── RELACIONES ── */
+        .rel-card { display: flex; flex-direction: column; gap: 0; }
+        .rel-row { display: flex; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 12px; }
+        .rel-row:last-child { border-bottom: none; }
+        .rel-name { flex: 1; font-size: 0.72rem; color: var(--text); }
+        .rel-name small { display: block; color: var(--muted); font-size: 0.6rem; margin-top: 2px; }
+        .rel-bar-wrap { width: 80px; height: 5px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+        .rel-bar { height: 100%; border-radius: 3px; transition: width .6s ease; }
+        .rel-bar.good { background: var(--accent); }
+        .rel-bar.mid { background: var(--gold); }
+        .rel-bar.bad { background: var(--red); }
+        .rel-val { font-size: 0.78rem; font-weight: 700; color: var(--text); min-width: 55px; text-align: right; }
+        .rel-note { font-size: 0.6rem; color: var(--muted); margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); line-height: 1.6; }
+
+        /* ── CALCULADORA ── */
+        .calc-wrap { background: var(--card-bg2); border: 1px solid var(--accent); border-radius: 18px; padding: 28px; }
+        .calc-title { color: var(--accent); font-weight: 900; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+        .input-group { margin-bottom: 14px; }
+        .input-group label { display: block; font-size: 0.6rem; color: var(--muted); margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .input-group input, .input-group select { width: 100%; background: #080a08; border: 1px solid #2a2d2a; color: #fff; padding: 11px 14px; border-radius: 8px; font-size: 0.85rem; font-family: 'Montserrat', sans-serif; transition: border-color .2s; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
+        .precio-auto { font-size: 0.6rem; color: var(--gold); margin-top: 4px; }
+
+        .res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-top: 22px; }
+        .res-box { padding: 18px; border-radius: 12px; text-align: center; }
+        .res-main { background: var(--accent); color: #000; }
+        .res-sec { background: rgba(255,255,255,0.04); border: 1px solid #2a2d2a; }
+        .res-warn { background: rgba(255,95,95,0.08); border: 1px solid rgba(255,95,95,0.3); }
+        .res-label { font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+        .res-val { font-size: 1.5rem; font-weight: 900; margin-top: 6px; }
+        .res-main .res-val { color: #000; }
+        .res-sec .res-val, .res-warn .res-val { color: var(--gold); }
+        .res-warn .res-val { color: var(--red); }
+
+        .calc-detail { margin-top: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 16px; }
+        .calc-detail-row { display: flex; justify-content: space-between; font-size: 0.7rem; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .calc-detail-row:last-child { border-bottom: none; font-weight: 700; }
+        .calc-detail-row span:first-child { color: var(--muted); }
+        .calc-detail-row span:last-child { color: var(--text); }
+
+        /* ── CLIMA ── */
+        .weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .weather-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 22px; text-align: center; }
+        .weather-icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .weather-temp { font-size: 2rem; font-weight: 900; }
+        .weather-city { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 6px; }
+        .weather-desc { font-size: 0.75rem; color: var(--text); margin-top: 4px; }
+
+        /* ── PORTALES ── */
+        .news-link { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 18px 22px; border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: inherit; border: 1px solid var(--border); transition: 0.2s; }
+        .news-link:hover { border-color: var(--accent); transform: translateX(5px); }
+        .news-link .nl-name { font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px; }
+        .news-link .nl-desc { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+        .news-link i { color: var(--accent); }
+
+        /* ── LOADER ── */
+        .loader-wrap { text-align: center; padding: 60px; color: var(--muted); }
+        .loader { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { to { transform: rotate(360deg) } }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+            .status-bar { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logo.png" class="logo-img" alt="ASF"
+         onerror="this.outerHTML='<h1 style=&quot;color:var(--accent);font-size:1.8rem;letter-spacing:3px&quot;>AGRO SIN FRONTERAS</h1>'">
+    <div class="header-sub">Intelligence Hub · Mercados Agropecuarios Argentina</div>
+</header>
+
+<!-- TICKER (se llena con JS) -->
+<div class="ticker">
+    <div class="ticker-label">▶ MERCADO</div>
+    <div style="overflow:hidden;flex:1">
+        <div class="ticker-track" id="ticker-track">
+            <span class="ticker-item">Cargando precios...</span>
+        </div>
+    </div>
+</div>
+
+<!-- NAVEGACIÓN -->
+<div class="nav-tabs">
+    <button class="tab-btn active" onclick="openTab('granos',this)">📊 MERCADOS</button>
+    <button class="tab-btn" onclick="openTab('hacienda',this)">🐄 HACIENDA</button>
+    <button class="tab-btn" onclick="openTab('relaciones',this)">⚖️ RELACIONES</button>
+    <button class="tab-btn" onclick="openTab('calculadora',this)">🧮 MARGEN BRUTO</button>
+    <button class="tab-btn" onclick="openTab('clima',this)">🌤️ CLIMA</button>
+    <button class="tab-btn" onclick="openTab('noticias',this)">🔗 PORTALES</button>
+</div>
+
+<div class="container">
+
+    <!-- LOADER INICIAL -->
+    <div id="loader" class="loader-wrap">
+        <div class="loader"></div>
+        <div>Cargando datos del mercado...</div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN 1: GRANOS                      -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="granos" class="section" style="display:none">
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Dólar BNA Venta</span>
+                <span class="status-val" id="s-dolar">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Dólar BNA Compra</span>
+                <span class="status-val" id="s-dolar-c">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Última actualización</span>
+                <span class="status-val accent"><span class="status-dot"></span><span id="s-fecha">--</span></span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Fuente</span>
+                <span class="status-val accent" id="s-fuente">CAC/BCR · DolarAPI</span>
+            </div>
+        </div>
+
+        <div class="grid" id="grid-granos">
+            <!-- Generado dinámicamente -->
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN 2: HACIENDA                    -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="hacienda" class="section" style="display:none">
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Plaza</span>
+                <span class="status-val accent">MAG Cañuelas</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Datos</span>
+                <span class="status-val accent"><span class="status-dot"></span><span id="s-fecha-h">--</span></span>
+            </div>
+        </div>
+
+        <div class="grid grid-3" id="grid-hacienda">
+            <!-- Generado dinámicamente -->
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN 3: RELACIONES INSUMO/PRODUCTO  -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="relaciones" class="section" style="display:none">
+        <div class="grid grid-3" id="grid-relaciones">
+            <!-- Generado dinámicamente -->
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN 4: CALCULADORA MARGEN BRUTO    -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="calculadora" class="section" style="display:none">
+        <div class="calc-wrap">
+            <div class="calc-title">
+                <i class="fa-solid fa-calculator"></i>
+                Simulador de Margen Bruto
+            </div>
+
+            <div class="grid grid-3">
+                <!-- COL 1: Producción -->
+                <div class="card" style="background:rgba(0,0,0,0.2)">
+                    <div style="font-size:.65rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">🌾 Cultivo</div>
+
+                    <div class="input-group">
+                        <label>Grano</label>
+                        <select id="calc-grano" onchange="onGranoChange()">
+                            <option value="soja">Soja</option>
+                            <option value="maiz">Maíz</option>
+                            <option value="trigo">Trigo</option>
+                            <option value="girasol">Girasol</option>
+                            <option value="sorgo">Sorgo</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Precio grano (u$s/qq)</label>
+                        <input type="number" id="calc-precio-qq" step="0.01" oninput="calcular()">
+                        <div class="precio-auto" id="precio-auto-label">↑ Cargado automáticamente desde pizarra</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Rinde esperado (qq/ha)</label>
+                        <input type="number" id="rinde" value="30" step="0.5" oninput="calcular()">
+                    </div>
+                </div>
+
+                <!-- COL 2: Costos fijos -->
+                <div class="card" style="background:rgba(0,0,0,0.2)">
+                    <div style="font-size:.65rem;color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">💰 Costos (u$s/ha)</div>
+
+                    <div class="input-group">
+                        <label>Alquiler campo</label>
+                        <input type="number" id="alquiler" value="220" step="10" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Labores + Semilla</label>
+                        <input type="number" id="labores" value="130" step="10" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Agroquímicos + Fertilizantes</label>
+                        <input type="number" id="agro" value="150" step="10" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Seguro (u$s/ha)</label>
+                        <input type="number" id="seguro" value="15" step="5" oninput="calcular()">
+                    </div>
+                </div>
+
+                <!-- COL 3: Variables comerciales -->
+                <div class="card" style="background:rgba(0,0,0,0.2)">
+                    <div style="font-size:.65rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">📦 Comercialización</div>
+
+                    <div class="input-group">
+                        <label>Flete (u$s/tn)</label>
+                        <input type="number" id="flete" value="22" step="1" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Comisiones + impuestos (%)</label>
+                        <input type="number" id="gastos-com" value="8" step="0.5" oninput="calcular()">
+                    </div>
+                    <div class="input-group">
+                        <label>Costo cosecha (u$s/ha)</label>
+                        <input type="number" id="cosecha" value="60" step="5" oninput="calcular()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTADOS -->
+            <div class="res-grid">
+                <div class="res-box res-main">
+                    <div class="res-label">Margen Bruto / ha</div>
+                    <div class="res-val" id="mb-ha">u$s 0</div>
+                </div>
+                <div class="res-box res-sec">
+                    <div class="res-label">Rinde Indiferencia</div>
+                    <div class="res-val" id="rinde-indif">-- qq</div>
+                </div>
+                <div class="res-box res-sec">
+                    <div class="res-label">Ingreso Bruto / ha</div>
+                    <div class="res-val" id="ingreso-bruto">u$s 0</div>
+                </div>
+                <div class="res-box res-warn" id="box-alerta" style="display:none">
+                    <div class="res-label">⚠ Margen Negativo</div>
+                    <div class="res-val" id="deficit-val">--</div>
+                </div>
+            </div>
+
+            <!-- DESGLOSE -->
+            <div class="calc-detail">
+                <div class="calc-detail-row"><span>Precio pizarra (u$s/tn)</span><span id="det-precio-tn">--</span></div>
+                <div class="calc-detail-row"><span>Precio pizarra (u$s/qq)</span><span id="det-precio-qq">--</span></div>
+                <div class="calc-detail-row"><span>Producción total (tn/ha)</span><span id="det-prod">--</span></div>
+                <div class="calc-detail-row"><span>Ingreso bruto</span><span id="det-ingreso">--</span></div>
+                <div class="calc-detail-row"><span>Gastos de comercialización</span><span id="det-com">--</span></div>
+                <div class="calc-detail-row"><span>Costo total implantación + cosecha</span><span id="det-costo">--</span></div>
+                <div class="calc-detail-row"><span style="color:var(--accent);font-weight:900">MARGEN BRUTO</span><span id="det-mb" style="color:var(--accent);font-weight:900">--</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN 5: CLIMA                       -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="clima" class="section" style="display:none">
+        <p style="color:var(--muted);font-size:.75rem;margin-bottom:20px">
+            Clima actual en zonas productoras clave. Datos vía Open-Meteo (gratuito, sin API key).
+        </p>
+        <div class="weather-grid" id="weather-grid">
+            <div class="loader-wrap"><div class="loader"></div><div>Cargando clima...</div></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN 6: PORTALES                    -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="noticias" class="section" style="display:none">
+        <h2 style="color:var(--accent);font-size:0.9rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px">Portales de Referencia</h2>
+
+        <a href="https://www.cac.bcr.com.ar/es/precios-de-pizarra" target="_blank" class="news-link">
+            <div><div class="nl-name">PIZARRA BCR · CAC</div><div class="nl-desc">Cámara Arbitral de Cereales · Bolsa de Comercio de Rosario</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.mercadoagroganadero.com.ar" target="_blank" class="news-link">
+            <div><div class="nl-name">MAG CAÑUELAS</div><div class="nl-desc">Mercado Agroganadero · Precios hacienda en tiempo real</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.bcr.com.ar/es/mercados/mercado-de-granos/cotizaciones" target="_blank" class="news-link">
+            <div><div class="nl-name">BOLSA ROSARIO</div><div class="nl-desc">Cotizaciones locales · Mercado de granos</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.infocampo.com.ar" target="_blank" class="news-link">
+            <div><div class="nl-name">INFOCAMPO</div><div class="nl-desc">Noticias agropecuarias · Precios diarios</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://news.agrofy.com.ar/granos/precios-pizarra" target="_blank" class="news-link">
+            <div><div class="nl-name">AGROFY NEWS · PIZARRA</div><div class="nl-desc">Precios de pizarra Rosario y cámaras arbitrales</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.lanacion.com.ar/economia/campo/" target="_blank" class="news-link">
+            <div><div class="nl-name">LA NACION CAMPO</div><div class="nl-desc">Análisis de mercados y noticias del agro</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://www.magyp.gob.ar/sitio/areas/analisis_economico/" target="_blank" class="news-link">
+            <div><div class="nl-name">MAGYP · ANÁLISIS ECONÓMICO</div><div class="nl-desc">Secretaría de Agricultura · Relación insumo/producto oficial</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://dolarapi.com" target="_blank" class="news-link">
+            <div><div class="nl-name">DOLAR API</div><div class="nl-desc">API gratuita tipo de cambio BNA en tiempo real</div></div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+    </div>
+
+</div><!-- /container -->
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                      -->
+<!-- ═══════════════════════════════════════════════ -->
+<script>
+// ────────────────────────────────────────────
+// ESTADO GLOBAL
+// ────────────────────────────────────────────
+let DATA = null;  // datos cargados del data.json
+
+const GRAIN_LABELS = {
+    soja: { name: 'Soja', emoji: '🌱', color: '#76c442' },
+    maiz: { name: 'Maíz', emoji: '🌽', color: '#e8b74d' },
+    trigo: { name: 'Trigo', emoji: '🌾', color: '#c8b470' },
+    girasol: { name: 'Girasol', emoji: '🌻', color: '#e8a020' },
+    sorgo: { name: 'Sorgo', emoji: '🌾', color: '#a08060' },
+    cebada: { name: 'Cebada', emoji: '🌾', color: '#90a060' },
+};
+
+const HAD_LABELS = {
+    novillito: { name: 'Novillito', emoji: '🐂' },
+    novillo:   { name: 'Novillo',   emoji: '🐃' },
+    vaquillona:{ name: 'Vaquillona',emoji: '🐮' },
+    vaca:      { name: 'Vaca',      emoji: '🐄' },
+    ternero:   { name: 'Ternero',   emoji: '🐄' },
+    toro:      { name: 'Toro',      emoji: '🐂' },
+};
+
+// ────────────────────────────────────────────
+// CARGA PRINCIPAL
+// ────────────────────────────────────────────
+async function loadData() {
+    try {
+        // Cache-busting para evitar datos desactualizados en el browser
+        const url = 'data.json?v=' + Date.now();
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        DATA = await res.json();
+        renderAll();
+    } catch (e) {
+        console.error('Error cargando data.json:', e);
+        document.getElementById('loader').innerHTML = `
+            <div style="color:var(--red)">
+                ⚠ No se pudo cargar data.json<br>
+                <small style="color:var(--muted)">${e.message}</small><br><br>
+                <small style="color:var(--muted)">Asegurate de que el archivo data.json esté en el mismo directorio.</small>
+            </div>`;
+    }
+}
+
+function renderAll() {
+    document.getElementById('loader').style.display = 'none';
+
+    renderStatusBar();
+    renderGranos();
+    renderHacienda();
+    renderRelaciones();
+    renderTicker();
+
+    // Mostrar la sección activa
+    const activeSection = document.querySelector('.section.active') || document.getElementById('granos');
+    activeSection.style.display = 'block';
+    if (!activeSection.classList.contains('active')) {
+        document.getElementById('granos').style.display = 'block';
+        document.getElementById('granos').classList.add('active');
+    }
+
+    // Inicializar calculadora con precio del primer grano
+    onGranoChange();
+    calcular();
+}
+
+// ────────────────────────────────────────────
+// STATUS BAR
+// ────────────────────────────────────────────
+function renderStatusBar() {
+    const d = DATA.dolar || {};
+    setText('s-dolar',   d.venta   ? `$${fmt(d.venta, 2)}`   : '--');
+    setText('s-dolar-c', d.compra  ? `$${fmt(d.compra, 2)}`  : '--');
+    setText('s-fecha',   DATA.fecha + ' ' + DATA.hora || '--');
+    setText('s-fecha-h', DATA.fecha || '--');
+}
+
+// ────────────────────────────────────────────
+// GRANOS
+// ────────────────────────────────────────────
+function renderGranos() {
+    const container = document.getElementById('grid-granos');
+    const granos = DATA.granos || {};
+    container.innerHTML = '';
+
+    for (const [clave, datos] of Object.entries(granos)) {
+        const info = GRAIN_LABELS[clave] || { name: clave, emoji: '🌾', color: '#76c442' };
+        const ars = datos.ars;
+        const usdTn = datos.usd_tn;
+        const mes = datos.mes || '';
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-label">${info.emoji} ${info.name.toUpperCase()}</div>
+            <div class="card-val">$${fmtARS(ars)}</div>
+            <div class="card-sub">Pesos por tonelada · ${mes}</div>
+            ${usdTn ? `<div class="card-usd">US$ ${fmt(usdTn, 2)} / tn &nbsp;|&nbsp; US$ ${fmt(usdTn/10, 2)} / qq</div>` : ''}
+            <span class="card-badge">Rosario</span>
+        `;
+        container.appendChild(card);
+    }
+}
+
+// ────────────────────────────────────────────
+// HACIENDA
+// ────────────────────────────────────────────
+function renderHacienda() {
+    const container = document.getElementById('grid-hacienda');
+    const had = DATA.hacienda || {};
+    container.innerHTML = '';
+
+    for (const [clave, datos] of Object.entries(had)) {
+        const info = HAD_LABELS[clave] || { name: clave, emoji: '🐄' };
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const dolar = DATA.dolar?.venta || 1382.5;
+        const promUsd = datos.promedio ? (datos.promedio / dolar * 1000).toFixed(2) : '--';
+
+        card.innerHTML = `
+            <div class="card-label">${info.emoji} ${info.name.toUpperCase()}</div>
+            <div class="card-val">$${fmtARS(datos.promedio)}<span style="font-size:.8rem;color:var(--muted)">/kg</span></div>
+            <table class="had-table">
+                <tr><td>Promedio</td><td class="prom">$${fmtARS(datos.promedio)}/kg</td></tr>
+                <tr><td>Mínimo</td><td class="rng">$${fmtARS(datos.min)}/kg</td></tr>
+                <tr><td>Máximo</td><td class="rng" style="color:var(--gold)">$${fmtARS(datos.max)}/kg</td></tr>
+                <tr><td>En USD</td><td style="color:var(--gold);font-size:.7rem">≈ US$ ${promUsd}/kg vivo</td></tr>
+            </table>
+            <span class="card-badge badge-gold">MAG Cañuelas</span>
+        `;
+        container.appendChild(card);
+    }
+}
+
+// ────────────────────────────────────────────
+// RELACIONES INSUMO / PRODUCTO
+// ────────────────────────────────────────────
+function renderRelaciones() {
+    const container = document.getElementById('grid-relaciones');
+    const rels = DATA.relaciones || {};
+    const granos = DATA.granos || {};
+    const had = DATA.hacienda || {};
+    container.innerHTML = '';
+
+    // ── Card 1: Agricultura - Soja ──
+    const soja = granos.soja?.usd_tn;
+    const sojaCard = crearRelCard('🌱 Soja vs Insumos', 'qq de soja necesarios para comprar 1 unidad de insumo', [
+        { name: 'Urea (1 tn)',          val: rels.soja_urea,           unit: 'qq soja', ref: 20 },
+        { name: 'Fosfato DAP (1 tn)',   val: rels.soja_fosfato,        unit: 'qq soja', ref: 20 },
+        { name: 'Glifosato (100 L)',    val: rels.soja_glifosato_100l, unit: 'qq soja', ref: 6  },
+        { name: 'Semilla (bolsa 40kg)', val: rels.soja_semilla,        unit: 'qq soja', ref: 2  },
+    ], `Soja pizarra: US$ ${soja ? fmt(soja, 0) : '--'}/tn`);
+    container.appendChild(sojaCard);
+
+    // ── Card 2: Agricultura - Maíz ──
+    const maiz = granos.maiz?.usd_tn;
+    const maizCard = crearRelCard('🌽 Maíz vs Insumos', 'qq de maíz necesarios para comprar 1 unidad de insumo', [
+        { name: 'Urea (1 tn)',          val: rels.maiz_urea,           unit: 'qq maíz', ref: 33 },
+        { name: 'Fosfato DAP (1 tn)',   val: rels.maiz_fosfato,        unit: 'qq maíz', ref: 30 },
+        { name: 'Glifosato (100 L)',    val: rels.maiz_glifosato_100l, unit: 'qq maíz', ref: 10 },
+        { name: 'Semilla (bolsa)',      val: rels.maiz_semilla,        unit: 'qq maíz', ref: 12 },
+    ], `Maíz pizarra: US$ ${maiz ? fmt(maiz, 0) : '--'}/tn`);
+    container.appendChild(maizCard);
+
+    // ── Card 3: Ganadería ──
+    const novProm = had.novillo?.promedio;
+    const ternProm = had.ternero?.promedio;
+    const maizArs = granos.maiz?.ars;
+
+    const relTN = ternProm && novProm ? (ternProm / novProm).toFixed(2) : '--';
+    const relMN = rels.maiz_kg_novillo ? rels.maiz_kg_novillo.toFixed(2) : '--';
+    const relSM = rels.soja_maiz ? rels.soja_maiz.toFixed(2) : '--';
+
+    const ganCard = document.createElement('div');
+    ganCard.className = 'card';
+    ganCard.innerHTML = `
+        <div class="card-label">🐄 Relaciones Ganaderas</div>
+        <div class="rel-card" style="margin-top:14px">
+            <div class="rel-row">
+                <div class="rel-name">Ternero / Novillo<small>kg ternero por kg novillo</small></div>
+                <div class="rel-val">${relTN}</div>
+                <span class="card-badge badge-gold">kg/kg</span>
+            </div>
+            <div class="rel-row">
+                <div class="rel-name">Maíz / Novillo<small>kg maíz por kg carne viva</small></div>
+                <div class="rel-val">${relMN}</div>
+                <span class="card-badge">feedlot</span>
+            </div>
+            <div class="rel-row">
+                <div class="rel-name">Soja / Maíz<small>tn soja por tn maíz</small></div>
+                <div class="rel-val">${relSM}</div>
+                <span class="card-badge">sustitución</span>
+            </div>
+        </div>
+        <div class="rel-note">
+            Relación maíz/novillo &lt; 0,5 = favorable para feedlot. 
+            Ternero/novillo cercano a 1,3 indica alta demanda de invernada.
+        </div>
+    `;
+    container.appendChild(ganCard);
+}
+
+function crearRelCard(titulo, subtitulo, items, footer) {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const maxVal = Math.max(...items.map(i => i.val || 0));
+
+    const rows = items.map(item => {
+        if (!item.val) return '';
+        const pct = Math.min(100, (item.val / (maxVal * 1.2)) * 100);
+        const cls = item.val <= item.ref * 0.9 ? 'good' : item.val <= item.ref * 1.15 ? 'mid' : 'bad';
+        return `
+            <div class="rel-row">
+                <div class="rel-name">${item.name}<small>${item.unit}</small></div>
+                <div class="rel-bar-wrap"><div class="rel-bar ${cls}" style="width:${pct}%"></div></div>
+                <div class="rel-val">${fmt(item.val, 1)}</div>
+            </div>`;
+    }).join('');
+
+    card.innerHTML = `
+        <div class="card-label">${titulo}</div>
+        <div style="font-size:.6rem;color:var(--muted);margin:4px 0 14px">${subtitulo}</div>
+        <div class="rel-card">${rows}</div>
+        <div class="rel-note">${footer}</div>
+    `;
+    return card;
+}
+
+// ────────────────────────────────────────────
+// CALCULADORA
+// ────────────────────────────────────────────
+function onGranoChange() {
+    const grano = document.getElementById('calc-grano').value;
+    const granos = DATA?.granos || {};
+    const datos = granos[grano];
+
+    if (datos?.usd_qq) {
+        document.getElementById('calc-precio-qq').value = fmt(datos.usd_qq, 2);
+        document.getElementById('precio-auto-label').textContent =
+            `↑ Pizarra Rosario: US$${fmt(datos.usd_qq, 2)}/qq · ${datos.mes || ''}`;
+    } else {
+        document.getElementById('precio-auto-label').textContent = 'Ingresá el precio manualmente';
+    }
+    calcular();
+}
+
+function calcular() {
+    const precioQq  = parseFloat(document.getElementById('calc-precio-qq').value) || 0;
+    const rinde     = parseFloat(document.getElementById('rinde').value) || 0;
+    const alquiler  = parseFloat(document.getElementById('alquiler').value) || 0;
+    const labores   = parseFloat(document.getElementById('labores').value) || 0;
+    const agro      = parseFloat(document.getElementById('agro').value) || 0;
+    const seguro    = parseFloat(document.getElementById('seguro').value) || 0;
+    const flete     = parseFloat(document.getElementById('flete').value) || 0;
+    const comPct    = parseFloat(document.getElementById('gastos-com').value) || 0;
+    const cosecha   = parseFloat(document.getElementById('cosecha').value) || 0;
+
+    const precioTn = precioQq * 10;
+    const prodTn = rinde / 10;
+
+    const ingresoBruto  = precioTn * prodTn;
+    const gastoCom      = ingresoBruto * (comPct / 100);
+    const gastFlete     = flete * prodTn;
+    const costoFijo     = alquiler + labores + agro + seguro + cosecha;
+    const costoTotal    = costoFijo + gastoCom + gastFlete;
+
+    const margenBruto   = ingresoBruto - costoTotal;
+    const rindeIndif    = costoTotal / (precioQq * (1 - comPct/100) - flete / 10);
+
+    // Actualizar resultados
+    const mb = margenBruto;
+    const mbStr = `u$s ${mb >= 0 ? '' : '-'}${fmt(Math.abs(mb), 0)}`;
+
+    document.getElementById('mb-ha').textContent   = mbStr;
+    document.getElementById('ingreso-bruto').textContent = `u$s ${fmt(ingresoBruto, 0)}`;
+    document.getElementById('rinde-indif').textContent   = `${fmt(rindeIndif, 1)} qq`;
+
+    const alertBox = document.getElementById('box-alerta');
+    if (mb < 0) {
+        alertBox.style.display = 'block';
+        document.getElementById('deficit-val').textContent = `u$s ${fmt(Math.abs(mb), 0)} de déficit`;
+    } else {
+        alertBox.style.display = 'none';
+    }
+
+    // Desglose
+    setText('det-precio-tn', `u$s ${fmt(precioTn, 2)}`);
+    setText('det-precio-qq', `u$s ${fmt(precioQq, 2)}`);
+    setText('det-prod',      `${fmt(prodTn, 2)} tn/ha`);
+    setText('det-ingreso',   `u$s ${fmt(ingresoBruto, 2)}`);
+    setText('det-com',       `u$s ${fmt(gastoCom + gastFlete, 2)}`);
+    setText('det-costo',     `u$s ${fmt(costoFijo, 2)}`);
+    setText('det-mb',        `u$s ${fmt(mb, 2)}`);
+    document.getElementById('det-mb').style.color = mb >= 0 ? 'var(--accent)' : 'var(--red)';
+}
+
+// ────────────────────────────────────────────
+// CLIMA (Open-Meteo · sin API key)
+// ────────────────────────────────────────────
+const CIUDADES = [
+    { nombre: 'Rosario', lat: -32.9575, lon: -60.6394 },
+    { nombre: 'Córdoba', lat: -31.4201, lon: -64.1888 },
+    { nombre: 'Buenos Aires', lat: -34.6118, lon: -58.3960 },
+    { nombre: 'Río Cuarto', lat: -33.1307, lon: -64.3499 },
+    { nombre: 'Bahía Blanca', lat: -38.7183, lon: -62.2663 },
+    { nombre: 'Venado Tuerto', lat: -33.7454, lon: -61.9616 },
+];
+
+const WM_CODES = {
+    0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',
+    51:'🌦️',61:'🌧️',71:'🌨️',80:'🌦️',95:'⛈️',99:'⛈️'
+};
+
+async function loadClima() {
+    const grid = document.getElementById('weather-grid');
+    grid.innerHTML = '';
+
+    for (const ciudad of CIUDADES) {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${ciudad.lat}&longitude=${ciudad.lon}&current=temperature_2m,weathercode,windspeed_10m,precipitation&timezone=America%2FArgentina%2FBuenos_Aires`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            const c = data.current;
+            const icon = WM_CODES[c.weathercode] || '🌡️';
+
+            const card = document.createElement('div');
+            card.className = 'weather-card';
+            card.innerHTML = `
+                <div class="weather-icon">${icon}</div>
+                <div class="weather-temp">${Math.round(c.temperature_2m)}°C</div>
+                <div class="weather-city">${ciudad.nombre}</div>
+                <div class="weather-desc">💨 ${Math.round(c.windspeed_10m)} km/h · 🌧 ${c.precipitation} mm</div>
+            `;
+            grid.appendChild(card);
+        } catch {
+            const card = document.createElement('div');
+            card.className = 'weather-card';
+            card.innerHTML = `<div class="weather-city">${ciudad.nombre}</div><div style="color:var(--muted);font-size:.7rem">Sin datos</div>`;
+            grid.appendChild(card);
+        }
+    }
+}
+
+// ────────────────────────────────────────────
+// TICKER
+// ────────────────────────────────────────────
+function renderTicker() {
+    const granos = DATA.granos || {};
+    const had = DATA.hacienda || {};
+    const dolar = DATA.dolar?.venta;
+    const items = [];
+
+    for (const [k, v] of Object.entries(granos)) {
+        const info = GRAIN_LABELS[k] || { emoji: '🌾', name: k };
+        items.push(`<span class="ticker-item">${info.emoji} ${info.name.toUpperCase()} <b>$${fmtARS(v.ars)}</b> · US$${fmt(v.usd_tn,0)}/tn <span class="ticker-sep">|</span></span>`);
+    }
+    if (had.novillito) items.push(`<span class="ticker-item">🐂 NOVILLITO <b>$${fmtARS(had.novillito.max)}/kg</b> máx <span class="ticker-sep">|</span></span>`);
+    if (had.novillo)   items.push(`<span class="ticker-item">🐃 NOVILLO <b>$${fmtARS(had.novillo.promedio)}/kg</b> prom <span class="ticker-sep">|</span></span>`);
+    if (dolar)         items.push(`<span class="ticker-item">💵 TC BNA <b>$${fmt(dolar,2)}</b> <span class="ticker-sep">|</span></span>`);
+
+    const content = items.join('');
+    document.getElementById('ticker-track').innerHTML = content + content; // loop
+}
+
+// ────────────────────────────────────────────
+// NAVEGACIÓN
+// ────────────────────────────────────────────
+function openTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+    const el = document.getElementById(id);
+    if (el) {
+        el.classList.add('active');
+        el.style.display = 'block';
+    }
+    if (btn) btn.classList.add('active');
+
+    // Cargar clima solo cuando se abre esa tab
+    if (id === 'clima') loadClima();
+}
+
+// ────────────────────────────────────────────
+// UTILIDADES
+// ────────────────────────────────────────────
+function fmt(n, dec = 0) {
+    if (n == null || isNaN(n)) return '--';
+    return parseFloat(n).toLocaleString('es-AR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+
+function fmtARS(n) {
+    if (!n) return '--';
+    return Math.round(n).toLocaleString('es-AR');
+}
+
+function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+// ────────────────────────────────────────────
+// INICIO
+// ────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
