@@ -1,62 +1,48 @@
 import requests
 import re
 
-def actualizar_plataforma():
-    # 1. Obtener Dólar oficial real (vía API)
+def analizar_situacion(valor, tipo):
+    # Umbrales históricos aproximados
+    if tipo == "urea_soja":
+        if valor < 15: return "Buena", "ind-buena"
+        if valor < 19: return "Regular", "ind-regular"
+        return "Mala", "ind-mala"
+    
+    if tipo == "maiz_carne":
+        if valor > 12: return "Compra", "ind-buena" # Carne cara vs maíz barato
+        if valor > 9: return "Equilibrio", "ind-regular"
+        return "Desfavorable", "ind-mala"
+    
+    return "N/A", ""
+
+def actualizar():
     try:
         res = requests.get("https://api.bluelytics.com.ar/v2/latest")
         dolar = res.json()['oficial']['value_sell']
     except:
-        dolar = 1382.50 # Valor de respaldo si la API falla
+        dolar = 1382.50
 
-    # 2. Base de datos de precios (Valores que el bot inyectará)
-    # Podes editar estos números manualmente en GitHub y el bot hará los cálculos
-    p = {
-        # GRANOS ROSARIO ($/tn)
-        "soja": 430000,
-        "maiz": 262675,
-        "trigo": 283412,
-        "girasol": 500000,
-        "sorgo": 269600,
-        "cebada": 195000,
-        
-        # GANADERÍA CAÑUELAS ($/kg)
-        "mag_novillo": 3050,
-        "mag_novillito": 3360,
-        "mag_ternero": 3450,
-        "mag_vaca": 1920,
-        "mag_conserva": 1380,
-        "mag_toro": 1800
-    }
+    p = {"soja": 430000, "maiz": 262675, "mag_novillo": 3050, "mag_ternero": 3450}
+    
+    # Cálculos
+    rel_urea_soja = 100 / (p["soja"] / dolar)
+    rel_maiz_ternero = p["mag_ternero"] / (p["maiz"] / 1000)
 
-    # 3. Cálculos automáticos de Insumo/Producto
-    # Basado en Urea a USD 1.000 la tonelada (USD 100 los 100kg)
-    # La fórmula convierte el precio ARS a USD usando el dólar obtenido arriba
-    rel_soja = 100 / (p["soja"] / dolar)
-    rel_maiz = 100 / (p["maiz"] / dolar)
+    # Análisis
+    txt_urea, cls_urea = analizar_situacion(rel_urea_soja, "urea_soja")
+    txt_carne, cls_carne = analizar_situacion(rel_maiz_ternero, "maiz_carne")
 
-    # 4. Leer el archivo HTML
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
-    # 5. Inyectar Dólar
-    html = re.sub(r'id="valor-dolar">[^<]+', f'id="valor-dolar">${dolar:,.2f}', html)
+    # Inyección de valores y clases CSS para colores
+    html = re.sub(r'id="rel-urea-soja">[^<]+', f'id="rel-urea-soja">{rel_urea_soja:.1f}', html)
+    html = re.sub(r'id="ind-urea-soja" class="ind">[^<]+', f'id="ind-urea-soja" class="ind {cls_urea}">{txt_urea}', html)
+    
+    html = re.sub(r'id="rel-maiz-ternero">[^<]+', f'id="rel-maiz-ternero">{rel_maiz_ternero:.1f}', html)
+    html = re.sub(r'id="ind-maiz-ternero" class="ind">[^<]+', f'id="ind-maiz-ternero" class="ind {cls_carne}">{txt_carne}', html)
 
-    # 6. Inyectar Granos (recorre la lista y busca los IDs en el HTML)
-    for grano in ["soja", "maiz", "trigo", "girasol", "sorgo", "cebada"]:
-        html = re.sub(f'id="precio-{grano}">[^<]+', f'id="precio-{grano}">${p[grano]:,.0f}', html)
-
-    # 7. Inyectar Ganadería
-    for cat in ["novillo", "novillito", "ternero", "vaca", "conserva", "toro"]:
-        html = re.sub(f'id="mag-{cat}">[^<]+', f'id="mag-{cat}">${p["mag_"+cat]:,.0f}', html)
-
-    # 8. Inyectar Relaciones Insumo/Producto
-    html = re.sub(r'id="rel-urea-soja">[^<]+', f'id="rel-urea-soja">{rel_soja:.1f}', html)
-    html = re.sub(r'id="rel-urea-maiz">[^<]+', f'id="rel-urea-maiz">{rel_maiz:.1f}', html)
-
-    # 9. Guardar los cambios en el archivo
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
-if __name__ == "__main__":
-    actualizar_plataforma()
+actualizar()
