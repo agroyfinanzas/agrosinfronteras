@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASF | Intelligence Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+// ═══════════════════════════════════════════════════════
+// CALCULADORA DE CANJE
+// ═══════════════════════════════════════════════════════
+
+// Precios de referencia de insumos en u$s por unidad indicada
+const INSUMOS_CANJE = {
+    // Fertilizantes (precio por tn)
+    urea:       { nombre:'Urea granulada',           usd: 1000, unidad:'por tn',    factor: 1000 }, // factor = kg por unidad
+    dap:        { nombre:'Fosfato DAP (18-46-0)',     usd:  650, unidad:'por tn',    factor: 1000 },
+    map:        { nombre:'MAP (12-52-0)',             usd:  700, unidad:'por tn',    factor: 1000 },
+    uan:        { nombre:'UAN solución 32%',          usd:  450, unidad:'por tn',    factor: 1000 },
+    sfs:        { nombre:'Superfosfato simple',       usd:  420, unidad:'por tn',    factor: 1000 },
+    yeso:       { nombre:'Yeso agrícola',             usd:  140, unidad:'por tn',    factor: 1000 },
+    // Herbicidas (precio por 100 L o kg)
+    glifosato:  { nombre:'Glifosato 48%',             usd:  320, unidad:'por 100 L', factor: 100  },
+    '24d':      { nombre:'2,4-D amina 72%',           usd:  450, unidad:'por 100 L', factor: 100  },
+    atrazina:   { nombre:'Atrazina 90% WG',           usd:  600, unidad:'por 100 kg',factor: 100  },
+    dicamba:    { nombre:'Dicamba',                   usd: 1400, unidad:'por 100 L', factor: 100  },
+    // Insecticidas (precio por 100 L)
+    clorpirifos:{ nombre:'Clorpirifos 48%',           usd:  650, unidad:'por 100 L', factor: 100  },
+    lambda:     { nombre:'Lambda cihalotrina',        usd: 1200, unidad:'por 100 L', factor: 100  },
+    imida:      { nombre:'Imidacloprid 35% SC',       usd: 1800, unidad:'por 100 L', factor: 100  },
+    // Fungicidas (precio por 100 L)
+    azox:       { nombre:'Azoxistrobina + Cipro.',    usd: 2200, unidad:'por 100 L', factor: 100  },
+    tebu:       { nombre:'Tebuconazole 43% SC',       usd: 1500, unidad:'por 100 L', factor: 100  },
+    triflox:    { nombre:'Triflox. + Tebuconazole',   usd: 2800, unidad:'por 100 L', factor: 100  },
+    // Semillas (precio por unidad/bolsa)
+    sem_soja:   { nombre:'Semilla soja (bolsa 40kg)', usd:   80, unidad:'por bolsa', factor: 40   },
+    sem_maiz:   { nombre:'Semilla maíz (bolsa 70M)',  usd:  140, unidad:'por bolsa', factor: null },
+    sem_trigo:  { nombre:'Semilla trigo (bolsa 25kg)',usd:   45, unidad:'por bolsa', factor: 25   },
+    // Combustible
+    gasoil:     { nombre:'Gasoil agro',               usd:  0.5, unidad:'por litro', factor: 1    },
+    gasoil500:  { nombre:'Gasoil agro (500 L)',        usd:  250, unidad:'por 500 L', factor: 500  },
+    // Custom
+    custom:     { nombre:'Precio manual',             usd:    0, unidad:'por unidad',factor: null },
+};
+
+function onCanjeInsumoChange() {
+    const tipo = document.getElementById('canje-insumo-tipo').value;
+    const ins  = INSUMOS_CANJE[tipo];
+    if (!ins) return;
+
+    if (tipo === 'custom') {
+        document.getElementById('canje-precio-insumo').value = '';
+        document.getElementById('canje-precio-insumo').removeAttribute('readonly');
+        document.getElementById('canje-insumo-hint').textContent = 'Ingresá el precio manualmente';
+        document.getElementById('canje-unidad').value = 'por unidad';
+    } else {
+        document.getElementById('canje-precio-insumo').value = ins.usd;
+        document.getElementById('canje-precio-insumo').setAttribute('readonly', true);
+        document.getElementById('canje-insumo-hint').textContent = `Precio referencia mayo 2026 · ${ins.unidad}`;
+        document.getElementById('canje-unidad').value = ins.unidad;
+    }
+    calcularCanje();
+}
+
+function onCanjeGranoChange() {
+    const grano = document.getElementById('canje-grano').value;
+    const datos = DATA?.granos?.[grano];
+    const ret   = RETENCIONES[grano] || { pct: 24, label: '--' };
+
+    if (datos?.usd_tn) {
+        document.getElementById('canje-precio-grano-tn').value = n(datos.usd_tn, 2);
+        document.getElementById('canje-grano-hint').textContent =
+            `↑ Pizarra Rosario: US$ ${n(datos.usd_tn,2)}/tn`;
+    }
+    document.getElementById('canje-ret').value = ret.pct;
+    document.getElementById('canje-ret-hint').textContent = ret.label;
+
+    if (DATA?.dolar?.venta) {
+        document.getElementById('canje-tc').value = n(DATA.dolar.venta, 2);
+    }
+    calcularCanje();
+}
+
+function calcularCanje() {
+    const tipo       = document.getElementById('canje-insumo-tipo').value;
+    const precioIns  = +document.getElementById('canje-precio-insumo').value || 0;
+    const cantidad   = +document.getElementById('canje-cantidad').value || 1;
+    const fobTn      = +document.getElementById('canje-precio-grano-tn').value || 0;
+    const retPct     = +document.getElementById('canje-ret').value || 0;
+    const tc         = +document.getElementById('canje-tc').value || 1382.5;
+    const refMode    = document.getElementById('canje-precio-ref').value;
+    const grano      = document.getElementById('canje-grano').value;
+
+    // Precio neto post-retención
+    const retUsd    = fobTn * (retPct / 100);
+    const netoTn    = fobTn - retUsd;
+    const netoQq    = netoTn / 10;
+    const netoArs   = netoTn * tc;
+
+    // Mostrar precio neto
+    setText('canje-neto-tn',  fobTn > 0 ? `US$ ${n(netoTn,2)}/tn` : '--');
+    setText('canje-neto-qq',  fobTn > 0 ? `US$ ${n(netoQq,2)}/qq` : '--');
+    setText('canje-neto-ars', fobTn > 0 ? `$ ${ars(netoArs)}/tn`  : '--');
+
+    // Precio activo según referencia elegida
+    const precioActivoTn = refMode === 'neto' ? netoTn : fobTn;
+    document.getElementById('canje-precio-activo').value = precioActivoTn > 0 ? n(precioActivoTn, 2) : '';
+
+    if (precioIns <= 0 || precioActivoTn <= 0) return;
+
+    // Valor total del insumo en u$s
+    const totalUsd = precioIns * cantidad;
+    const totalArs = totalUsd * tc;
+
+    // Canje en tn y qq
+    const canjeTn  = totalUsd / precioActivoTn;
+    const canjeQq  = canjeTn * 10;
+    const canjeKg  = canjeTn * 1000;
+
+    // qq retenidos (sobre el total de grano que habría que vender al FOB para pagar)
+    const granoFobNecesarioTn = totalUsd / fobTn;
+    const retQq = granoFobNecesarioTn * (retPct / 100) * 10;
+
+    // Mostrar resultados
+    setText('canje-qq-total',  `${n(canjeQq, 2)} qq`);
+    setText('canje-qq-sub',    `de ${(GRAIN_INFO[grano]||{name:grano}).name}`);
+    setText('canje-tn-total',  `${n(canjeTn, 3)} tn`);
+    setText('canje-tn-sub',    `de ${(GRAIN_INFO[grano]||{name:grano}).name}`);
+    setText('canje-kg-total',  `${n(canjeKg, 1)} kg`);
+    setText('canje-usd-total', `US$ ${n(totalUsd, 2)}`);
+    const ins = INSUMOS_CANJE[tipo];
+    setText('canje-usd-sub',   ins ? `${cantidad} ${ins.unidad}` : '');
+    setText('canje-ars-total', `$ ${ars(totalArs)}`);
+    setText('canje-ars-sub',   `TC BNA $${n(tc,2)}`);
+    setText('canje-ret-sobre', `${n(retQq, 2)} qq`);
+
+    // Tabla comparativa
+    actualizarTablaComparativa(totalUsd, tc, retPct);
+}
+
+function actualizarTablaComparativa(totalUsd, tc, retPctActual) {
+    const refMode  = document.getElementById('canje-precio-ref').value;
+    const granos   = ['soja','maiz','trigo','girasol','sorgo'];
+    const nombres  = { soja:'🌱 Soja', maiz:'🌽 Maíz', trigo:'🌾 Trigo', girasol:'🌻 Girasol', sorgo:'🌾 Sorgo' };
+    const tbody    = document.getElementById('canje-tabla-body');
+    const granoSel = document.getElementById('canje-grano').value;
+
+    tbody.innerHTML = granos.map(g => {
+        const datos   = DATA?.granos?.[g];
+        const ret     = RETENCIONES[g] || { pct: 0 };
+        const fobTn   = datos?.usd_tn || 0;
+        const netoTn  = fobTn * (1 - ret.pct / 100);
+        const netoQq  = netoTn / 10;
+        const activoTn= refMode === 'neto' ? netoTn : fobTn;
+        const canjeQq = activoTn > 0 ? totalUsd / activoTn * 10 : 0;
+        const canjeKg = canjeQq * 100;
+        const canjeArs= canjeQq / 10 * activoTn * tc;
+        const isActivo = g === granoSel;
+
+        return `<tr style="${isActivo ? 'background:rgba(118,196,66,.07);' : ''}">
+            <td class="td-nombre">${nombres[g]}${isActivo ? ' ←' : ''}</td>
+            <td>${fobTn > 0 ? `US$ ${n(fobTn,1)}` : '--'}</td>
+            <td class="td-ret">${ret.pct}%</td>
+            <td>${netoTn > 0 ? `US$ ${n(netoTn,1)}` : '--'}</td>
+            <td class="td-qq">${canjeQq > 0 ? n(canjeQq,2) + ' qq' : '--'}</td>
+            <td class="td-kg">${canjeKg > 0 ? n(canjeKg,1) + ' kg' : '--'}</td>
+            <td class="td-ars">${canjeArs > 0 ? '$ ' + ars(canjeArs) : '--'}</td>
+        </tr>`;
+    }).join('');
+}
+
+// Inicializar canje cuando se abre la tab
+function initCanje() {
+    onCanjeInsumoChange();
+    onCanjeGranoChange();
+}
+
+</script>
+    <style>
+        :root {
+            --bg:#0b0d0b; --card:#141714; --card2:#1a1d1a;
+            --accent:#76c442; --accent-dim:rgba(118,196,66,0.12);
+            --text:#f0f5f0; --muted:#7a8a7a;
+            --gold:#e8b74d; --gold-dim:rgba(232,183,77,0.12);
+            --red:#ff5f5f; --red-dim:rgba(255,95,95,0.1);
+            --blue:#4db8e8; --blue-dim:rgba(77,184,232,0.1);
+            --border:rgba(118,196,66,0.15); --border-gold:rgba(232,183,77,0.2);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;line-height:1.6}
+
+        /* HEADER */
+        header{padding:28px 20px;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#1a2616 0%,var(--bg) 100%)}
+        .logo-img{max-width:200px}
+        .header-sub{font-size:.6rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
+
+        /* TICKER */
+        .ticker{background:rgba(118,196,66,0.07);border-bottom:1px solid var(--border);overflow:hidden;height:32px;display:flex;align-items:center}
+        .ticker-label{background:var(--accent);color:#000;font-size:.58rem;font-weight:900;padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;letter-spacing:2px;flex-shrink:0}
+        .ticker-track{display:flex;animation:ticker 40s linear infinite;white-space:nowrap}
+        @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        .ticker-item{font-size:.68rem;padding:0 20px;display:inline-flex;align-items:center;gap:6px}
+        .ticker-item b{color:var(--accent)}
+        .ticker-sep{color:var(--border)}
+
+        /* NAV */
+        .nav-tabs{display:flex;justify-content:center;gap:6px;padding:16px 20px 10px;flex-wrap:wrap;position:sticky;top:0;z-index:999;background:rgba(11,13,11,0.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+        .tab-btn{background:rgba(20,23,20,0.9);border:1px solid var(--border);color:var(--muted);padding:9px 16px;border-radius:50px;cursor:pointer;font-weight:700;font-size:.62rem;letter-spacing:1px;transition:.25s;font-family:'Montserrat',sans-serif}
+        .tab-btn:hover{border-color:var(--accent);color:var(--accent)}
+        .tab-btn.active{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:0 0 16px rgba(118,196,66,.3)}
+
+        /* LAYOUT */
+        .container{max-width:1200px;margin:auto;padding:24px 20px 100px}
+        .section{display:none;animation:fadeIn .35s ease}
+        .section.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+        /* STATUS BAR */
+        .status-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card2);border:1px solid var(--border-gold);border-radius:12px;padding:12px 20px;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+        .status-label{font-size:.58rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block}
+        .status-val{font-size:1.2rem;font-weight:900;color:#fff}
+        .status-val.sm{font-size:.75rem;color:var(--accent)}
+        .status-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;animation:pulse 2s infinite;margin-right:5px}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+        /* CARDS */
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+        .g3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+        .card{background:var(--card);border-radius:14px;padding:20px;border:1px solid var(--border);transition:.25s;position:relative;overflow:hidden}
+        .card:hover{border-color:var(--accent);transform:translateY(-2px)}
+        .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:.3s}
+        .card:hover::after{opacity:1}
+        .card-label{font-size:.58rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
+        .card-val{font-size:1.6rem;font-weight:900;color:#fff;margin:7px 0 3px;line-height:1}
+        .card-sub{font-size:.62rem;color:var(--muted)}
+        .card-usd{font-size:.72rem;font-weight:700;color:var(--gold);margin-top:4px}
+        .badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:.55rem;font-weight:900;border:1px solid var(--accent);color:var(--accent);background:var(--accent-dim);margin-top:7px;letter-spacing:.5px;text-transform:uppercase}
+        .badge-gold{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+        .badge-red{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+        .badge-blue{border-color:var(--blue);color:var(--blue);background:var(--blue-dim)}
+
+        /* HACIENDA */
+        .had-table{width:100%;border-collapse:collapse;margin-top:4px}
+        .had-table tr{border-bottom:1px solid rgba(255,255,255,.05)}
+        .had-table tr:hover{background:rgba(118,196,66,.04)}
+        .had-table td{padding:8px 4px;font-size:.72rem}
+        .had-table td:first-child{color:var(--muted);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+        .had-table td.prom{color:var(--accent);font-weight:900;font-size:.82rem}
+
+        /* RELACIONES */
+        .rel-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:10px}
+        .rel-row:last-child{border-bottom:none}
+        .rel-name{flex:1;font-size:.7rem}
+        .rel-name small{display:block;color:var(--muted);font-size:.58rem;margin-top:1px}
+        .rel-bar-wrap{width:70px;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;flex-shrink:0}
+        .rel-bar{height:100%;border-radius:3px;transition:width .6s ease}
+        .rel-bar.good{background:var(--accent)}
+        .rel-bar.mid{background:var(--gold)}
+        .rel-bar.bad{background:var(--red)}
+        .rel-val{font-size:.75rem;font-weight:700;min-width:48px;text-align:right}
+        .rel-note{font-size:.58rem;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px solid var(--border);line-height:1.6}
+
+        /* CALCULADORA */
+        .calc-wrap{background:var(--card2);border:1px solid var(--accent);border-radius:18px;padding:26px}
+        .calc-title{color:var(--accent);font-weight:900;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+        .inp-lbl{display:block;font-size:.58rem;color:var(--muted);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+        .inp{width:100%;background:#080a08;border:1px solid #2a2d2a;color:#fff;padding:10px 13px;border-radius:8px;font-size:.82rem;font-family:'Montserrat',sans-serif;transition:border-color .2s}
+        .inp:focus{outline:none;border-color:var(--accent)}
+        select.inp option{background:#141714}
+        .inp-group{margin-bottom:13px}
+        .inp-hint{font-size:.58rem;color:var(--gold);margin-top:4px}
+
+        /* Panel retenciones */
+        .ret-panel{background:rgba(255,95,95,.05);border:1px solid rgba(255,95,95,.22);border-radius:12px;padding:18px;margin-bottom:18px}
+        .ret-title{font-size:.62rem;color:var(--red);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+        .ret-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+        .ret-item{text-align:center;background:rgba(0,0,0,.3);border-radius:8px;padding:10px 8px}
+        .ret-item-label{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+        .ret-item-val{font-size:1.05rem;font-weight:900;margin-top:3px}
+        .ret-item-val.neg{color:var(--red)}
+        .ret-item-val.pos{color:var(--accent)}
+        .ret-item-val.neu{color:var(--gold)}
+
+        /* Resultados */
+        .res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-top:20px}
+        .res-box{padding:16px;border-radius:12px;text-align:center}
+        .res-main{background:var(--accent);color:#000}
+        .res-sec{background:rgba(255,255,255,.04);border:1px solid #2a2d2a}
+        .res-warn{background:var(--red-dim);border:1px solid rgba(255,95,95,.3)}
+        .res-info{background:var(--blue-dim);border:1px solid rgba(77,184,232,.3)}
+        .res-lbl{font-size:.55rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+        .res-val{font-size:1.35rem;font-weight:900;margin-top:5px}
+        .res-main .res-val{color:#000}
+        .res-sec .res-val{color:var(--gold)}
+        .res-warn .res-val{color:var(--red)}
+        .res-info .res-val{color:var(--blue)}
+
+        .calc-detail{margin-top:18px;background:rgba(0,0,0,.3);border-radius:10px;padding:14px}
+        .det-row{display:flex;justify-content:space-between;font-size:.68rem;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+        .det-row:last-child{border-bottom:none;font-weight:700;padding-top:8px}
+        .det-row span:first-child{color:var(--muted)}
+
+        /* Botón PDF/WhatsApp */
+        .btn-pdf{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:20px;padding:14px;background:linear-gradient(135deg,#1a7a2a,#25a244);border:none;border-radius:12px;color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;font-size:.78rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:.25s;box-shadow:0 4px 20px rgba(37,162,68,.35)}
+        .btn-pdf:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(37,162,68,.5)}
+        .btn-pdf i{font-size:1rem}
+
+        /* CALENDARIO */
+        .cal-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+        @media(max-width:760px){.cal-wrap{grid-template-columns:1fr}}
+        .cal-month{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+        .cal-month-hdr{background:rgba(118,196,66,.1);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+        .cal-month-name{font-weight:900;font-size:.82rem;letter-spacing:1px;text-transform:uppercase}
+        .cal-event{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);transition:.15s;cursor:default}
+        .cal-event:last-child{border-bottom:none}
+        .cal-event:hover{background:rgba(118,196,66,.04)}
+        .cal-date-badge{flex-shrink:0;width:36px;text-align:center;background:var(--card2);border-radius:8px;padding:4px 0}
+        .cal-day{font-size:1.05rem;font-weight:900;line-height:1;color:var(--accent)}
+        .cal-wd{font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+        .cal-event-title{font-size:.7rem;font-weight:700;color:var(--text);line-height:1.4}
+        .cal-event-desc{font-size:.58rem;color:var(--muted);margin-top:2px;line-height:1.4}
+        .cal-cat{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.5rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+        .cat-fiscal{background:rgba(255,95,95,.15);border:1px solid rgba(255,95,95,.3);color:var(--red)}
+        .cat-usda{background:rgba(77,184,232,.15);border:1px solid rgba(77,184,232,.3);color:var(--blue)}
+        .cat-bcr{background:var(--accent-dim);border:1px solid var(--border);color:var(--accent)}
+        .cat-expo{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold)}
+        .cal-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+        .cal-filter-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:6px 13px;border-radius:20px;cursor:pointer;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:.2s;font-family:'Montserrat',sans-serif}
+        .cal-filter-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+
+        /* CLIMA */
+        .w-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center}
+        .w-icon{font-size:2.2rem;margin-bottom:6px}
+        .w-temp{font-size:1.8rem;font-weight:900}
+        .w-city{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+        .w-desc{font-size:.7rem;color:var(--text);margin-top:3px}
+
+        /* PORTALES */
+        .news-link{display:flex;align-items:center;justify-content:space-between;background:var(--card);padding:16px 20px;border-radius:12px;margin-bottom:9px;text-decoration:none;color:inherit;border:1px solid var(--border);transition:.2s}
+        .news-link:hover{border-color:var(--accent);transform:translateX(4px)}
+        .nl-name{font-weight:700;font-size:.78rem;letter-spacing:.5px}
+        .nl-desc{font-size:.62rem;color:var(--muted);margin-top:2px}
+
+        /* LOADER */
+        .loader-wrap{text-align:center;padding:60px;color:var(--muted)}
+        .loader{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        @media(max-width:600px){.grid{grid-template-columns:1fr 1fr}}
+
+        /* ── CALCULADORA DE CANJE ── */
+        .canje-wrap{background:var(--card2);border:1px solid var(--accent);border-radius:18px;padding:26px}
+        .canje-title{color:var(--accent);font-weight:900;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+        .canje-res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:18px 0}
+        .canje-box{padding:18px 14px;border-radius:12px;text-align:center;border:1px solid #2a2d2a}
+        .canje-box.main{background:var(--accent);border-color:var(--accent)}
+        .canje-box.main .canje-box-lbl{color:rgba(0,0,0,.7)}
+        .canje-box.main .canje-box-val{color:#000}
+        .canje-box.sec{background:rgba(255,255,255,.03)}
+        .canje-box.gold{background:rgba(232,183,77,.08);border-color:rgba(232,183,77,.3)}
+        .canje-box-lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+        .canje-box-val{font-size:1.3rem;font-weight:900;color:#fff;line-height:1}
+        .canje-box-sub{font-size:.58rem;color:var(--muted);margin-top:4px}
+        .canje-nota{margin-top:14px;padding:10px 14px;background:rgba(118,196,66,.06);border:1px solid rgba(118,196,66,.2);border-radius:8px;font-size:.65rem;color:#7a9b72;line-height:1.6}
+        .canje-tabla{width:100%;border-collapse:collapse;margin-top:14px;font-size:.73rem}
+        .canje-tabla thead tr{background:linear-gradient(90deg,var(--accent),#4caf50)}
+        .canje-tabla thead th{padding:9px 10px;text-align:left;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:#000;font-weight:900}
+        .canje-tabla tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s}
+        .canje-tabla tbody tr:hover{background:rgba(118,196,66,.04)}
+        .canje-tabla tbody td{padding:9px 10px;color:#c8d9c0}
+        .canje-tabla .td-nombre{font-weight:700;color:#fff}
+        .canje-tabla .td-qq{color:var(--accent);font-weight:900}
+        .canje-tabla .td-kg{color:var(--gold);font-weight:700}
+        .canje-tabla .td-ars{color:#b8c9b0}
+        .canje-tabla .td-ret{color:var(--red);font-size:.65rem}
+        .insumo-section{margin-top:24px}
+        .insumo-section-title{font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(118,196,66,.2)}
+
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logo.png" class="logo-img" alt="ASF"
+         onerror="this.outerHTML='<h1 style=color:var(--accent);font-size:1.7rem;letter-spacing:3px>AGRO SIN FRONTERAS</h1>'">
+    <div class="header-sub">Intelligence Hub · Mercados Agropecuarios Argentina</div>
+</header>
+
+<div class="ticker">
+    <div class="ticker-label">▶ MERCADO</div>
+    <div style="overflow:hidden;flex:1">
+        <div class="ticker-track" id="ticker-track">
+            <span class="ticker-item">Cargando precios...</span>
+        </div>
+    </div>
+</div>
+
+<div class="nav-tabs">
+    <button class="tab-btn active" onclick="openTab('granos',this)">📊 MERCADOS</button>
+    <button class="tab-btn" onclick="openTab('hacienda',this)">🐄 HACIENDA</button>
+    <button class="tab-btn" onclick="openTab('relaciones',this)">⚖️ RELACIONES</button>
+    <button class="tab-btn" onclick="openTab('calculadora',this)">🧮 MARGEN BRUTO</button>
+    <button class="tab-btn" onclick="openTab('calendario',this)">📅 CALENDARIO</button>
+    <button class="tab-btn" onclick="openTab('clima',this)">🌤️ CLIMA</button>
+    <button class="tab-btn" onclick="openTab('noticias',this)">🔗 PORTALES</button>
+    <button class="tab-btn" onclick="openTab('canje',this)">&#x1F504; CANJE</button>
+</div>
+
+<div class="container">
+    <div id="loader" class="loader-wrap"><div class="loader"></div><div>Cargando datos...</div></div>
+
+    <!-- GRANOS -->
+    <div id="granos" class="section" style="display:none">
+        <div class="status-bar">
+            <div><span class="status-label">Dólar BNA Venta</span><span class="status-val" id="s-dolar">--</span></div>
+            <div><span class="status-label">Dólar BNA Compra</span><span class="status-val" id="s-dolar-c">--</span></div>
+            <div><span class="status-label">Actualización</span><span class="status-val sm"><span class="status-dot"></span><span id="s-fecha">--</span></span></div>
+            <div><span class="status-label">Fuente</span><span class="status-val sm">CAC/BCR · DolarAPI</span></div>
+        </div>
+        <div class="grid" id="grid-granos"></div>
+    </div>
+
+    <!-- HACIENDA -->
+    <div id="hacienda" class="section" style="display:none">
+        <div class="status-bar">
+            <div><span class="status-label">Plaza</span><span class="status-val sm">MAG Cañuelas</span></div>
+            <div><span class="status-label">Fecha</span><span class="status-val sm"><span class="status-dot"></span><span id="s-fecha-h">--</span></span></div>
+        </div>
+        <div class="grid g3" id="grid-hacienda"></div>
+    </div>
+
+    <!-- RELACIONES -->
+    <div id="relaciones" class="section" style="display:none">
+        <div class="grid g3" id="grid-relaciones"></div>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div id="calculadora" class="section" style="display:none">
+        <div class="calc-wrap">
+            <div class="calc-title"><i class="fa-solid fa-calculator"></i> Simulador de Margen Bruto</div>
+
+            <div class="grid g3" style="margin-bottom:18px">
+                <!-- Cultivo -->
+                <div class="card" style="background:rgba(0,0,0,.2)">
+                    <div style="font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🌾 Cultivo</div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Grano</label>
+                        <select id="calc-grano" class="inp" onchange="onGranoChange()">
+                            <option value="soja">Soja</option>
+                            <option value="maiz">Maíz</option>
+                            <option value="trigo">Trigo</option>
+                            <option value="girasol">Girasol</option>
+                            <option value="sorgo">Sorgo</option>
+                        </select>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Precio pizarra FOB (u$s/qq)</label>
+                        <input type="number" id="calc-precio-qq" class="inp" step="0.01" oninput="calcular()">
+                        <div class="inp-hint" id="precio-auto-label">↑ Cargado desde pizarra Rosario</div>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Rinde esperado (qq/ha)</label>
+                        <input type="number" id="rinde" class="inp" value="30" step="0.5" oninput="calcular()">
+                    </div>
+                </div>
+
+                <!-- Costos -->
+                <div class="card" style="background:rgba(0,0,0,.2)">
+                    <div style="font-size:.6rem;color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">💰 Costos (u$s/ha)</div>
+                    <div class="inp-group"><label class="inp-lbl">Alquiler campo</label><input type="number" id="alquiler" class="inp" value="220" oninput="calcular()"></div>
+                    <div class="inp-group"><label class="inp-lbl">Labores + Semilla</label><input type="number" id="labores" class="inp" value="130" oninput="calcular()"></div>
+                    <div class="inp-group"><label class="inp-lbl">Agroquímicos + Fertilizantes</label><input type="number" id="agro" class="inp" value="150" oninput="calcular()"></div>
+                    <div class="inp-group"><label class="inp-lbl">Seguro</label><input type="number" id="seguro" class="inp" value="15" oninput="calcular()"></div>
+                </div>
+
+                <!-- Comercialización -->
+                <div class="card" style="background:rgba(0,0,0,.2)">
+                    <div style="font-size:.6rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">📦 Comercialización</div>
+                    <div class="inp-group"><label class="inp-lbl">Flete (u$s/tn)</label><input type="number" id="flete" class="inp" value="22" oninput="calcular()"></div>
+                    <div class="inp-group"><label class="inp-lbl">Comisiones + parafiscales (%)</label><input type="number" id="gastos-com" class="inp" value="8" oninput="calcular()"></div>
+                    <div class="inp-group"><label class="inp-lbl">Costo cosecha (u$s/ha)</label><input type="number" id="cosecha" class="inp" value="60" oninput="calcular()"></div>
+                </div>
+            </div>
+
+            <!-- PANEL RETENCIONES -->
+            <div class="ret-panel">
+                <div class="ret-title"><i class="fa-solid fa-percent"></i> Calculadora de Precio Neto al Productor · Retenciones (Decreto 877/2025)</div>
+                <div class="grid g3">
+                    <div class="inp-group">
+                        <label class="inp-lbl">Retención vigente (%) — editable</label>
+                        <input type="number" id="ret-pct" class="inp" step="0.1" oninput="calcular()">
+                        <div class="inp-hint" id="ret-hint">Se carga automáticamente según el grano</div>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Precio FOB pizarra (u$s/tn)</label>
+                        <input type="number" id="ret-fob" class="inp" step="0.1" oninput="calcular()">
+                        <div class="inp-hint">Cargado desde pizarra Rosario</div>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Tipo de cambio ($/u$s)</label>
+                        <input type="number" id="ret-tc" class="inp" value="1382.50" step="0.5" oninput="calcular()">
+                        <div class="inp-hint">BNA oficial — se actualiza con data.json</div>
+                    </div>
+                </div>
+                <div class="ret-grid" id="ret-resultados">
+                    <div class="ret-item"><div class="ret-item-label">Retención (u$s/tn)</div><div class="ret-item-val neg" id="ret-usd-tn">--</div></div>
+                    <div class="ret-item"><div class="ret-item-label">Precio neto (u$s/tn)</div><div class="ret-item-val pos" id="ret-neto-tn">--</div></div>
+                    <div class="ret-item"><div class="ret-item-label">Precio neto (u$s/qq)</div><div class="ret-item-val pos" id="ret-neto-qq">--</div></div>
+                    <div class="ret-item"><div class="ret-item-label">Precio neto ($/tn)</div><div class="ret-item-val neu" id="ret-neto-ars">--</div></div>
+                </div>
+            </div>
+
+            <!-- RESULTADOS -->
+            <div class="res-grid">
+                <div class="res-box res-main" id="box-mb"><div class="res-lbl">Margen Bruto / ha</div><div class="res-val" id="mb-ha">u$s 0</div></div>
+                <div class="res-box res-sec"><div class="res-lbl">Rinde Indiferencia</div><div class="res-val" id="rinde-indif">-- qq</div></div>
+                <div class="res-box res-sec"><div class="res-lbl">Ingreso Bruto / ha</div><div class="res-val" id="ingreso-bruto">u$s 0</div></div>
+                <div class="res-box res-info"><div class="res-lbl">Precio neto productor</div><div class="res-val" id="mb-neto-qq">-- u$s/qq</div></div>
+                <div class="res-box res-warn" id="box-alerta" style="display:none"><div class="res-lbl">⚠ Déficit</div><div class="res-val" id="deficit-val">--</div></div>
+            </div>
+
+            <!-- DESGLOSE -->
+            <div class="calc-detail">
+                <div class="det-row"><span>Precio FOB pizarra</span><span id="det-fob">--</span></div>
+                <div class="det-row"><span>Retención aplicada</span><span id="det-ret">--</span></div>
+                <div class="det-row"><span>Precio neto productor</span><span id="det-neto">--</span></div>
+                <div class="det-row"><span>Producción (tn/ha)</span><span id="det-prod">--</span></div>
+                <div class="det-row"><span>Ingreso bruto</span><span id="det-ingreso">--</span></div>
+                <div class="det-row"><span>Gastos comercialización + flete</span><span id="det-com">--</span></div>
+                <div class="det-row"><span>Costos fijos implantación + cosecha</span><span id="det-costo">--</span></div>
+                <div class="det-row"><span style="color:var(--accent);font-weight:900">MARGEN BRUTO NETO</span><span id="det-mb" style="font-weight:900">--</span></div>
+            </div>
+
+            <!-- BOTÓN PDF + WHATSAPP -->
+            <button class="btn-pdf" onclick="exportPDF()">
+                <i class="fa-brands fa-whatsapp" style="font-size:1.1rem"></i>
+                <i class="fa-solid fa-file-pdf"></i>
+                Descargar PDF · Compartir por WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div id="calendario" class="section" style="display:none">
+        <div class="status-bar" style="margin-bottom:16px">
+            <div><span class="status-label">Año</span><span class="status-val sm">2026 · Fechas clave del agro argentino</span></div>
+        </div>
+        <div class="cal-filter" id="cal-filter">
+            <button class="cal-filter-btn active" onclick="filtrarCal('all',this)">Todos</button>
+            <button class="cal-filter-btn" onclick="filtrarCal('fiscal',this)">🔴 Fiscal / SISA / ARCA</button>
+            <button class="cal-filter-btn" onclick="filtrarCal('usda',this)">🔵 Informes USDA</button>
+            <button class="cal-filter-btn" onclick="filtrarCal('bcr',this)">🟢 BCR / Bolsas</button>
+            <button class="cal-filter-btn" onclick="filtrarCal('expo',this)">🟡 Exposiciones</button>
+        </div>
+        <div class="cal-wrap" id="cal-container"></div>
+    </div>
+
+    <!-- CLIMA -->
+    <div id="clima" class="section" style="display:none">
+        <p style="color:var(--muted);font-size:.72rem;margin-bottom:18px">Zonas productoras clave · Open-Meteo (sin API key)</p>
+        <div class="grid" id="weather-grid"><div class="loader-wrap"><div class="loader"></div><div>Cargando clima...</div></div></div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- SECCIÓN: CALCULADORA DE CANJE         -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="canje" class="section" style="display:none">
+        <div class="canje-wrap">
+            <div class="canje-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Calculadora de Canje</div>
+
+            <div class="grid g3" style="margin-bottom:18px">
+                <!-- Col 1: Insumo -->
+                <div class="card" style="background:rgba(0,0,0,.2)">
+                    <div style="font-size:.6rem;color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🧴 Insumo a canjear</div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Tipo de insumo</label>
+                        <select id="canje-insumo-tipo" class="inp" onchange="onCanjeInsumoChange()">
+                            <optgroup label="── Fertilizantes ──">
+                                <option value="urea">Urea granulada</option>
+                                <option value="dap">Fosfato DAP (18-46-0)</option>
+                                <option value="map">MAP (12-52-0)</option>
+                                <option value="uan">UAN solución 32%</option>
+                                <option value="sfs">Superfosfato simple</option>
+                                <option value="yeso">Yeso agrícola</option>
+                            </optgroup>
+                            <optgroup label="── Herbicidas ──">
+                                <option value="glifosato">Glifosato 48%</option>
+                                <option value="24d">2,4-D amina 72%</option>
+                                <option value="atrazina">Atrazina 90% WG</option>
+                                <option value="dicamba">Dicamba</option>
+                            </optgroup>
+                            <optgroup label="── Insecticidas ──">
+                                <option value="clorpirifos">Clorpirifos 48%</option>
+                                <option value="lambda">Lambda cihalotrina</option>
+                                <option value="imida">Imidacloprid 35% SC</option>
+                            </optgroup>
+                            <optgroup label="── Fungicidas ──">
+                                <option value="azox">Azoxistrobina + Cipro.</option>
+                                <option value="tebu">Tebuconazole 43% SC</option>
+                                <option value="triflox">Triflox. + Tebuconazole</option>
+                            </optgroup>
+                            <optgroup label="── Semillas ──">
+                                <option value="sem_soja">Semilla soja (bolsa 40kg)</option>
+                                <option value="sem_maiz">Semilla maíz (bolsa 70M)</option>
+                                <option value="sem_trigo">Semilla trigo (bolsa 25kg)</option>
+                            </optgroup>
+                            <optgroup label="── Combustible ──">
+                                <option value="gasoil">Gasoil agro (L)</option>
+                                <option value="gasoil500">Gasoil agro (500 L)</option>
+                            </optgroup>
+                            <optgroup label="── Personalizado ──">
+                                <option value="custom">Precio manual (u$s)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Precio insumo (u$s)</label>
+                        <input type="number" id="canje-precio-insumo" class="inp" step="0.01" oninput="calcularCanje()">
+                        <div class="inp-hint" id="canje-insumo-hint">Cargado automáticamente</div>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Unidad del precio</label>
+                        <input type="text" id="canje-unidad" class="inp" value="por tn" readonly style="color:var(--muted);cursor:default">
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Cantidad de unidades</label>
+                        <input type="number" id="canje-cantidad" class="inp" value="1" step="0.5" min="0.1" oninput="calcularCanje()">
+                    </div>
+                </div>
+
+                <!-- Col 2: Grano -->
+                <div class="card" style="background:rgba(0,0,0,.2)">
+                    <div style="font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🌾 Grano de canje</div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Grano</label>
+                        <select id="canje-grano" class="inp" onchange="onCanjeGranoChange()">
+                            <option value="soja">🌱 Soja</option>
+                            <option value="maiz">🌽 Maíz</option>
+                            <option value="trigo">🌾 Trigo</option>
+                            <option value="girasol">🌻 Girasol</option>
+                            <option value="sorgo">🌾 Sorgo</option>
+                        </select>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Precio FOB pizarra (u$s/tn)</label>
+                        <input type="number" id="canje-precio-grano-tn" class="inp" step="0.1" oninput="calcularCanje()">
+                        <div class="inp-hint" id="canje-grano-hint">Cargado desde pizarra Rosario</div>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Retención vigente (%)</label>
+                        <input type="number" id="canje-ret" class="inp" step="0.1" oninput="calcularCanje()">
+                        <div class="inp-hint" id="canje-ret-hint" style="color:var(--red)">Se carga según el grano · Decreto 877/2025</div>
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Tipo de cambio ($/u$s)</label>
+                        <input type="number" id="canje-tc" class="inp" value="1382.50" step="0.5" oninput="calcularCanje()">
+                        <div class="inp-hint">BNA Oficial</div>
+                    </div>
+                </div>
+
+                <!-- Col 3: Precio a usar -->
+                <div class="card" style="background:rgba(0,0,0,.2)">
+                    <div style="font-size:.6rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">⚙️ Precio grano a usar</div>
+                    <div class="inp-group">
+                        <label class="inp-lbl">Referencia de precio</label>
+                        <select id="canje-precio-ref" class="inp" onchange="calcularCanje()">
+                            <option value="neto">Precio neto (post-retención)</option>
+                            <option value="fob">Precio FOB (pre-retención)</option>
+                        </select>
+                        <div class="inp-hint">El precio neto es lo que recibe el productor</div>
+                    </div>
+                    <div class="inp-group" style="margin-top:16px;padding:12px;background:rgba(255,95,95,.05);border:1px solid rgba(255,95,95,.2);border-radius:8px">
+                        <div style="font-size:.55rem;color:var(--red);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📊 Precio neto calculado</div>
+                        <div style="font-size:1.3rem;font-weight:900;color:#fff" id="canje-neto-tn">-- u$s/tn</div>
+                        <div style="font-size:.7rem;color:var(--gold);margin-top:4px" id="canje-neto-qq">-- u$s/qq</div>
+                        <div style="font-size:.62rem;color:var(--muted);margin-top:4px" id="canje-neto-ars">-- $/tn</div>
+                    </div>
+                    <div class="inp-group" style="margin-top:10px">
+                        <label class="inp-lbl">Precio grano activo (u$s/tn)</label>
+                        <input type="number" id="canje-precio-activo" class="inp" step="0.1" readonly style="color:var(--accent);font-weight:700;cursor:default">
+                        <div class="inp-hint">Calculado según referencia elegida</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTADOS PRINCIPALES -->
+            <div class="canje-res-grid" id="canje-resultados">
+                <div class="canje-box main">
+                    <div class="canje-box-lbl">Canje total (qq)</div>
+                    <div class="canje-box-val" id="canje-qq-total">--</div>
+                    <div class="canje-box-sub" id="canje-qq-sub">quintales</div>
+                </div>
+                <div class="canje-box main">
+                    <div class="canje-box-lbl">Canje total (tn)</div>
+                    <div class="canje-box-val" id="canje-tn-total">--</div>
+                    <div class="canje-box-sub" id="canje-tn-sub">toneladas</div>
+                </div>
+                <div class="canje-box gold">
+                    <div class="canje-box-lbl">Canje total (kg)</div>
+                    <div class="canje-box-val" id="canje-kg-total">--</div>
+                    <div class="canje-box-sub">kilogramos</div>
+                </div>
+                <div class="canje-box sec">
+                    <div class="canje-box-lbl">Valor insumo (ARS)</div>
+                    <div class="canje-box-val" id="canje-ars-total" style="color:var(--gold)">--</div>
+                    <div class="canje-box-sub" id="canje-ars-sub">al TC BNA</div>
+                </div>
+                <div class="canje-box sec">
+                    <div class="canje-box-lbl">Valor insumo (u$s)</div>
+                    <div class="canje-box-val" id="canje-usd-total" style="color:#fff">--</div>
+                    <div class="canje-box-sub" id="canje-usd-sub">total</div>
+                </div>
+                <div class="canje-box sec">
+                    <div class="canje-box-lbl">Retención sobre canje</div>
+                    <div class="canje-box-val" id="canje-ret-sobre" style="color:var(--red)">--</div>
+                    <div class="canje-box-sub">qq retenidos al Estado</div>
+                </div>
+            </div>
+
+            <!-- TABLA COMPARATIVA POR GRANO -->
+            <div class="insumo-section">
+                <div class="insumo-section-title">📊 Comparativa de Canje — mismo insumo en distintos granos</div>
+                <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(118,196,66,.15)">
+                    <table class="canje-tabla" id="canje-tabla-comp">
+                        <thead>
+                            <tr>
+                                <th>Grano</th>
+                                <th>FOB u$s/tn</th>
+                                <th>Retención</th>
+                                <th>Neto u$s/tn</th>
+                                <th>Canje qq</th>
+                                <th>Canje kg</th>
+                                <th>Canje ARS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="canje-tabla-body">
+                            <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Seleccioná un insumo para ver la comparativa</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NOTA -->
+            <div class="canje-nota">
+                💡 <strong>¿Cómo se calcula el canje?</strong> Se divide el valor total del insumo (en u$s) por el precio del grano elegido.
+                Si usás <em>precio neto</em>, el canje refleja lo que realmente "sale" al productor descontadas las retenciones.
+                Si usás <em>precio FOB</em>, es la referencia de pizarra sin descuentos.
+                La retención se carga automáticamente según el grano · Decreto 877/2025.
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTALES -->
+    <div id="noticias" class="section" style="display:none">
+        <h2 style="color:var(--accent);font-size:.85rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px">Portales de Referencia</h2>
+        <a href="https://www.cac.bcr.com.ar/es/precios-de-pizarra" target="_blank" class="news-link"><div><div class="nl-name">PIZARRA BCR · CAC</div><div class="nl-desc">Cámara Arbitral de Cereales · Bolsa de Comercio de Rosario</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+        <a href="https://www.mercadoagroganadero.com.ar" target="_blank" class="news-link"><div><div class="nl-name">MAG CAÑUELAS</div><div class="nl-desc">Mercado Agroganadero · Precios hacienda en tiempo real</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+        <a href="https://www.bcr.com.ar/es/mercados/mercado-de-granos/cotizaciones" target="_blank" class="news-link"><div><div class="nl-name">BOLSA DE COMERCIO ROSARIO</div><div class="nl-desc">Cotizaciones locales · Mercado de granos</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+        <a href="https://www.apps.usda.gov/psdonline/app/index.html#/app/calendar" target="_blank" class="news-link"><div><div class="nl-name">USDA · CALENDARIO INFORMES</div><div class="nl-desc">Fechas oficiales WASDE, Crop Progress y Supply & Demand</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--blue)"></i></a>
+        <a href="https://news.agrofy.com.ar/granos/precios-pizarra" target="_blank" class="news-link"><div><div class="nl-name">AGROFY NEWS · PIZARRA</div><div class="nl-desc">Precios de pizarra Rosario y cámaras arbitrales</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+        <a href="https://www.infocampo.com.ar" target="_blank" class="news-link"><div><div class="nl-name">INFOCAMPO</div><div class="nl-desc">Noticias agropecuarias · Precios diarios</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+        <a href="https://www.lanacion.com.ar/economia/campo/" target="_blank" class="news-link"><div><div class="nl-name">LA NACION CAMPO</div><div class="nl-desc">Análisis de mercados y noticias del agro</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+        <a href="https://www.magyp.gob.ar/sitio/areas/analisis_economico/" target="_blank" class="news-link"><div><div class="nl-name">MAGYP · ANÁLISIS ECONÓMICO</div><div class="nl-desc">Secretaría de Agricultura · Relación insumo/producto oficial</div></div><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent)"></i></a>
+    </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════
+// ESTADO Y CONSTANTES
+// ═══════════════════════════════════
+let DATA = null;
+
+// Retenciones vigentes · Decreto 877/2025 (dic 2025 — permanentes)
+const RETENCIONES = {
+    soja:    { pct: 24,  label: 'Soja — 24%  (Dcto. 877/2025)' },
+    maiz:    { pct: 8.5, label: 'Maíz — 8,5% (Dcto. 877/2025)' },
+    trigo:   { pct: 7.5, label: 'Trigo — 7,5% (Dcto. 877/2025)' },
+    girasol: { pct: 4.5, label: 'Girasol — 4,5% (Dcto. 877/2025)' },
+    sorgo:   { pct: 8.5, label: 'Sorgo — 8,5% (Dcto. 877/2025)' },
+};
+
+const GRAIN_INFO = {
+    soja:    { name:'Soja',    emoji:'🌱' },
+    maiz:    { name:'Maíz',    emoji:'🌽' },
+    trigo:   { name:'Trigo',   emoji:'🌾' },
+    girasol: { name:'Girasol', emoji:'🌻' },
+    sorgo:   { name:'Sorgo',   emoji:'🌾' },
+    cebada:  { name:'Cebada',  emoji:'🌾' },
+};
+
+const HAD_INFO = {
+    novillito: { name:'Novillito',  emoji:'🐂' },
+    novillo:   { name:'Novillo',    emoji:'🐃' },
+    vaquillona:{ name:'Vaquillona', emoji:'🐮' },
+    vaca:      { name:'Vaca',       emoji:'🐄' },
+    ternero:   { name:'Ternero',    emoji:'🐄' },
+    toro:      { name:'Toro',       emoji:'🐂' },
+};
+
+// ═══════════════════════════════════
+// CARGA DATA.JSON
+// ═══════════════════════════════════
+async function loadData() {
+    try {
+        const r = await fetch('data.json?v=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        DATA = await r.json();
+        renderAll();
+    } catch(e) {
+        document.getElementById('loader').innerHTML =
+            `<div style="color:var(--red)">⚠ No se pudo cargar data.json<br><small style="color:var(--muted)">${e.message}</small><br><br><small style="color:var(--muted)">Asegurate de que data.json esté en el mismo directorio que index.html.</small></div>`;
+    }
+}
+
+function renderAll() {
+    document.getElementById('loader').style.display = 'none';
+    renderStatusBar();
+    renderGranos();
+    renderHacienda();
+    renderRelaciones();
+    renderTicker();
+    renderCalendario();
+    openTab('granos', document.querySelector('.tab-btn'));
+    onGranoChange();
+    calcular();
+    if (typeof initCanje === 'function') initCanje();
+}
+
+// ═══════════════════════════════════
+// STATUS BAR
+// ═══════════════════════════════════
+function renderStatusBar() {
+    const d = DATA.dolar || {};
+    set('s-dolar',   d.venta  ? `$${n(d.venta,2)}`  : '--');
+    set('s-dolar-c', d.compra ? `$${n(d.compra,2)}` : '--');
+    set('s-fecha',   (DATA.fecha||'--') + ' ' + (DATA.hora||''));
+    set('s-fecha-h', DATA.fecha||'--');
+    if (d.venta) document.getElementById('ret-tc').value = d.venta;
+}
+
+// ═══════════════════════════════════
+// GRANOS
+// ═══════════════════════════════════
+function renderGranos() {
+    const c = document.getElementById('grid-granos');
+    c.innerHTML = '';
+    for (const [k, v] of Object.entries(DATA.granos || {})) {
+        const i = GRAIN_INFO[k] || { name:k, emoji:'🌾' };
+        const d = document.createElement('div');
+        d.className = 'card';
+        d.innerHTML = `
+            <div class="card-label">${i.emoji} ${i.name.toUpperCase()}</div>
+            <div class="card-val">$${ars(v.ars)}</div>
+            <div class="card-sub">Pesos/tn · ${v.mes||''}</div>
+            ${v.usd_tn ? `<div class="card-usd">US$ ${n(v.usd_tn,2)}/tn &nbsp;·&nbsp; US$ ${n(v.usd_tn/10,2)}/qq</div>` : ''}
+            <span class="badge">Rosario</span>`;
+        c.appendChild(d);
+    }
+}
+
+// ═══════════════════════════════════
+// HACIENDA
+// ═══════════════════════════════════
+function renderHacienda() {
+    const c = document.getElementById('grid-hacienda');
+    c.innerHTML = '';
+    const tc = DATA.dolar?.venta || 1382.5;
+    for (const [k, v] of Object.entries(DATA.hacienda || {})) {
+        const i = HAD_INFO[k] || { name:k, emoji:'🐄' };
+        const usd = v.promedio ? (v.promedio / tc * 1000).toFixed(2) : '--';
+        const d = document.createElement('div');
+        d.className = 'card';
+        d.innerHTML = `
+            <div class="card-label">${i.emoji} ${i.name.toUpperCase()}</div>
+            <div class="card-val">$${ars(v.promedio)}<span style="font-size:.75rem;color:var(--muted)">/kg</span></div>
+            <table class="had-table">
+                <tr><td>Promedio</td><td class="prom">$${ars(v.promedio)}/kg</td></tr>
+                <tr><td>Mínimo</td><td>$${ars(v.min)}/kg</td></tr>
+                <tr><td>Máximo</td><td style="color:var(--gold)">$${ars(v.max)}/kg</td></tr>
+                <tr><td>En USD</td><td style="color:var(--gold);font-size:.68rem">≈ US$ ${usd}/kg</td></tr>
+            </table>
+            <span class="badge badge-gold">MAG Cañuelas</span>`;
+        c.appendChild(d);
+    }
+}
+
+// ═══════════════════════════════════
+// RELACIONES
+// ═══════════════════════════════════
+function renderRelaciones() {
+    const c = document.getElementById('grid-relaciones');
+    c.innerHTML = '';
+    const rels   = DATA.relaciones || {};
+    const granos = DATA.granos    || {};
+    const had    = DATA.hacienda  || {};
+
+    c.appendChild(crearRelCard('🌱 Soja vs Insumos', 'qq de soja por unidad de insumo', [
+        { name:'Urea (1 tn)',          val:rels.soja_urea,           unit:'qq soja', ref:20 },
+        { name:'Fosfato DAP (1 tn)',   val:rels.soja_fosfato,        unit:'qq soja', ref:20 },
+        { name:'Glifosato (100 L)',    val:rels.soja_glifosato_100l, unit:'qq soja', ref:6  },
+        { name:'Semilla (bolsa 40 kg)',val:rels.soja_semilla,        unit:'qq soja', ref:2  },
+    ], `Soja: US$ ${granos.soja?.usd_tn ? n(granos.soja.usd_tn,0) : '--'}/tn`));
+
+    c.appendChild(crearRelCard('🌽 Maíz vs Insumos', 'qq de maíz por unidad de insumo', [
+        { name:'Urea (1 tn)',          val:rels.maiz_urea,           unit:'qq maíz', ref:33 },
+        { name:'Fosfato DAP (1 tn)',   val:rels.maiz_fosfato,        unit:'qq maíz', ref:30 },
+        { name:'Glifosato (100 L)',    val:rels.maiz_glifosato_100l, unit:'qq maíz', ref:10 },
+        { name:'Semilla (bolsa)',      val:rels.maiz_semilla,        unit:'qq maíz', ref:12 },
+    ], `Maíz: US$ ${granos.maiz?.usd_tn ? n(granos.maiz.usd_tn,0) : '--'}/tn`));
+
+    const relTN = had.ternero?.promedio && had.novillo?.promedio
+        ? n(had.ternero.promedio / had.novillo.promedio, 2) : '--';
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = `
+        <div class="card-label">🐄 Relaciones Ganaderas</div>
+        <div style="margin-top:12px">
+            <div class="rel-row"><div class="rel-name">Ternero / Novillo<small>kg ternero por kg novillo</small></div><div class="rel-val">${relTN}</div><span class="badge badge-gold">kg/kg</span></div>
+            <div class="rel-row"><div class="rel-name">Maíz / Novillo<small>kg maíz por kg carne</small></div><div class="rel-val">${rels.maiz_kg_novillo ? n(rels.maiz_kg_novillo,2) : '--'}</div><span class="badge">feedlot</span></div>
+            <div class="rel-row"><div class="rel-name">Soja / Maíz<small>tn soja / tn maíz</small></div><div class="rel-val">${rels.soja_maiz ? n(rels.soja_maiz,2) : '--'}</div><span class="badge">sustitución</span></div>
+        </div>
+        <div class="rel-note">Maíz/novillo &lt;0,5 = favorable feedlot. Ternero/novillo ≈1,3 = alta demanda invernada.</div>`;
+    c.appendChild(d);
+}
+
+function crearRelCard(titulo, sub, items, footer) {
+    const maxV = Math.max(...items.map(i => i.val || 0));
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = `
+        <div class="card-label">${titulo}</div>
+        <div style="font-size:.58rem;color:var(--muted);margin:3px 0 12px">${sub}</div>
+        ${items.map(item => {
+            if (!item.val) return '';
+            const pct = Math.min(100, (item.val / (maxV * 1.2)) * 100);
+            const cls = item.val <= item.ref * .9 ? 'good' : item.val <= item.ref * 1.1 ? 'mid' : 'bad';
+            return `<div class="rel-row">
+                <div class="rel-name">${item.name}<small>${item.unit}</small></div>
+                <div class="rel-bar-wrap"><div class="rel-bar ${cls}" style="width:${pct}%"></div></div>
+                <div class="rel-val">${n(item.val,1)}</div>
+            </div>`;
+        }).join('')}
+        <div class="rel-note">${footer}</div>`;
+    return d;
+}
+
+// ═══════════════════════════════════
+// CALCULADORA
+// ═══════════════════════════════════
+function onGranoChange() {
+    const grano = document.getElementById('calc-grano').value;
+    const datos = DATA?.granos?.[grano];
+    const ret   = RETENCIONES[grano] || { pct:24, label:'--' };
+
+    if (datos?.usd_qq) {
+        document.getElementById('calc-precio-qq').value = n(datos.usd_qq, 2);
+        document.getElementById('precio-auto-label').textContent =
+            `↑ Pizarra Rosario: US$${n(datos.usd_qq,2)}/qq · ${datos.mes||''}`;
+        document.getElementById('ret-fob').value = n(datos.usd_tn, 2);
+    }
+    document.getElementById('ret-pct').value  = ret.pct;
+    document.getElementById('ret-hint').textContent = ret.label;
+    calcular();
+}
+
+function calcular() {
+    const precioQq = +document.getElementById('calc-precio-qq').value || 0;
+    const rinde    = +document.getElementById('rinde').value    || 0;
+    const alquiler = +document.getElementById('alquiler').value || 0;
+    const labores  = +document.getElementById('labores').value  || 0;
+    const agro     = +document.getElementById('agro').value     || 0;
+    const seguro   = +document.getElementById('seguro').value   || 0;
+    const flete    = +document.getElementById('flete').value    || 0;
+    const comPct   = +document.getElementById('gastos-com').value || 0;
+    const cosecha  = +document.getElementById('cosecha').value  || 0;
+    const retPct   = +document.getElementById('ret-pct').value  || 0;
+    const fobTn    = +document.getElementById('ret-fob').value  || precioQq * 10;
+    const tc       = +document.getElementById('ret-tc').value   || 1382.5;
+
+    // Retenciones
+    const retUsdTn = fobTn * (retPct / 100);
+    const netoTn   = fobTn - retUsdTn;
+    const netoQq   = netoTn / 10;
+    const netoArs  = netoTn * tc;
+
+    set('ret-usd-tn',  `- US$ ${n(retUsdTn,2)}`);
+    set('ret-neto-tn', `US$ ${n(netoTn,2)}`);
+    set('ret-neto-qq', `US$ ${n(netoQq,2)}`);
+    set('ret-neto-ars',`$ ${ars(netoArs)}`);
+
+    // Margen Bruto (con precio post-retención)
+    const prodTn      = rinde / 10;
+    const ingresoBruto= netoTn * prodTn;
+    const gastoCom    = ingresoBruto * (comPct / 100);
+    const gastFlete   = flete * prodTn;
+    const costoFijo   = alquiler + labores + agro + seguro + cosecha;
+    const costoTotal  = costoFijo + gastoCom + gastFlete;
+    const mb          = ingresoBruto - costoTotal;
+    const rindeIndif  = netoQq > 0 ? costoTotal / (netoQq * (1 - comPct/100) - flete/10) : 0;
+
+    set('mb-ha',         `u$s ${mb >= 0 ? '' : '-'}${n(Math.abs(mb),0)}`);
+    set('ingreso-bruto', `u$s ${n(ingresoBruto,0)}`);
+    set('rinde-indif',   `${n(rindeIndif,1)} qq`);
+    set('mb-neto-qq',    `${n(netoQq,2)} u$s/qq`);
+
+    // Color caja MB
+    const boxMB = document.getElementById('box-mb');
+    boxMB.style.background = mb >= 0 ? 'var(--accent)' : 'var(--red)';
+    document.getElementById('mb-ha').style.color = mb >= 0 ? '#000' : '#fff';
+
+    document.getElementById('box-alerta').style.display = mb < 0 ? 'block' : 'none';
+    if (mb < 0) set('deficit-val', `u$s ${n(Math.abs(mb),0)}`);
+
+    // Desglose
+    set('det-fob',     `US$ ${n(fobTn,2)}/tn`);
+    set('det-ret',     `${retPct}% = -US$ ${n(retUsdTn,2)}/tn`);
+    set('det-neto',    `US$ ${n(netoTn,2)}/tn (${n(netoQq,2)}/qq)`);
+    set('det-prod',    `${n(prodTn,2)} tn/ha`);
+    set('det-ingreso', `u$s ${n(ingresoBruto,2)}`);
+    set('det-com',     `u$s ${n(gastoCom+gastFlete,2)}`);
+    set('det-costo',   `u$s ${n(costoFijo,2)}`);
+    set('det-mb',      `u$s ${n(mb,2)}`);
+    document.getElementById('det-mb').style.color = mb >= 0 ? 'var(--accent)' : 'var(--red)';
+}
+
+// ═══════════════════════════════════
+// EXPORTAR PDF
+// ═══════════════════════════════════
+async function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
+
+    const grano     = document.getElementById('calc-grano').value;
+    const granoInfo = GRAIN_INFO[grano] || { name:grano };
+    const ret       = RETENCIONES[grano] || { pct:0 };
+    const fecha     = DATA?.fecha || new Date().toLocaleDateString('es-AR');
+    const tc        = +document.getElementById('ret-tc').value || 1382.5;
+
+    // Paleta
+    const G  = [118,196,66];
+    const DK = [11,13,11];
+    const CD = [20,23,20];
+    const C2 = [26,29,26];
+    const AU = [232,183,77];
+    const RD = [255,95,95];
+    const WH = [240,245,240];
+    const MT = [122,138,122];
+    const BL = [77,184,232];
+
+    // Fondo
+    doc.setFillColor(...DK); doc.rect(0,0,210,297,'F');
+
+    // Header
+    doc.setFillColor(26,38,22); doc.rect(0,0,210,42,'F');
+    doc.setFillColor(...G);     doc.rect(0,42,210,1.5,'F');
+
+    // Logo
+    try {
+        const b64 = await imgToBase64('logo.png');
+        doc.addImage(b64,'PNG',8,7,52,28,undefined,'FAST');
+    } catch {
+        doc.setFont('helvetica','bold'); doc.setFontSize(17);
+        doc.setTextColor(...G);
+        doc.text('AGRO SIN FRONTERAS',10,22);
+    }
+
+    doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...MT);
+    doc.text('Intelligence Hub · Mercados Agropecuarios Argentina',10,34);
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...WH);
+    doc.text('ANÁLISIS DE MARGEN BRUTO',125,16);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MT);
+    doc.text(`${granoInfo.name.toUpperCase()} · ${fecha}`,125,22);
+    doc.text(`TC BNA: $${n(tc,2)} · Ret. Dcto. 877/2025: ${ret.pct}%`,125,28);
+
+    // Sección retenciones
+    let y = 54;
+    secTitle(doc,'RETENCIONES Y PRECIO NETO AL PRODUCTOR',y,G);
+    y += 9;
+    const retRows = [
+        ['Precio FOB Pizarra Rosario',              `US$ ${document.getElementById('ret-fob').value||'--'}/tn`],
+        ['Retención aplicada',                       `${ret.pct}%  →  ${document.getElementById('ret-usd-tn').textContent}`],
+        ['Precio neto productor (u$s/tn)',           document.getElementById('ret-neto-tn').textContent],
+        ['Precio neto productor (u$s/qq)',           document.getElementById('ret-neto-qq').textContent],
+        ['Precio neto en pesos ($/tn)',              document.getElementById('ret-neto-ars').textContent],
+    ];
+    y = tbl(doc, retRows, y, CD, WH, G, MT);
+
+    // Sección parámetros
+    y += 7;
+    secTitle(doc,'PARÁMETROS DE PRODUCCIÓN',y,AU);
+    y += 9;
+    const paramRows = [
+        ['Cultivo',                          granoInfo.name + ' · Pizarra Rosario ' + fecha],
+        ['Precio grano (u$s/qq)',            document.getElementById('calc-precio-qq').value||'--'],
+        ['Rinde esperado (qq/ha)',           document.getElementById('rinde').value||'--'],
+        ['Alquiler (u$s/ha)',               document.getElementById('alquiler').value||'--'],
+        ['Labores + Semilla (u$s/ha)',       document.getElementById('labores').value||'--'],
+        ['Agroquímicos + Fert. (u$s/ha)',   document.getElementById('agro').value||'--'],
+        ['Seguro (u$s/ha)',                 document.getElementById('seguro').value||'--'],
+        ['Flete (u$s/tn)',                  document.getElementById('flete').value||'--'],
+        ['Comisiones + parafiscales (%)',   document.getElementById('gastos-com').value||'--'],
+        ['Costo cosecha (u$s/ha)',          document.getElementById('cosecha').value||'--'],
+    ];
+    y = tbl(doc, paramRows, y, CD, WH, AU, MT);
+
+    // Sección resultados
+    y += 7;
+    secTitle(doc,'RESULTADOS',y,G);
+    y += 9;
+    const mbNum  = parseFloat(document.getElementById('mb-ha').textContent.replace(/[^0-9.-]/g,'')) || 0;
+    const mbPos  = !document.getElementById('mb-ha').textContent.includes('-');
+    const resRows = [
+        ['Ingreso bruto (u$s/ha)',               document.getElementById('det-ingreso').textContent],
+        ['Gastos comercialización + flete',       document.getElementById('det-com').textContent],
+        ['Costo fijo implantación + cosecha',    document.getElementById('det-costo').textContent],
+        ['Rinde de indiferencia',                document.getElementById('rinde-indif').textContent],
+        ['MARGEN BRUTO NETO (u$s/ha)',           document.getElementById('mb-ha').textContent],
+    ];
+    for (let i=0; i<resRows.length; i++) {
+        const isLast = i === resRows.length-1;
+        const bg = isLast ? (mbPos ? [15,45,15] : [50,15,15]) : (i%2===0 ? CD : C2);
+        const tc2= isLast ? (mbPos ? G : RD) : WH;
+        row(doc, resRows[i][0], resRows[i][1], y, bg, tc2, isLast);
+        y += 9;
+    }
+
+    // Footer
+    doc.setFillColor(...CD); doc.rect(0,280,210,17,'F');
+    doc.setFillColor(...G);  doc.rect(0,280,210,0.8,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...MT);
+    doc.text(`Generado por ASF Intelligence Hub · @agrosinfronterasok · ${fecha}`,10,288);
+    doc.text('Los valores son orientativos. Verificar con su asesor técnico antes de tomar decisiones.',10,293);
+    doc.setTextColor(...G);
+    doc.text('instagram.com/agrosinfronterasok',148,288);
+
+    const fname = `ASF_MargenBruto_${grano}_${fecha.replace(/\//g,'-')}.pdf`;
+    doc.save(fname);
+
+    // WhatsApp
+    setTimeout(() => {
+        const txt = encodeURIComponent(
+            `📊 *Análisis Margen Bruto — ${granoInfo.name}*\n` +
+            `📅 ${fecha} | TC BNA: $${n(tc,2)}\n` +
+            `📉 Retención ${ret.pct}% → Precio neto: ${document.getElementById('ret-neto-qq').textContent}/qq\n` +
+            `💰 *Margen Bruto: ${document.getElementById('mb-ha').textContent}*\n` +
+            `🌾 Rinde indiferencia: ${document.getElementById('rinde-indif').textContent}\n\n` +
+            `📱 Calculado con ASF Intelligence Hub · @agrosinfronterasok`
+        );
+        if (confirm('✅ PDF descargado.\n\n¿Querés compartir el resumen por WhatsApp?')) {
+            window.open(`https://wa.me/?text=${txt}`, '_blank');
+        }
+    }, 600);
+}
+
+// Helpers PDF
+function secTitle(doc, txt, y, color) {
+    doc.setFillColor(20,26,18); doc.rect(8,y-5,194,8,'F');
+    doc.setFillColor(...color); doc.rect(8,y-5,3,8,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+    doc.setTextColor(...color); doc.text(txt,14,y);
+}
+
+function tbl(doc, rows, y, bg, textC, accentC, mutedC) {
+    for (let i=0; i<rows.length; i++) {
+        doc.setFillColor(...(i%2===0 ? bg : [15,17,15]));
+        doc.rect(8,y,194,8,'F');
+        doc.setFont('helvetica','normal'); doc.setFontSize(7.2);
+        doc.setTextColor(...mutedC); doc.text(rows[i][0],12,y+5.5);
+        doc.setFont('helvetica','bold');
+        doc.setTextColor(...textC); doc.text(String(rows[i][1]),202,y+5.5,{align:'right'});
+        y += 8;
+    }
+    return y;
+}
+
+function row(doc, label, val, y, bg, textC, bold) {
+    doc.setFillColor(...bg); doc.rect(8,y,194,8,'F');
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setFontSize(bold ? 8 : 7.2);
+    doc.setTextColor(100,120,100); doc.text(label,12,y+5.5);
+    doc.setTextColor(...textC); doc.text(String(val),202,y+5.5,{align:'right'});
+}
+
+function imgToBase64(src) {
+    return new Promise((res,rej) => {
+        const img = new Image(); img.crossOrigin='anonymous';
+        img.onload = () => {
+            const c = document.createElement('canvas');
+            c.width=img.width; c.height=img.height;
+            c.getContext('2d').drawImage(img,0,0);
+            res(c.toDataURL('image/png'));
+        };
+        img.onerror = rej;
+        img.src = src;
+    });
+}
+
+// ═══════════════════════════════════
+// CALENDARIO
+// ═══════════════════════════════════
+const EVENTOS = [
+    // FISCAL / SISA / ARCA
+    { mes:'Mayo 2026',    dia:9,  wd:'SAB', titulo:'Vencimiento ARCA — Grandes Contribuyentes',       desc:'Presentación y pago IVA y Ganancias empresas agropecuarias categoría A',    cat:'fiscal' },
+    { mes:'Mayo 2026',    dia:20, wd:'MIÉ', titulo:'Vencimiento SISA — Actualización de Padrones',    desc:'Renovación inscripción SISA para operadores de granos. Verificar estado en ARCA', cat:'fiscal' },
+    { mes:'Mayo 2026',    dia:26, wd:'MAR', titulo:'ARCA — Bienes Personales · Anticipo',             desc:'Vencimiento anticipo anual de Bienes Personales agropecuarios',               cat:'fiscal' },
+    { mes:'Junio 2026',   dia:9,  wd:'MAR', titulo:'Vencimiento ARCA — Declaración Jurada IVA',      desc:'Período mayo. Aplica a productores inscriptos como responsables del IVA',    cat:'fiscal' },
+    { mes:'Junio 2026',   dia:15, wd:'LUN', titulo:'SISA — Habilitación nueva campaña gruesa',        desc:'Plazo actualización SISA para comercialización soja 2025/26',                 cat:'fiscal' },
+    { mes:'Junio 2026',   dia:30, wd:'MAR', titulo:'Cierre ejercicio fiscal agropecuario',            desc:'Cierre período impositivo para actividades con ejercicio calendario',         cat:'fiscal' },
+    { mes:'Julio 2026',   dia:10, wd:'VIE', titulo:'Vencimiento ARCA — Grandes contrib. IVA/Gcias',  desc:'Pago IVA y anticipos Ganancias. Período junio',                              cat:'fiscal' },
+    { mes:'Agosto 2026',  dia:10, wd:'LUN', titulo:'Vencimiento ARCA — IVA período julio',           desc:'Pequeños contrib. y responsables inscriptos agropecuarios',                  cat:'fiscal' },
+    // USDA
+    { mes:'Mayo 2026',    dia:9,  wd:'SAB', titulo:'USDA WASDE — Mayo 2026',                         desc:'World Agricultural Supply & Demand Estimates. Alto impacto soja/maíz. 12:00 hs ET', cat:'usda' },
+    { mes:'Mayo 2026',    dia:12, wd:'MAR', titulo:'USDA Crop Progress Report',                      desc:'Estado siembra de maíz y soja en EEUU. Impacto directo en futuros CBOT',    cat:'usda' },
+    { mes:'Junio 2026',   dia:11, wd:'JUE', titulo:'USDA WASDE — Junio 2026',                       desc:'Actualización oferta/demanda global. Perspectivas cosecha Hemisferio Norte', cat:'usda' },
+    { mes:'Junio 2026',   dia:30, wd:'MAR', titulo:'USDA Acreage & Grain Stocks',                   desc:'Informe de intención de siembra y stocks trimestrales. Alto impacto en precios', cat:'usda' },
+    { mes:'Julio 2026',   dia:10, wd:'VIE', titulo:'USDA WASDE — Julio 2026',                       desc:'Primera estimación cosecha nueva de maíz y soja EEUU. Muy relevante',        cat:'usda' },
+    { mes:'Agosto 2026',  dia:12, wd:'MIÉ', titulo:'USDA WASDE — Agosto 2026',                      desc:'Primeras estimaciones de rinde de maíz y soja. Mayor impacto de la campaña', cat:'usda' },
+    // BCR / BOLSAS
+    { mes:'Mayo 2026',    dia:6,  wd:'MIÉ', titulo:'BCR — Informe Semanal de Granos',               desc:'Panorama mercado local. Estimación oferta/demanda Argentina. bcr.com.ar',     cat:'bcr' },
+    { mes:'Mayo 2026',    dia:22, wd:'VIE', titulo:'BCR — Estimación cosecha gruesa 2025/26',        desc:'Dato oficial de producción de soja y maíz Argentina. Mueve el mercado local', cat:'bcr' },
+    { mes:'Mayo 2026',    dia:29, wd:'VIE', titulo:'BCR — Reporte mensual exportaciones',           desc:'Volumen y valor de exportaciones de granos y subproductos del mes',          cat:'bcr' },
+    { mes:'Junio 2026',   dia:5,  wd:'VIE', titulo:'BCR — Informe de coyuntura agroindustrial',     desc:'Análisis mensual complejo agroexportador Gran Rosario',                       cat:'bcr' },
+    { mes:'Junio 2026',   dia:19, wd:'VIE', titulo:'BCR — Cierre comercialización soja/maíz',       desc:'Cumplimiento de ventas vs. estimación de cosecha campaña 2025/26',           cat:'bcr' },
+    { mes:'Julio 2026',   dia:3,  wd:'VIE', titulo:'BCR — Perspectivas campaña fina 2026/27',       desc:'Primeras estimaciones de siembra de trigo y cebada 2026/27',                 cat:'bcr' },
+    // EXPOSICIONES
+    { mes:'Junio 2026',   dia:9,  wd:'MAR', titulo:'🐄 AGROACTIVA 2026 — Inicio',                   desc:'Muestra agroindustrial a campo. Armstrong, Santa Fe. Tecnología, maquinaria y ganadería', cat:'expo' },
+    { mes:'Junio 2026',   dia:12, wd:'VIE', titulo:'🐄 AGROACTIVA 2026 — Cierre',                   desc:'Último día. Rondas de negocios ganadería, maquinaria e insumos agropecuarios', cat:'expo' },
+    { mes:'Julio 2026',   dia:19, wd:'DOM', titulo:'🏆 RURAL DE PALERMO — Inicio',                   desc:'Predio La Rural, CABA. Mayor exposición ganadera del país. Remates y ventas', cat:'expo' },
+    { mes:'Julio 2026',   dia:28, wd:'MAR', titulo:'🏆 RURAL DE PALERMO — Cierre',                   desc:'Cierre Sociedad Rural Argentina. Discurso presidencial tradicional',           cat:'expo' },
+    { mes:'Agosto 2026',  dia:25, wd:'MAR', titulo:'🌾 EXPOAGRO 2026 — Fecha tentativa',             desc:'Exposición a campo Entre Ríos / Santa Fe. Referencia nacional tecnología agrícola', cat:'expo' },
+];
+
+let filtroActual = 'all';
+
+function renderCalendario() { renderCal(filtroActual); }
+
+function filtrarCal(cat, btn) {
+    filtroActual = cat;
+    document.querySelectorAll('.cal-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCal(cat);
+}
+
+function renderCal(cat) {
+    const c = document.getElementById('cal-container');
+    c.innerHTML = '';
+    const filtered = cat === 'all' ? EVENTOS : EVENTOS.filter(e => e.cat === cat);
+    const porMes = {};
+    filtered.forEach(ev => { if (!porMes[ev.mes]) porMes[ev.mes]=[]; porMes[ev.mes].push(ev); });
+
+    const catCls   = { fiscal:'cat-fiscal', usda:'cat-usda', bcr:'cat-bcr', expo:'cat-expo' };
+    const catNames = { fiscal:'Fiscal/SISA/ARCA', usda:'Informe USDA', bcr:'BCR/Bolsa', expo:'Exposición' };
+
+    for (const [mes, evs] of Object.entries(porMes)) {
+        const block = document.createElement('div');
+        block.className = 'cal-month';
+        block.innerHTML = `
+            <div class="cal-month-hdr">
+                <span class="cal-month-name">📅 ${mes}</span>
+                <span style="font-size:.58rem;color:var(--muted)">${evs.length} evento${evs.length>1?'s':''}</span>
+            </div>
+            <div>
+                ${evs.sort((a,b)=>a.dia-b.dia).map(ev=>`
+                <div class="cal-event">
+                    <div class="cal-date-badge"><div class="cal-day">${ev.dia}</div><div class="cal-wd">${ev.wd}</div></div>
+                    <div>
+                        <div class="cal-event-title">${ev.titulo}</div>
+                        <div class="cal-event-desc">${ev.desc}</div>
+                        <span class="cal-cat ${catCls[ev.cat]||''}">${catNames[ev.cat]||ev.cat}</span>
+                    </div>
+                </div>`).join('')}
+            </div>`;
+        c.appendChild(block);
+    }
+
+    if (!Object.keys(porMes).length)
+        c.innerHTML = '<div style="color:var(--muted);font-size:.8rem;padding:30px;text-align:center;grid-column:1/-1">No hay eventos para este filtro.</div>';
+}
+
+// ═══════════════════════════════════
+// CLIMA
+// ═══════════════════════════════════
+const CIUDADES = [
+    { n:'Rosario',         lat:-32.9575, lon:-60.6394 },
+    { n:'Córdoba',         lat:-31.4201, lon:-64.1888 },
+    { n:'Buenos Aires',    lat:-34.6118, lon:-58.3960 },
+    { n:'Río Cuarto',      lat:-33.1307, lon:-64.3499 },
+    { n:'Bahía Blanca',    lat:-38.7183, lon:-62.2663 },
+    { n:'Venado Tuerto',   lat:-33.7454, lon:-61.9616 },
+    { n:'Trenque Lauquen', lat:-35.9723, lon:-62.7296 },
+    { n:'Junín',           lat:-34.5928, lon:-60.9572 },
+];
+const WM = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',51:'🌦️',61:'🌧️',71:'🌨️',80:'🌦️',95:'⛈️',99:'⛈️'};
+
+async function loadClima() {
+    const grid = document.getElementById('weather-grid');
+    grid.innerHTML = '';
+    for (const c of CIUDADES) {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,weathercode,windspeed_10m,precipitation&timezone=America%2FArgentina%2FBuenos_Aires`;
+        try {
+            const r = await fetch(url), d = await r.json(), cur = d.current;
+            const div = document.createElement('div');
+            div.className = 'w-card';
+            div.innerHTML = `<div class="w-icon">${WM[cur.weathercode]||'🌡️'}</div><div class="w-temp">${Math.round(cur.temperature_2m)}°C</div><div class="w-city">${c.n}</div><div class="w-desc">💨 ${Math.round(cur.windspeed_10m)} km/h · 🌧 ${cur.precipitation} mm</div>`;
+            grid.appendChild(div);
+        } catch {
+            const div = document.createElement('div');
+            div.className = 'w-card';
+            div.innerHTML = `<div class="w-city">${c.n}</div><div style="color:var(--muted);font-size:.7rem">Sin datos</div>`;
+            grid.appendChild(div);
+        }
+    }
+}
+
+// ═══════════════════════════════════
+// TICKER
+// ═══════════════════════════════════
+function renderTicker() {
+    const granos = DATA.granos   || {};
+    const had    = DATA.hacienda || {};
+    const dolar  = DATA.dolar?.venta;
+    const items  = [];
+    for (const [k,v] of Object.entries(granos)) {
+        const i = GRAIN_INFO[k] || { emoji:'🌾', name:k };
+        items.push(`<span class="ticker-item">${i.emoji} ${i.name.toUpperCase()} <b>$${ars(v.ars)}</b> · US$${n(v.usd_tn,0)}/tn <span class="ticker-sep">|</span></span>`);
+    }
+    if (had.novillito) items.push(`<span class="ticker-item">🐂 NOVILLITO <b>$${ars(had.novillito.max)}/kg</b> máx <span class="ticker-sep">|</span></span>`);
+    if (had.novillo)   items.push(`<span class="ticker-item">🐃 NOVILLO <b>$${ars(had.novillo.promedio)}/kg</b> prom <span class="ticker-sep">|</span></span>`);
+    if (dolar)         items.push(`<span class="ticker-item">💵 BNA <b>$${n(dolar,2)}</b> <span class="ticker-sep">|</span></span>`);
+    const content = items.join('');
+    document.getElementById('ticker-track').innerHTML = content + content;
+}
+
+// ═══════════════════════════════════
+// NAV
+// ═══════════════════════════════════
+function openTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (id === 'canje' && typeof initCanje === 'function') { setTimeout(initCanje, 50); }
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('active'); el.style.display='block'; }
+    if (btn) btn.classList.add('active');
+    if (id === 'clima') loadClima();
+}
+
+// ═══════════════════════════════════
+// UTILS
+// ═══════════════════════════════════
+function n(v, dec=0) { return v==null||isNaN(v)?'--':parseFloat(v).toLocaleString('es-AR',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+function ars(v)      { return v ? Math.round(v).toLocaleString('es-AR') : '--'; }
+function set(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+
+// ═══════════════════════════════════
+// INICIO
+// ═══════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
