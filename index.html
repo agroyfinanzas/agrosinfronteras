@@ -7,173 +7,161 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // CALCULADORA DE CANJE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 
-// Precios de referencia de insumos en u$s por unidad indicada
 const INSUMOS_CANJE = {
-    // Fertilizantes (precio por tn)
-    urea:       { nombre:'Urea granulada',           usd: 1000, unidad:'por tn',    factor: 1000 }, // factor = kg por unidad
-    dap:        { nombre:'Fosfato DAP (18-46-0)',     usd:  650, unidad:'por tn',    factor: 1000 },
-    map:        { nombre:'MAP (12-52-0)',             usd:  700, unidad:'por tn',    factor: 1000 },
-    uan:        { nombre:'UAN solución 32%',          usd:  450, unidad:'por tn',    factor: 1000 },
-    sfs:        { nombre:'Superfosfato simple',       usd:  420, unidad:'por tn',    factor: 1000 },
-    yeso:       { nombre:'Yeso agrícola',             usd:  140, unidad:'por tn',    factor: 1000 },
-    // Herbicidas (precio por 100 L o kg)
-    glifosato:  { nombre:'Glifosato 48%',             usd:  320, unidad:'por 100 L', factor: 100  },
-    '24d':      { nombre:'2,4-D amina 72%',           usd:  450, unidad:'por 100 L', factor: 100  },
-    atrazina:   { nombre:'Atrazina 90% WG',           usd:  600, unidad:'por 100 kg',factor: 100  },
-    dicamba:    { nombre:'Dicamba',                   usd: 1400, unidad:'por 100 L', factor: 100  },
-    // Insecticidas (precio por 100 L)
-    clorpirifos:{ nombre:'Clorpirifos 48%',           usd:  650, unidad:'por 100 L', factor: 100  },
-    lambda:     { nombre:'Lambda cihalotrina',        usd: 1200, unidad:'por 100 L', factor: 100  },
-    imida:      { nombre:'Imidacloprid 35% SC',       usd: 1800, unidad:'por 100 L', factor: 100  },
-    // Fungicidas (precio por 100 L)
-    azox:       { nombre:'Azoxistrobina + Cipro.',    usd: 2200, unidad:'por 100 L', factor: 100  },
-    tebu:       { nombre:'Tebuconazole 43% SC',       usd: 1500, unidad:'por 100 L', factor: 100  },
-    triflox:    { nombre:'Triflox. + Tebuconazole',   usd: 2800, unidad:'por 100 L', factor: 100  },
-    // Semillas (precio por unidad/bolsa)
-    sem_soja:   { nombre:'Semilla soja (bolsa 40kg)', usd:   80, unidad:'por bolsa', factor: 40   },
-    sem_maiz:   { nombre:'Semilla maíz (bolsa 70M)',  usd:  140, unidad:'por bolsa', factor: null },
-    sem_trigo:  { nombre:'Semilla trigo (bolsa 25kg)',usd:   45, unidad:'por bolsa', factor: 25   },
+    // Fertilizantes — precio u$s por TN
+    urea:        { nombre:'Urea granulada',           usd:1000, unidad:'por tn'     },
+    dap:         { nombre:'Fosfato DAP (18-46-0)',     usd: 650, unidad:'por tn'     },
+    map:         { nombre:'MAP (12-52-0)',             usd: 700, unidad:'por tn'     },
+    uan:         { nombre:'UAN solución 32%',          usd: 450, unidad:'por tn'     },
+    sfs:         { nombre:'Superfosfato simple',       usd: 420, unidad:'por tn'     },
+    yeso:        { nombre:'Yeso agrícola',             usd: 140, unidad:'por tn'     },
+    // Herbicidas — precio u$s por 100 L/kg
+    glifosato:   { nombre:'Glifosato 48%',             usd: 320, unidad:'por 100 L'  },
+    '24d':       { nombre:'2,4-D amina 72%',           usd: 450, unidad:'por 100 L'  },
+    atrazina:    { nombre:'Atrazina 90% WG',           usd: 600, unidad:'por 100 kg' },
+    dicamba:     { nombre:'Dicamba',                   usd:1400, unidad:'por 100 L'  },
+    // Insecticidas
+    clorpirifos: { nombre:'Clorpirifos 48%',           usd: 650, unidad:'por 100 L'  },
+    lambda:      { nombre:'Lambda cihalotrina',        usd:1200, unidad:'por 100 L'  },
+    imida:       { nombre:'Imidacloprid 35% SC',       usd:1800, unidad:'por 100 L'  },
+    // Fungicidas
+    azox:        { nombre:'Azoxistrobina + Cipro.',    usd:2200, unidad:'por 100 L'  },
+    tebu:        { nombre:'Tebuconazole 43% SC',       usd:1500, unidad:'por 100 L'  },
+    triflox:     { nombre:'Triflox. + Tebuconazole',   usd:2800, unidad:'por 100 L'  },
+    // Semillas
+    sem_soja:    { nombre:'Semilla soja (bolsa 40 kg)',usd:  80, unidad:'por bolsa'  },
+    sem_maiz:    { nombre:'Semilla maíz (bolsa 70M)',  usd: 140, unidad:'por bolsa'  },
+    sem_trigo:   { nombre:'Semilla trigo (bolsa 25kg)',usd:  45, unidad:'por bolsa'  },
     // Combustible
-    gasoil:     { nombre:'Gasoil agro',               usd:  0.5, unidad:'por litro', factor: 1    },
-    gasoil500:  { nombre:'Gasoil agro (500 L)',        usd:  250, unidad:'por 500 L', factor: 500  },
+    gasoil:      { nombre:'Gasoil agro',               usd: 0.5, unidad:'por litro'  },
+    gasoil500:   { nombre:'Gasoil agro (500 L)',        usd: 250, unidad:'por 500 L'  },
     // Custom
-    custom:     { nombre:'Precio manual',             usd:    0, unidad:'por unidad',factor: null },
+    custom:      { nombre:'Precio manual',             usd:   0, unidad:'por unidad' },
 };
 
-function onCanjeInsumoChange() {
-    const tipo = document.getElementById('canje-insumo-tipo').value;
+// Se llama cuando DATA ya está cargado y se abre la tab por primera vez
+function initCanje() {
+    cjTipoChange();   // carga precio insumo
+    cjGranoChange();  // carga precio grano + retención + TC desde data.json
+}
+
+function cjTipoChange() {
+    const tipo = document.getElementById('cj-tipo').value;
     const ins  = INSUMOS_CANJE[tipo];
     if (!ins) return;
-
-    if (tipo === 'custom') {
-        document.getElementById('canje-precio-insumo').value = '';
-        document.getElementById('canje-precio-insumo').removeAttribute('readonly');
-        document.getElementById('canje-insumo-hint').textContent = 'Ingresá el precio manualmente';
-        document.getElementById('canje-unidad').value = 'por unidad';
+    const esCustom = tipo === 'custom';
+    const pEl = document.getElementById('cj-precio');
+    if (esCustom) {
+        pEl.value = '';
+        pEl.removeAttribute('readonly');
+        pEl.style.color = '#fff';
+        document.getElementById('cj-precio-hint').textContent = 'Ingresá el precio manualmente (u$s)';
     } else {
-        document.getElementById('canje-precio-insumo').value = ins.usd;
-        document.getElementById('canje-precio-insumo').setAttribute('readonly', true);
-        document.getElementById('canje-insumo-hint').textContent = `Precio referencia mayo 2026 · ${ins.unidad}`;
-        document.getElementById('canje-unidad').value = ins.unidad;
+        pEl.value = ins.usd;
+        pEl.setAttribute('readonly', true);
+        pEl.style.color = 'var(--gold)';
+        document.getElementById('cj-precio-hint').textContent = `Referencia mayo 2026 · ${ins.unidad}`;
     }
-    calcularCanje();
+    document.getElementById('cj-unidad').value = ins.unidad;
+    calcCanje();
 }
 
-function onCanjeGranoChange() {
-    const grano = document.getElementById('canje-grano').value;
+function cjGranoChange() {
+    const grano = document.getElementById('cj-grano').value;
+    // Precios desde data.json (fuente principal)
     const datos = DATA?.granos?.[grano];
-    const ret   = RETENCIONES[grano] || { pct: 24, label: '--' };
+    const ret   = RETENCIONES[grano] || { pct:24, label:'--' };
+    const tc    = DATA?.dolar?.venta || 1382.5;
 
     if (datos?.usd_tn) {
-        document.getElementById('canje-precio-grano-tn').value = n(datos.usd_tn, 2);
-        document.getElementById('canje-grano-hint').textContent =
-            `↑ Pizarra Rosario: US$ ${n(datos.usd_tn,2)}/tn`;
+        document.getElementById('cj-fob').value = n(datos.usd_tn, 2);
+        document.getElementById('cj-fob-hint').textContent =
+            `↑ Pizarra Rosario: US$ ${n(datos.usd_tn,2)}/tn · ${datos.mes||''}`;
     }
-    document.getElementById('canje-ret').value = ret.pct;
-    document.getElementById('canje-ret-hint').textContent = ret.label;
-
-    if (DATA?.dolar?.venta) {
-        document.getElementById('canje-tc').value = n(DATA.dolar.venta, 2);
-    }
-    calcularCanje();
+    document.getElementById('cj-ret').value = ret.pct;
+    document.getElementById('cj-ret-hint').textContent = ret.label;
+    document.getElementById('cj-tc').value  = n(tc, 2);
+    calcCanje();
 }
 
-function calcularCanje() {
-    const tipo       = document.getElementById('canje-insumo-tipo').value;
-    const precioIns  = +document.getElementById('canje-precio-insumo').value || 0;
-    const cantidad   = +document.getElementById('canje-cantidad').value || 1;
-    const fobTn      = +document.getElementById('canje-precio-grano-tn').value || 0;
-    const retPct     = +document.getElementById('canje-ret').value || 0;
-    const tc         = +document.getElementById('canje-tc').value || 1382.5;
-    const refMode    = document.getElementById('canje-precio-ref').value;
-    const grano      = document.getElementById('canje-grano').value;
+function calcCanje() {
+    const tipo     = document.getElementById('cj-tipo').value;
+    const precio   = +document.getElementById('cj-precio').value   || 0;
+    const cantidad = +document.getElementById('cj-cantidad').value  || 1;
+    const fobTn    = +document.getElementById('cj-fob').value       || 0;
+    const retPct   = +document.getElementById('cj-ret').value       || 0;
+    const tc       = +document.getElementById('cj-tc').value        || 1382.5;
+    const refMode  = document.getElementById('cj-ref').value;
+    const grano    = document.getElementById('cj-grano').value;
 
     // Precio neto post-retención
-    const retUsd    = fobTn * (retPct / 100);
-    const netoTn    = fobTn - retUsd;
-    const netoQq    = netoTn / 10;
-    const netoArs   = netoTn * tc;
+    const netoTn  = fobTn * (1 - retPct / 100);
+    const netoQq  = netoTn / 10;
+    const netoArs = netoTn * tc;
 
     // Mostrar precio neto
-    setText('canje-neto-tn',  fobTn > 0 ? `US$ ${n(netoTn,2)}/tn` : '--');
-    setText('canje-neto-qq',  fobTn > 0 ? `US$ ${n(netoQq,2)}/qq` : '--');
-    setText('canje-neto-ars', fobTn > 0 ? `$ ${ars(netoArs)}/tn`  : '--');
+    document.getElementById('cj-neto-tn').textContent  = fobTn > 0 ? `US$ ${n(netoTn,2)}/tn` : '--';
+    document.getElementById('cj-neto-qq').textContent  = fobTn > 0 ? `US$ ${n(netoQq,2)}/qq`  : '--';
+    document.getElementById('cj-neto-ars').textContent = fobTn > 0 ? `$ ${ars(netoArs)}/tn`   : '--';
 
-    // Precio activo según referencia elegida
-    const precioActivoTn = refMode === 'neto' ? netoTn : fobTn;
-    document.getElementById('canje-precio-activo').value = precioActivoTn > 0 ? n(precioActivoTn, 2) : '';
+    // Precio activo según modo elegido
+    const activoTn = refMode === 'neto' ? netoTn : fobTn;
+    document.getElementById('cj-activo').value = activoTn > 0 ? n(activoTn, 2) : '';
 
-    if (precioIns <= 0 || precioActivoTn <= 0) return;
+    if (precio <= 0 || activoTn <= 0) return;
 
-    // Valor total del insumo en u$s
-    const totalUsd = precioIns * cantidad;
+    // Cálculo canje
+    const totalUsd = precio * cantidad;
     const totalArs = totalUsd * tc;
-
-    // Canje en tn y qq
-    const canjeTn  = totalUsd / precioActivoTn;
+    const canjeTn  = totalUsd / activoTn;
     const canjeQq  = canjeTn * 10;
     const canjeKg  = canjeTn * 1000;
 
-    // qq retenidos (sobre el total de grano que habría que vender al FOB para pagar)
-    const granoFobNecesarioTn = totalUsd / fobTn;
-    const retQq = granoFobNecesarioTn * (retPct / 100) * 10;
+    // qq retenidos: cuántos qq extra habría que vender al FOB para recuperar la retención
+    const retQq = fobTn > 0 ? (totalUsd / fobTn) * (retPct / 100) * 10 : 0;
 
-    // Mostrar resultados
-    setText('canje-qq-total',  `${n(canjeQq, 2)} qq`);
-    setText('canje-qq-sub',    `de ${(GRAIN_INFO[grano]||{name:grano}).name}`);
-    setText('canje-tn-total',  `${n(canjeTn, 3)} tn`);
-    setText('canje-tn-sub',    `de ${(GRAIN_INFO[grano]||{name:grano}).name}`);
-    setText('canje-kg-total',  `${n(canjeKg, 1)} kg`);
-    setText('canje-usd-total', `US$ ${n(totalUsd, 2)}`);
-    const ins = INSUMOS_CANJE[tipo];
-    setText('canje-usd-sub',   ins ? `${cantidad} ${ins.unidad}` : '');
-    setText('canje-ars-total', `$ ${ars(totalArs)}`);
-    setText('canje-ars-sub',   `TC BNA $${n(tc,2)}`);
-    setText('canje-ret-sobre', `${n(retQq, 2)} qq`);
+    const granoNombre = (GRAIN_INFO[grano] || { name: grano }).name;
+    const ins = INSUMOS_CANJE[tipo] || {};
+
+    set('cj-res-qq',      `${n(canjeQq,2)} qq`);
+    set('cj-res-qq-sub',  `de ${granoNombre}`);
+    set('cj-res-tn',      `${n(canjeTn,3)} tn`);
+    set('cj-res-kg',      `${n(canjeKg,1)} kg`);
+    set('cj-res-usd',     `US$ ${n(totalUsd,2)}`);
+    set('cj-res-usd-sub', ins.unidad ? `${cantidad} ${ins.unidad}` : '');
+    set('cj-res-ars',     `$ ${ars(totalArs)}`);
+    set('cj-res-ars-sub', `TC BNA $${n(tc,2)}`);
+    set('cj-res-ret',     retQq > 0 ? `${n(retQq,2)} qq` : '--');
 
     // Tabla comparativa
-    actualizarTablaComparativa(totalUsd, tc, retPct);
-}
-
-function actualizarTablaComparativa(totalUsd, tc, retPctActual) {
-    const refMode  = document.getElementById('canje-precio-ref').value;
-    const granos   = ['soja','maiz','trigo','girasol','sorgo'];
-    const nombres  = { soja:'🌱 Soja', maiz:'🌽 Maíz', trigo:'🌾 Trigo', girasol:'🌻 Girasol', sorgo:'🌾 Sorgo' };
-    const tbody    = document.getElementById('canje-tabla-body');
-    const granoSel = document.getElementById('canje-grano').value;
+    const tbody = document.getElementById('cj-tabla');
+    const granos = ['soja','maiz','trigo','girasol','sorgo'];
+    const nombres = {soja:'🌱 Soja',maiz:'🌽 Maíz',trigo:'🌾 Trigo',girasol:'🌻 Girasol',sorgo:'🌾 Sorgo'};
 
     tbody.innerHTML = granos.map(g => {
-        const datos   = DATA?.granos?.[g];
-        const ret     = RETENCIONES[g] || { pct: 0 };
-        const fobTn   = datos?.usd_tn || 0;
-        const netoTn  = fobTn * (1 - ret.pct / 100);
-        const netoQq  = netoTn / 10;
-        const activoTn= refMode === 'neto' ? netoTn : fobTn;
-        const canjeQq = activoTn > 0 ? totalUsd / activoTn * 10 : 0;
-        const canjeKg = canjeQq * 100;
-        const canjeArs= canjeQq / 10 * activoTn * tc;
-        const isActivo = g === granoSel;
-
-        return `<tr style="${isActivo ? 'background:rgba(118,196,66,.07);' : ''}">
-            <td class="td-nombre">${nombres[g]}${isActivo ? ' ←' : ''}</td>
-            <td>${fobTn > 0 ? `US$ ${n(fobTn,1)}` : '--'}</td>
-            <td class="td-ret">${ret.pct}%</td>
-            <td>${netoTn > 0 ? `US$ ${n(netoTn,1)}` : '--'}</td>
-            <td class="td-qq">${canjeQq > 0 ? n(canjeQq,2) + ' qq' : '--'}</td>
-            <td class="td-kg">${canjeKg > 0 ? n(canjeKg,1) + ' kg' : '--'}</td>
-            <td class="td-ars">${canjeArs > 0 ? '$ ' + ars(canjeArs) : '--'}</td>
+        const d      = DATA?.granos?.[g];
+        const r      = RETENCIONES[g] || { pct:0 };
+        const fob    = d?.usd_tn || 0;
+        const neto   = fob * (1 - r.pct / 100);
+        const activo = refMode === 'neto' ? neto : fob;
+        const cjQq   = activo > 0 ? totalUsd / activo * 10 : 0;
+        const cjKg   = cjQq * 100;
+        const cjArs  = activo > 0 ? (totalUsd / activo) * activo * tc : 0;
+        const esAct  = g === grano;
+        return `<tr class="${esAct ? 'activo' : ''}">
+            <td class="td-n">${nombres[g]}${esAct ? ' ◀' : ''}</td>
+            <td>${fob > 0 ? 'US$ '+n(fob,1) : '--'}</td>
+            <td class="td-ret">${r.pct}%</td>
+            <td>${neto > 0 ? 'US$ '+n(neto,1) : '--'}</td>
+            <td class="td-qq">${cjQq > 0 ? n(cjQq,2)+' qq' : '--'}</td>
+            <td style="color:var(--gold)">${cjKg > 0 ? n(cjKg,1)+' kg' : '--'}</td>
+            <td style="color:var(--muted)">${cjArs > 0 ? '$ '+ars(cjArs) : '--'}</td>
         </tr>`;
     }).join('');
-}
-
-// Inicializar canje cuando se abre la tab
-function initCanje() {
-    onCanjeInsumoChange();
-    onCanjeGranoChange();
 }
 
 </script>
@@ -352,30 +340,30 @@ function initCanje() {
         /* ── CALCULADORA DE CANJE ── */
         .canje-wrap{background:var(--card2);border:1px solid var(--accent);border-radius:18px;padding:26px}
         .canje-title{color:var(--accent);font-weight:900;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-        .canje-res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:18px 0}
-        .canje-box{padding:18px 14px;border-radius:12px;text-align:center;border:1px solid #2a2d2a}
+        .canje-res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:18px 0}
+        .canje-box{padding:16px 12px;border-radius:12px;text-align:center;border:1px solid #2a2d2a}
         .canje-box.main{background:var(--accent);border-color:var(--accent)}
-        .canje-box.main .canje-box-lbl{color:rgba(0,0,0,.7)}
-        .canje-box.main .canje-box-val{color:#000}
-        .canje-box.sec{background:rgba(255,255,255,.03)}
+        .canje-box.main .canje-lbl{color:rgba(0,0,0,.7)}
+        .canje-box.main .canje-val{color:#000}
         .canje-box.gold{background:rgba(232,183,77,.08);border-color:rgba(232,183,77,.3)}
-        .canje-box-lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
-        .canje-box-val{font-size:1.3rem;font-weight:900;color:#fff;line-height:1}
-        .canje-box-sub{font-size:.58rem;color:var(--muted);margin-top:4px}
-        .canje-nota{margin-top:14px;padding:10px 14px;background:rgba(118,196,66,.06);border:1px solid rgba(118,196,66,.2);border-radius:8px;font-size:.65rem;color:#7a9b72;line-height:1.6}
-        .canje-tabla{width:100%;border-collapse:collapse;margin-top:14px;font-size:.73rem}
+        .canje-box.sec{background:rgba(255,255,255,.03)}
+        .canje-box.red{background:rgba(255,95,95,.06);border-color:rgba(255,95,95,.25)}
+        .canje-lbl{font-size:.52rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px}
+        .canje-val{font-size:1.25rem;font-weight:900;color:#fff;line-height:1}
+        .canje-sub{font-size:.56rem;color:var(--muted);margin-top:3px}
+        .canje-neto-box{padding:12px;background:rgba(255,95,95,.05);border:1px solid rgba(255,95,95,.2);border-radius:8px;margin-top:10px}
+        .canje-tabla{width:100%;border-collapse:collapse;font-size:.72rem}
         .canje-tabla thead tr{background:linear-gradient(90deg,var(--accent),#4caf50)}
-        .canje-tabla thead th{padding:9px 10px;text-align:left;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:#000;font-weight:900}
+        .canje-tabla thead th{padding:8px 10px;text-align:left;font-size:.57rem;text-transform:uppercase;letter-spacing:1px;color:#000;font-weight:900}
         .canje-tabla tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s}
         .canje-tabla tbody tr:hover{background:rgba(118,196,66,.04)}
-        .canje-tabla tbody td{padding:9px 10px;color:#c8d9c0}
-        .canje-tabla .td-nombre{font-weight:700;color:#fff}
+        .canje-tabla tbody tr.activo{background:rgba(118,196,66,.07)}
+        .canje-tabla td{padding:8px 10px;color:#c8d9c0}
+        .canje-tabla .td-n{font-weight:700;color:#fff}
         .canje-tabla .td-qq{color:var(--accent);font-weight:900}
-        .canje-tabla .td-kg{color:var(--gold);font-weight:700}
-        .canje-tabla .td-ars{color:#b8c9b0}
-        .canje-tabla .td-ret{color:var(--red);font-size:.65rem}
-        .insumo-section{margin-top:24px}
-        .insumo-section-title{font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(118,196,66,.2)}
+        .canje-tabla .td-ret{color:var(--red);font-size:.63rem}
+        .canje-nota{margin-top:14px;padding:10px 14px;background:rgba(118,196,66,.06);border:1px solid rgba(118,196,66,.2);border-radius:8px;font-size:.63rem;color:#7a9b72;line-height:1.6}
+        .insumo-sec-title{font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(118,196,66,.2)}
 
     </style>
 </head>
@@ -562,193 +550,190 @@ function initCanje() {
         <div class="grid" id="weather-grid"><div class="loader-wrap"><div class="loader"></div><div>Cargando clima...</div></div></div>
     </div>
 
+
     <!-- ══════════════════════════════════════ -->
-    <!-- SECCIÓN: CALCULADORA DE CANJE         -->
+    <!-- SECCIÓN: CALCULADORA DE CANJE          -->
     <!-- ══════════════════════════════════════ -->
     <div id="canje" class="section" style="display:none">
-        <div class="canje-wrap">
-            <div class="canje-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Calculadora de Canje</div>
+      <div class="canje-wrap">
+        <div class="canje-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Calculadora de Canje</div>
 
-            <div class="grid g3" style="margin-bottom:18px">
-                <!-- Col 1: Insumo -->
-                <div class="card" style="background:rgba(0,0,0,.2)">
-                    <div style="font-size:.6rem;color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🧴 Insumo a canjear</div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Tipo de insumo</label>
-                        <select id="canje-insumo-tipo" class="inp" onchange="onCanjeInsumoChange()">
-                            <optgroup label="── Fertilizantes ──">
-                                <option value="urea">Urea granulada</option>
-                                <option value="dap">Fosfato DAP (18-46-0)</option>
-                                <option value="map">MAP (12-52-0)</option>
-                                <option value="uan">UAN solución 32%</option>
-                                <option value="sfs">Superfosfato simple</option>
-                                <option value="yeso">Yeso agrícola</option>
-                            </optgroup>
-                            <optgroup label="── Herbicidas ──">
-                                <option value="glifosato">Glifosato 48%</option>
-                                <option value="24d">2,4-D amina 72%</option>
-                                <option value="atrazina">Atrazina 90% WG</option>
-                                <option value="dicamba">Dicamba</option>
-                            </optgroup>
-                            <optgroup label="── Insecticidas ──">
-                                <option value="clorpirifos">Clorpirifos 48%</option>
-                                <option value="lambda">Lambda cihalotrina</option>
-                                <option value="imida">Imidacloprid 35% SC</option>
-                            </optgroup>
-                            <optgroup label="── Fungicidas ──">
-                                <option value="azox">Azoxistrobina + Cipro.</option>
-                                <option value="tebu">Tebuconazole 43% SC</option>
-                                <option value="triflox">Triflox. + Tebuconazole</option>
-                            </optgroup>
-                            <optgroup label="── Semillas ──">
-                                <option value="sem_soja">Semilla soja (bolsa 40kg)</option>
-                                <option value="sem_maiz">Semilla maíz (bolsa 70M)</option>
-                                <option value="sem_trigo">Semilla trigo (bolsa 25kg)</option>
-                            </optgroup>
-                            <optgroup label="── Combustible ──">
-                                <option value="gasoil">Gasoil agro (L)</option>
-                                <option value="gasoil500">Gasoil agro (500 L)</option>
-                            </optgroup>
-                            <optgroup label="── Personalizado ──">
-                                <option value="custom">Precio manual (u$s)</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Precio insumo (u$s)</label>
-                        <input type="number" id="canje-precio-insumo" class="inp" step="0.01" oninput="calcularCanje()">
-                        <div class="inp-hint" id="canje-insumo-hint">Cargado automáticamente</div>
-                    </div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Unidad del precio</label>
-                        <input type="text" id="canje-unidad" class="inp" value="por tn" readonly style="color:var(--muted);cursor:default">
-                    </div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Cantidad de unidades</label>
-                        <input type="number" id="canje-cantidad" class="inp" value="1" step="0.5" min="0.1" oninput="calcularCanje()">
-                    </div>
-                </div>
+        <div class="grid g3" style="margin-bottom:18px">
 
-                <!-- Col 2: Grano -->
-                <div class="card" style="background:rgba(0,0,0,.2)">
-                    <div style="font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🌾 Grano de canje</div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Grano</label>
-                        <select id="canje-grano" class="inp" onchange="onCanjeGranoChange()">
-                            <option value="soja">🌱 Soja</option>
-                            <option value="maiz">🌽 Maíz</option>
-                            <option value="trigo">🌾 Trigo</option>
-                            <option value="girasol">🌻 Girasol</option>
-                            <option value="sorgo">🌾 Sorgo</option>
-                        </select>
-                    </div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Precio FOB pizarra (u$s/tn)</label>
-                        <input type="number" id="canje-precio-grano-tn" class="inp" step="0.1" oninput="calcularCanje()">
-                        <div class="inp-hint" id="canje-grano-hint">Cargado desde pizarra Rosario</div>
-                    </div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Retención vigente (%)</label>
-                        <input type="number" id="canje-ret" class="inp" step="0.1" oninput="calcularCanje()">
-                        <div class="inp-hint" id="canje-ret-hint" style="color:var(--red)">Se carga según el grano · Decreto 877/2025</div>
-                    </div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Tipo de cambio ($/u$s)</label>
-                        <input type="number" id="canje-tc" class="inp" value="1382.50" step="0.5" oninput="calcularCanje()">
-                        <div class="inp-hint">BNA Oficial</div>
-                    </div>
-                </div>
-
-                <!-- Col 3: Precio a usar -->
-                <div class="card" style="background:rgba(0,0,0,.2)">
-                    <div style="font-size:.6rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">⚙️ Precio grano a usar</div>
-                    <div class="inp-group">
-                        <label class="inp-lbl">Referencia de precio</label>
-                        <select id="canje-precio-ref" class="inp" onchange="calcularCanje()">
-                            <option value="neto">Precio neto (post-retención)</option>
-                            <option value="fob">Precio FOB (pre-retención)</option>
-                        </select>
-                        <div class="inp-hint">El precio neto es lo que recibe el productor</div>
-                    </div>
-                    <div class="inp-group" style="margin-top:16px;padding:12px;background:rgba(255,95,95,.05);border:1px solid rgba(255,95,95,.2);border-radius:8px">
-                        <div style="font-size:.55rem;color:var(--red);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📊 Precio neto calculado</div>
-                        <div style="font-size:1.3rem;font-weight:900;color:#fff" id="canje-neto-tn">-- u$s/tn</div>
-                        <div style="font-size:.7rem;color:var(--gold);margin-top:4px" id="canje-neto-qq">-- u$s/qq</div>
-                        <div style="font-size:.62rem;color:var(--muted);margin-top:4px" id="canje-neto-ars">-- $/tn</div>
-                    </div>
-                    <div class="inp-group" style="margin-top:10px">
-                        <label class="inp-lbl">Precio grano activo (u$s/tn)</label>
-                        <input type="number" id="canje-precio-activo" class="inp" step="0.1" readonly style="color:var(--accent);font-weight:700;cursor:default">
-                        <div class="inp-hint">Calculado según referencia elegida</div>
-                    </div>
-                </div>
+          <!-- INSUMO -->
+          <div class="card" style="background:rgba(0,0,0,.2)">
+            <div style="font-size:.6rem;color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🧴 Insumo a canjear</div>
+            <div class="inp-group">
+              <label class="inp-lbl">Tipo de insumo</label>
+              <select id="cj-tipo" class="inp" onchange="cjTipoChange()">
+                <optgroup label="── Fertilizantes ──">
+                  <option value="urea">Urea granulada</option>
+                  <option value="dap">Fosfato DAP (18-46-0)</option>
+                  <option value="map">MAP (12-52-0)</option>
+                  <option value="uan">UAN solución 32%</option>
+                  <option value="sfs">Superfosfato simple</option>
+                  <option value="yeso">Yeso agrícola</option>
+                </optgroup>
+                <optgroup label="── Herbicidas ──">
+                  <option value="glifosato">Glifosato 48%</option>
+                  <option value="24d">2,4-D amina 72%</option>
+                  <option value="atrazina">Atrazina 90% WG</option>
+                  <option value="dicamba">Dicamba</option>
+                </optgroup>
+                <optgroup label="── Insecticidas ──">
+                  <option value="clorpirifos">Clorpirifos 48%</option>
+                  <option value="lambda">Lambda cihalotrina</option>
+                  <option value="imida">Imidacloprid 35% SC</option>
+                </optgroup>
+                <optgroup label="── Fungicidas ──">
+                  <option value="azox">Azoxistrobina + Cipro.</option>
+                  <option value="tebu">Tebuconazole 43% SC</option>
+                  <option value="triflox">Triflox. + Tebuconazole</option>
+                </optgroup>
+                <optgroup label="── Semillas ──">
+                  <option value="sem_soja">Semilla soja (bolsa 40 kg)</option>
+                  <option value="sem_maiz">Semilla maíz (bolsa 70M)</option>
+                  <option value="sem_trigo">Semilla trigo (bolsa 25 kg)</option>
+                </optgroup>
+                <optgroup label="── Combustible ──">
+                  <option value="gasoil">Gasoil agro (por litro)</option>
+                  <option value="gasoil500">Gasoil agro (500 litros)</option>
+                </optgroup>
+                <optgroup label="── Personalizado ──">
+                  <option value="custom">Precio manual (u$s)</option>
+                </optgroup>
+              </select>
             </div>
-
-            <!-- RESULTADOS PRINCIPALES -->
-            <div class="canje-res-grid" id="canje-resultados">
-                <div class="canje-box main">
-                    <div class="canje-box-lbl">Canje total (qq)</div>
-                    <div class="canje-box-val" id="canje-qq-total">--</div>
-                    <div class="canje-box-sub" id="canje-qq-sub">quintales</div>
-                </div>
-                <div class="canje-box main">
-                    <div class="canje-box-lbl">Canje total (tn)</div>
-                    <div class="canje-box-val" id="canje-tn-total">--</div>
-                    <div class="canje-box-sub" id="canje-tn-sub">toneladas</div>
-                </div>
-                <div class="canje-box gold">
-                    <div class="canje-box-lbl">Canje total (kg)</div>
-                    <div class="canje-box-val" id="canje-kg-total">--</div>
-                    <div class="canje-box-sub">kilogramos</div>
-                </div>
-                <div class="canje-box sec">
-                    <div class="canje-box-lbl">Valor insumo (ARS)</div>
-                    <div class="canje-box-val" id="canje-ars-total" style="color:var(--gold)">--</div>
-                    <div class="canje-box-sub" id="canje-ars-sub">al TC BNA</div>
-                </div>
-                <div class="canje-box sec">
-                    <div class="canje-box-lbl">Valor insumo (u$s)</div>
-                    <div class="canje-box-val" id="canje-usd-total" style="color:#fff">--</div>
-                    <div class="canje-box-sub" id="canje-usd-sub">total</div>
-                </div>
-                <div class="canje-box sec">
-                    <div class="canje-box-lbl">Retención sobre canje</div>
-                    <div class="canje-box-val" id="canje-ret-sobre" style="color:var(--red)">--</div>
-                    <div class="canje-box-sub">qq retenidos al Estado</div>
-                </div>
+            <div class="inp-group">
+              <label class="inp-lbl">Precio insumo (u$s)</label>
+              <input type="number" id="cj-precio" class="inp" step="0.01" oninput="calcCanje()">
+              <div class="inp-hint" id="cj-precio-hint">Cargado automáticamente</div>
             </div>
-
-            <!-- TABLA COMPARATIVA POR GRANO -->
-            <div class="insumo-section">
-                <div class="insumo-section-title">📊 Comparativa de Canje — mismo insumo en distintos granos</div>
-                <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(118,196,66,.15)">
-                    <table class="canje-tabla" id="canje-tabla-comp">
-                        <thead>
-                            <tr>
-                                <th>Grano</th>
-                                <th>FOB u$s/tn</th>
-                                <th>Retención</th>
-                                <th>Neto u$s/tn</th>
-                                <th>Canje qq</th>
-                                <th>Canje kg</th>
-                                <th>Canje ARS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="canje-tabla-body">
-                            <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Seleccioná un insumo para ver la comparativa</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="inp-group">
+              <label class="inp-lbl">Unidad</label>
+              <input type="text" id="cj-unidad" class="inp" value="por tn" readonly style="color:var(--muted)">
             </div>
-
-            <!-- NOTA -->
-            <div class="canje-nota">
-                💡 <strong>¿Cómo se calcula el canje?</strong> Se divide el valor total del insumo (en u$s) por el precio del grano elegido.
-                Si usás <em>precio neto</em>, el canje refleja lo que realmente "sale" al productor descontadas las retenciones.
-                Si usás <em>precio FOB</em>, es la referencia de pizarra sin descuentos.
-                La retención se carga automáticamente según el grano · Decreto 877/2025.
+            <div class="inp-group">
+              <label class="inp-lbl">Cantidad de unidades</label>
+              <input type="number" id="cj-cantidad" class="inp" value="1" step="0.5" min="0.1" oninput="calcCanje()">
             </div>
+          </div>
+
+          <!-- GRANO -->
+          <div class="card" style="background:rgba(0,0,0,.2)">
+            <div style="font-size:.6rem;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">🌾 Grano de canje</div>
+            <div class="inp-group">
+              <label class="inp-lbl">Grano</label>
+              <select id="cj-grano" class="inp" onchange="cjGranoChange()">
+                <option value="soja">🌱 Soja</option>
+                <option value="maiz">🌽 Maíz</option>
+                <option value="trigo">🌾 Trigo</option>
+                <option value="girasol">🌻 Girasol</option>
+                <option value="sorgo">🌾 Sorgo</option>
+              </select>
+            </div>
+            <div class="inp-group">
+              <label class="inp-lbl">Precio FOB pizarra (u$s/tn)</label>
+              <input type="number" id="cj-fob" class="inp" step="0.1" oninput="calcCanje()">
+              <div class="inp-hint" id="cj-fob-hint">↑ Cargado desde pizarra Rosario</div>
+            </div>
+            <div class="inp-group">
+              <label class="inp-lbl">Retención vigente (%)</label>
+              <input type="number" id="cj-ret" class="inp" step="0.1" oninput="calcCanje()">
+              <div class="inp-hint" id="cj-ret-hint" style="color:var(--red)">Se carga según el grano · Dcto. 877/2025</div>
+            </div>
+            <div class="inp-group">
+              <label class="inp-lbl">Tipo de cambio ($/u$s)</label>
+              <input type="number" id="cj-tc" class="inp" value="1382.50" step="0.5" oninput="calcCanje()">
+              <div class="inp-hint">BNA Oficial · se actualiza con data.json</div>
+            </div>
+          </div>
+
+          <!-- REFERENCIA + PRECIO NETO -->
+          <div class="card" style="background:rgba(0,0,0,.2)">
+            <div style="font-size:.6rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">⚙️ Configuración</div>
+            <div class="inp-group">
+              <label class="inp-lbl">Precio grano a usar</label>
+              <select id="cj-ref" class="inp" onchange="calcCanje()">
+                <option value="neto">Precio neto (post-retención)</option>
+                <option value="fob">Precio FOB (pre-retención)</option>
+              </select>
+              <div class="inp-hint">Neto = lo que recibe el productor</div>
+            </div>
+            <div class="canje-neto-box">
+              <div style="font-size:.55rem;color:var(--red);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Precio neto calculado</div>
+              <div style="font-size:1.2rem;font-weight:900;color:#fff" id="cj-neto-tn">-- u$s/tn</div>
+              <div style="font-size:.7rem;color:var(--gold);margin-top:3px" id="cj-neto-qq">-- u$s/qq</div>
+              <div style="font-size:.62rem;color:var(--muted);margin-top:3px" id="cj-neto-ars">-- $/tn</div>
+            </div>
+            <div class="inp-group" style="margin-top:12px">
+              <label class="inp-lbl">Precio activo para canje (u$s/tn)</label>
+              <input type="number" id="cj-activo" class="inp" readonly style="color:var(--accent);font-weight:700">
+              <div class="inp-hint">Calculado según referencia elegida</div>
+            </div>
+          </div>
         </div>
+
+        <!-- RESULTADOS -->
+        <div class="canje-res-grid">
+          <div class="canje-box main">
+            <div class="canje-lbl">Canje (qq)</div>
+            <div class="canje-val" id="cj-res-qq">--</div>
+            <div class="canje-sub" id="cj-res-qq-sub">quintales</div>
+          </div>
+          <div class="canje-box main">
+            <div class="canje-lbl">Canje (tn)</div>
+            <div class="canje-val" id="cj-res-tn">--</div>
+            <div class="canje-sub">toneladas</div>
+          </div>
+          <div class="canje-box gold">
+            <div class="canje-lbl">Canje (kg)</div>
+            <div class="canje-val" id="cj-res-kg">--</div>
+            <div class="canje-sub">kilogramos</div>
+          </div>
+          <div class="canje-box sec">
+            <div class="canje-lbl">Valor total (u$s)</div>
+            <div class="canje-val" id="cj-res-usd" style="color:var(--gold)">--</div>
+            <div class="canje-sub" id="cj-res-usd-sub">dólares</div>
+          </div>
+          <div class="canje-box sec">
+            <div class="canje-lbl">Valor total (ARS)</div>
+            <div class="canje-val" id="cj-res-ars" style="color:#fff">--</div>
+            <div class="canje-sub" id="cj-res-ars-sub">pesos</div>
+          </div>
+          <div class="canje-box red">
+            <div class="canje-lbl">qq retenidos (Estado)</div>
+            <div class="canje-val" id="cj-res-ret" style="color:var(--red)">--</div>
+            <div class="canje-sub">sobre precio FOB</div>
+          </div>
+        </div>
+
+        <!-- TABLA COMPARATIVA -->
+        <div class="insumo-sec-title">📊 Comparativa — mismo insumo en los 5 granos</div>
+        <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(118,196,66,.15)">
+          <table class="canje-tabla">
+            <thead>
+              <tr>
+                <th>Grano</th>
+                <th>FOB u$s/tn</th>
+                <th>Retención</th>
+                <th>Neto u$s/tn</th>
+                <th>Canje qq</th>
+                <th>Canje kg</th>
+                <th>En ARS</th>
+              </tr>
+            </thead>
+            <tbody id="cj-tabla"></tbody>
+          </table>
+        </div>
+
+        <div class="canje-nota">
+          💡 <strong>¿Cómo se calcula?</strong> Se divide el valor total del insumo (u$s) por el precio del grano elegido.
+          Con <em>precio neto</em> el canje refleja lo que realmente "sale" al productor descontadas las retenciones.
+          Con <em>precio FOB</em> se usa la referencia de pizarra sin descuentos.
+          Los precios de granos se cargan automáticamente desde <code style="color:var(--accent)">data.json</code>.
+        </div>
+      </div>
     </div>
 
     <!-- PORTALES -->
@@ -825,7 +810,7 @@ function renderAll() {
     openTab('granos', document.querySelector('.tab-btn'));
     onGranoChange();
     calcular();
-    if (typeof initCanje === 'function') initCanje();
+    initCanje();
 }
 
 // ═══════════════════════════════════
@@ -1340,11 +1325,11 @@ function renderTicker() {
 function openTab(id, btn) {
     document.querySelectorAll('.section').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if (id === 'canje' && typeof initCanje === 'function') { setTimeout(initCanje, 50); }
     const el = document.getElementById(id);
     if (el) { el.classList.add('active'); el.style.display='block'; }
     if (btn) btn.classList.add('active');
     if (id === 'clima') loadClima();
+    if (id === 'canje') { cjGranoChange(); cjTipoChange(); }
 }
 
 // ═══════════════════════════════════
