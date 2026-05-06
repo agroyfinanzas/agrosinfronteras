@@ -1,45 +1,45 @@
 {
   "fecha": "06/05/2026",
-  "hora": "13:12",
-  "timestamp": "2026-05-06T13:12:40.003605-03:00",
+  "hora": "14:43",
+  "timestamp": "2026-05-06T14:43:30.393915-03:00",
   "dolar": {
-    "compra": 1365.0,
-    "venta": 1415.0,
+    "compra": 1360.0,
+    "venta": 1410.0,
     "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
     "soja": {
       "ars": 430000,
-      "usd_tn": 303.89,
-      "usd_qq": 30.39,
+      "usd_tn": 304.96,
+      "usd_qq": 30.5,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "maiz": {
       "ars": 262675,
-      "usd_tn": 185.64,
-      "usd_qq": 18.56,
+      "usd_tn": 186.29,
+      "usd_qq": 18.63,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "trigo": {
       "ars": 283412,
-      "usd_tn": 200.29,
-      "usd_qq": 20.03,
+      "usd_tn": 201.0,
+      "usd_qq": 20.1,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "girasol": {
       "ars": 500000,
-      "usd_tn": 353.36,
-      "usd_qq": 35.34,
+      "usd_tn": 354.61,
+      "usd_qq": 35.46,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "sorgo": {
       "ars": 269600,
-      "usd_tn": 190.53,
-      "usd_qq": 19.05,
+      "usd_tn": 191.21,
+      "usd_qq": 19.12,
       "mes": "Referencia",
       "fuente": "fallback"
     }
@@ -66,13 +66,13 @@
     "vaca": {
       "min": 2000.0,
       "max": 3800.0,
-      "promedio": 2913,
+      "promedio": 2912,
       "fuente": "MAG Cañuelas"
     },
     "toro": {
-      "min": 101.0,
+      "min": 103.0,
       "max": 3400.0,
-      "promedio": 2238,
+      "promedio": 2240,
       "fuente": "MAG Cañuelas"
     },
     "ternero": {
@@ -83,16 +83,16 @@
     }
   },
   "relaciones": {
-    "soja_urea": 32.9,
+    "soja_urea": 32.8,
     "soja_fosfato": 19.7,
     "soja_glifosato_100l": 2.0,
     "soja_semilla": 2.6,
-    "maiz_urea": 53.9,
-    "maiz_fosfato": 32.3,
+    "maiz_urea": 53.7,
+    "maiz_fosfato": 32.2,
     "maiz_glifosato_100l": 3.2,
     "maiz_semilla": 7.5,
-    "trigo_urea": 49.9,
-    "trigo_fosfato": 30.0,
+    "trigo_urea": 49.8,
+    "trigo_fosfato": 29.9,
     "trigo_glifosato_100l": 3.0,
     "ternero_novillo": 0.92,
     "maiz_kg_novillo": 0.073,
