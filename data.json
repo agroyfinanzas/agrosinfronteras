@@ -9,70 +9,70 @@
   },
   "granos": {
     "soja": {
-      "ars": 430000,
-      "usd_tn": 304.96,
-      "usd_qq": 30.5,
+      "ars": 440000,
+      "usd_tn": 317.92,
+      "usd_qq": 31.79,
       "mes": "Referencia",
-      "fuente": "fallback"
+      "fuente": "BCR/CAC"
     },
     "maiz": {
-      "ars": 262675,
-      "usd_tn": 186.29,
-      "usd_qq": 18.63,
+      "ars": 262960,
+      "usd_tn": 190.00,
+      "usd_qq": 19.00,
       "mes": "Referencia",
-      "fuente": "fallback"
+      "fuente": "BCR/CAC"
     },
     "trigo": {
-      "ars": 283412,
-      "usd_tn": 201.0,
-      "usd_qq": 20.1,
+      "ars": 287800,
+      "usd_tn": 207.95,
+      "usd_qq": 20.7,
       "mes": "Referencia",
-      "fuente": "fallback"
+      "fuente": "BCR/CAC"
     },
     "girasol": {
-      "ars": 500000,
-      "usd_tn": 354.61,
-      "usd_qq": 35.46,
+      "ars": 581280,
+      "usd_tn": 420.00,
+      "usd_qq": 42.00,
       "mes": "Referencia",
-      "fuente": "fallback"
+      "fuente": "BCR/CAC"
     },
     "sorgo": {
-      "ars": 269600,
-      "usd_tn": 191.21,
-      "usd_qq": 19.12,
+      "ars": 276800,
+      "usd_tn": 200.00,
+      "usd_qq": 20.00,
       "mes": "Referencia",
-      "fuente": "fallback"
+      "fuente": "BCR/CAC"
     }
   },
   "hacienda": {
     "novillo": {
-      "min": 337.0,
-      "max": 4700.0,
-      "promedio": 3601,
+      "min": 2500.00,
+      "max": 4700.00,
+      "promedio": 4241.92,
       "fuente": "MAG Cañuelas"
     },
     "novillito": {
-      "min": 357.0,
+      "min": 1800.00,
       "max": 5650.0,
-      "promedio": 3939,
+      "promedio": 4560.64,
       "fuente": "MAG Cañuelas"
     },
     "vaquillona": {
-      "min": 579.0,
+      "min": 2000.00,
       "max": 5660.0,
-      "promedio": 3471,
+      "promedio": 4026.83,
       "fuente": "MAG Cañuelas"
     },
     "vaca": {
-      "min": 2000.0,
+      "min": 1200.00,
       "max": 3800.0,
-      "promedio": 2912,
+      "promedio": 2455.05,
       "fuente": "MAG Cañuelas"
     },
     "toro": {
-      "min": 103.0,
+      "min": 1800.00,
       "max": 3400.0,
-      "promedio": 2240,
+      "promedio": 2571.31,
       "fuente": "MAG Cañuelas"
     },
     "ternero": {
