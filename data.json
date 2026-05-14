@@ -1,101 +1,101 @@
 {
-  "fecha": "13/05/2026",
-  "hora": "14:23",
-  "timestamp": "2026-05-13T14:23:27.762934-03:00",
+  "fecha": "14/05/2026",
+  "hora": "04:35",
+  "timestamp": "2026-05-14T04:35:46.458502-03:00",
   "dolar": {
-    "compra": 1355.0,
-    "venta": 1405.0,
+    "compra": 1365.0,
+    "venta": 1415.0,
     "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
     "soja": {
       "ars": 430000,
-      "usd_tn": 306.05,
-      "usd_qq": 30.61,
+      "usd_tn": 303.89,
+      "usd_qq": 30.39,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "maiz": {
       "ars": 262675,
-      "usd_tn": 186.96,
-      "usd_qq": 18.7,
+      "usd_tn": 185.64,
+      "usd_qq": 18.56,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "trigo": {
       "ars": 283412,
-      "usd_tn": 201.72,
-      "usd_qq": 20.17,
+      "usd_tn": 200.29,
+      "usd_qq": 20.03,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "girasol": {
       "ars": 500000,
-      "usd_tn": 355.87,
-      "usd_qq": 35.59,
+      "usd_tn": 353.36,
+      "usd_qq": 35.34,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "sorgo": {
       "ars": 269600,
-      "usd_tn": 191.89,
-      "usd_qq": 19.19,
+      "usd_tn": 190.53,
+      "usd_qq": 19.05,
       "mes": "Referencia",
       "fuente": "fallback"
     }
   },
   "hacienda": {
-    "novillo": {
-      "min": 234.0,
-      "max": 4920.0,
-      "promedio": 3485,
-      "fuente": "MAG Cañuelas"
-    },
     "novillito": {
-      "min": 456.0,
-      "max": 5500.0,
-      "promedio": 3663,
-      "fuente": "MAG Cañuelas"
+      "min": 2900,
+      "max": 3360,
+      "promedio": 3050,
+      "fuente": "fallback"
+    },
+    "novillo": {
+      "min": 2700,
+      "max": 3100,
+      "promedio": 2850,
+      "fuente": "fallback"
     },
     "vaquillona": {
-      "min": 630.0,
-      "max": 5370.0,
-      "promedio": 3482,
-      "fuente": "MAG Cañuelas"
+      "min": 2800,
+      "max": 3200,
+      "promedio": 3000,
+      "fuente": "fallback"
     },
     "vaca": {
-      "min": 737.0,
-      "max": 4000.0,
-      "promedio": 2516,
-      "fuente": "MAG Cañuelas"
-    },
-    "toro": {
-      "min": 103.0,
-      "max": 3800.0,
-      "promedio": 2531,
-      "fuente": "MAG Cañuelas"
+      "min": 1700,
+      "max": 1920,
+      "promedio": 1800,
+      "fuente": "fallback"
     },
     "ternero": {
       "min": 3200,
       "max": 3450,
       "promedio": 3300,
       "fuente": "fallback"
+    },
+    "toro": {
+      "min": 1600,
+      "max": 1800,
+      "promedio": 1700,
+      "fuente": "fallback"
     }
   },
   "relaciones": {
-    "soja_urea": 32.7,
-    "soja_fosfato": 19.6,
+    "soja_urea": 32.9,
+    "soja_fosfato": 19.7,
     "soja_glifosato_100l": 2.0,
     "soja_semilla": 2.6,
-    "maiz_urea": 53.5,
-    "maiz_fosfato": 32.1,
+    "maiz_urea": 53.9,
+    "maiz_fosfato": 32.3,
     "maiz_glifosato_100l": 3.2,
     "maiz_semilla": 7.5,
-    "trigo_urea": 49.6,
-    "trigo_fosfato": 29.7,
+    "trigo_urea": 49.9,
+    "trigo_fosfato": 30.0,
     "trigo_glifosato_100l": 3.0,
-    "ternero_novillo": 0.95,
-    "maiz_kg_novillo": 0.075,
+    "ternero_novillo": 1.16,
+    "maiz_kg_novillo": 0.092,
     "soja_maiz": 1.64
   }
 }
