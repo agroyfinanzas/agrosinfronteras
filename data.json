@@ -1,7 +1,7 @@
 {
   "fecha": "05/06/2026",
-  "hora": "12:56",
-  "timestamp": "2026-06-05T12:56:02.864578-03:00",
+  "hora": "15:57",
+  "timestamp": "2026-06-05T15:57:59.806070-03:00",
   "dolar": {
     "compra": 1410.0,
     "venta": 1460.0,
@@ -58,9 +58,9 @@
       "fuente": "MAG Cañuelas"
     },
     "vaquillona": {
-      "min": 786.0,
+      "min": 803.0,
       "max": 5500.0,
-      "promedio": 3903,
+      "promedio": 3905,
       "fuente": "MAG Cañuelas"
     },
     "vaca": {
