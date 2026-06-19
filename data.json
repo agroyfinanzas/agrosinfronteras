@@ -1,45 +1,45 @@
 {
   "fecha": "19/06/2026",
-  "hora": "15:56",
-  "timestamp": "2026-06-19T15:56:43.424183-03:00",
+  "hora": "19:05",
+  "timestamp": "2026-06-19T19:05:17.010185-03:00",
   "dolar": {
-    "compra": 1431.05,
-    "venta": 1480.34,
+    "compra": 1432.05,
+    "venta": 1481.94,
     "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
     "soja": {
       "ars": 430000,
-      "usd_tn": 290.47,
-      "usd_qq": 29.05,
+      "usd_tn": 290.16,
+      "usd_qq": 29.02,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "maiz": {
       "ars": 262675,
-      "usd_tn": 177.44,
-      "usd_qq": 17.74,
+      "usd_tn": 177.25,
+      "usd_qq": 17.73,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "trigo": {
       "ars": 283412,
-      "usd_tn": 191.45,
-      "usd_qq": 19.14,
+      "usd_tn": 191.24,
+      "usd_qq": 19.12,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "girasol": {
       "ars": 500000,
-      "usd_tn": 337.76,
-      "usd_qq": 33.78,
+      "usd_tn": 337.4,
+      "usd_qq": 33.74,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "sorgo": {
       "ars": 269600,
-      "usd_tn": 182.12,
-      "usd_qq": 18.21,
+      "usd_tn": 181.92,
+      "usd_qq": 18.19,
       "mes": "Referencia",
       "fuente": "fallback"
     }
@@ -83,7 +83,7 @@
     }
   },
   "relaciones": {
-    "soja_urea": 34.4,
+    "soja_urea": 34.5,
     "soja_fosfato": 20.7,
     "soja_glifosato_100l": 2.1,
     "soja_semilla": 2.8,
@@ -91,8 +91,8 @@
     "maiz_fosfato": 33.8,
     "maiz_glifosato_100l": 3.4,
     "maiz_semilla": 7.9,
-    "trigo_urea": 52.2,
-    "trigo_fosfato": 31.3,
+    "trigo_urea": 52.3,
+    "trigo_fosfato": 31.4,
     "trigo_glifosato_100l": 3.1,
     "ternero_novillo": 0.93,
     "maiz_kg_novillo": 0.074,
