@@ -1,44 +1,44 @@
 {
   "fecha": "22/06/2026",
-  "hora": "11:42",
-  "timestamp": "2026-06-22T11:42:41.189386-03:00",
+  "hora": "17:08",
+  "timestamp": "2026-06-22T17:08:53.474969-03:00",
   "dolar": {
-    "compra": 1432.05,
-    "venta": 1481.94,
+    "compra": 1431.54,
+    "venta": 1481.79,
     "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
     "soja": {
       "ars": 430000,
-      "usd_tn": 290.16,
+      "usd_tn": 290.19,
       "usd_qq": 29.02,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "maiz": {
       "ars": 262675,
-      "usd_tn": 177.25,
+      "usd_tn": 177.27,
       "usd_qq": 17.73,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "trigo": {
       "ars": 283412,
-      "usd_tn": 191.24,
-      "usd_qq": 19.12,
+      "usd_tn": 191.26,
+      "usd_qq": 19.13,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "girasol": {
       "ars": 500000,
-      "usd_tn": 337.4,
+      "usd_tn": 337.43,
       "usd_qq": 33.74,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "sorgo": {
       "ars": 269600,
-      "usd_tn": 181.92,
+      "usd_tn": 181.94,
       "usd_qq": 18.19,
       "mes": "Referencia",
       "fuente": "fallback"
