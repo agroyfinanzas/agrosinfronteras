@@ -1,7 +1,7 @@
 {
   "fecha": "03/07/2026",
-  "hora": "12:12",
-  "timestamp": "2026-07-03T12:12:16.676507-03:00",
+  "hora": "15:13",
+  "timestamp": "2026-07-03T15:13:34.537503-03:00",
   "dolar": {
     "compra": 1460.0,
     "venta": 1510.0,
@@ -48,7 +48,7 @@
     "novillo": {
       "min": 393.0,
       "max": 4670.0,
-      "promedio": 3233,
+      "promedio": 3422,
       "fuente": "MAG Cañuelas"
     },
     "novillito": {
@@ -94,8 +94,8 @@
     "trigo_urea": 53.3,
     "trigo_fosfato": 32.0,
     "trigo_glifosato_100l": 3.2,
-    "ternero_novillo": 1.02,
-    "maiz_kg_novillo": 0.081,
+    "ternero_novillo": 0.96,
+    "maiz_kg_novillo": 0.077,
     "soja_maiz": 1.64
   }
 }
