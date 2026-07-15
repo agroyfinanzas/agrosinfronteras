@@ -1,7 +1,7 @@
 {
   "fecha": "15/07/2026",
-  "hora": "11:52",
-  "timestamp": "2026-07-15T11:52:12.890941-03:00",
+  "hora": "15:09",
+  "timestamp": "2026-07-15T15:09:02.277029-03:00",
   "dolar": {
     "compra": 1445.0,
     "venta": 1495.0,
@@ -70,7 +70,7 @@
       "fuente": "MAG Cañuelas"
     },
     "toro": {
-      "min": 147.0,
+      "min": 148.0,
       "max": 3800.0,
       "promedio": 2328,
       "fuente": "MAG Cañuelas"
