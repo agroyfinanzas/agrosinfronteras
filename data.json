@@ -1,45 +1,45 @@
 {
   "fecha": "17/07/2026",
-  "hora": "11:44",
-  "timestamp": "2026-07-17T11:44:15.734969-03:00",
+  "hora": "15:06",
+  "timestamp": "2026-07-17T15:06:22.418008-03:00",
   "dolar": {
-    "compra": 1445.0,
-    "venta": 1495.0,
+    "compra": 1450.0,
+    "venta": 1500.0,
     "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
     "soja": {
       "ars": 430000,
-      "usd_tn": 287.63,
-      "usd_qq": 28.76,
+      "usd_tn": 286.67,
+      "usd_qq": 28.67,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "maiz": {
       "ars": 262675,
-      "usd_tn": 175.7,
-      "usd_qq": 17.57,
+      "usd_tn": 175.12,
+      "usd_qq": 17.51,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "trigo": {
       "ars": 283412,
-      "usd_tn": 189.57,
-      "usd_qq": 18.96,
+      "usd_tn": 188.94,
+      "usd_qq": 18.89,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "girasol": {
       "ars": 500000,
-      "usd_tn": 334.45,
-      "usd_qq": 33.45,
+      "usd_tn": 333.33,
+      "usd_qq": 33.33,
       "mes": "Referencia",
       "fuente": "fallback"
     },
     "sorgo": {
       "ars": 269600,
-      "usd_tn": 180.33,
-      "usd_qq": 18.03,
+      "usd_tn": 179.73,
+      "usd_qq": 17.97,
       "mes": "Referencia",
       "fuente": "fallback"
     }
@@ -64,7 +64,7 @@
       "fuente": "MAG Cañuelas"
     },
     "vaca": {
-      "min": 603.0,
+      "min": 604.0,
       "max": 3600.0,
       "promedio": 2429,
       "fuente": "MAG Cañuelas"
@@ -83,16 +83,16 @@
     }
   },
   "relaciones": {
-    "soja_urea": 34.8,
+    "soja_urea": 34.9,
     "soja_fosfato": 20.9,
     "soja_glifosato_100l": 2.1,
     "soja_semilla": 2.8,
-    "maiz_urea": 56.9,
-    "maiz_fosfato": 34.1,
+    "maiz_urea": 57.1,
+    "maiz_fosfato": 34.3,
     "maiz_glifosato_100l": 3.4,
     "maiz_semilla": 8.0,
-    "trigo_urea": 52.7,
-    "trigo_fosfato": 31.6,
+    "trigo_urea": 52.9,
+    "trigo_fosfato": 31.8,
     "trigo_glifosato_100l": 3.2,
     "ternero_novillo": 0.93,
     "maiz_kg_novillo": 0.074,
