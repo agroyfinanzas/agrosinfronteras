@@ -1,7 +1,7 @@
 {
   "fecha": "25/08/2026",
-  "hora": "10:51",
-  "timestamp": "2026-08-25T10:51:11.533649-03:00",
+  "hora": "14:32",
+  "timestamp": "2026-08-25T14:32:38.501261-03:00",
   "dolar": {
     "compra": 1480.0,
     "venta": 1530.0,
@@ -46,33 +46,33 @@
   },
   "hacienda": {
     "novillo": {
-      "min": 119.0,
-      "max": 4770.0,
-      "promedio": 3448,
+      "min": 165.0,
+      "max": 4800.0,
+      "promedio": 3442,
       "fuente": "MAG Cañuelas"
     },
     "novillito": {
-      "min": 259.0,
+      "min": 394.0,
       "max": 5300.0,
-      "promedio": 3916,
+      "promedio": 3921,
       "fuente": "MAG Cañuelas"
     },
     "vaquillona": {
-      "min": 919.0,
-      "max": 51003.0,
-      "promedio": 13170,
+      "min": 4000.0,
+      "max": 5250.0,
+      "promedio": 4762,
       "fuente": "MAG Cañuelas"
     },
     "vaca": {
-      "min": 841.0,
+      "min": 2360.0,
       "max": 3920.0,
-      "promedio": 2753,
+      "promedio": 3229,
       "fuente": "MAG Cañuelas"
     },
     "toro": {
-      "min": 158.0,
+      "min": 219.0,
       "max": 3800.0,
-      "promedio": 2565,
+      "promedio": 2580,
       "fuente": "MAG Cañuelas"
     },
     "ternero": {
