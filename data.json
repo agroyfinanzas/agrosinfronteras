@@ -1,7 +1,7 @@
 {
   "fecha": "15/09/2026",
-  "hora": "11:12",
-  "timestamp": "2026-09-15T11:12:29.261288-03:00",
+  "hora": "17:03",
+  "timestamp": "2026-09-15T17:03:00.948702-03:00",
   "dolar": {
     "compra": 1480.0,
     "venta": 1530.0,
@@ -60,19 +60,19 @@
     "vaquillona": {
       "min": 4000.0,
       "max": 5250.0,
-      "promedio": 4609,
+      "promedio": 4613,
       "fuente": "MAG Cañuelas"
     },
     "vaca": {
-      "min": 643.0,
+      "min": 766.0,
       "max": 4250.0,
       "promedio": 2825,
       "fuente": "MAG Cañuelas"
     },
     "toro": {
-      "min": 127.0,
-      "max": 3900.0,
-      "promedio": 2811,
+      "min": 139.0,
+      "max": 4000.0,
+      "promedio": 2764,
       "fuente": "MAG Cañuelas"
     },
     "ternero": {
