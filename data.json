@@ -1,7 +1,7 @@
 {
   "fecha": "22/09/2026",
-  "hora": "10:55",
-  "timestamp": "2026-09-22T10:55:55.750040-03:00",
+  "hora": "17:01",
+  "timestamp": "2026-09-22T17:01:33.895043-03:00",
   "dolar": {
     "compra": 1485.0,
     "venta": 1535.0,
@@ -46,9 +46,9 @@
   },
   "hacienda": {
     "novillo": {
-      "min": 311.0,
+      "min": 319.0,
       "max": 4500.0,
-      "promedio": 3384,
+      "promedio": 3381,
       "fuente": "MAG Cañuelas"
     },
     "novillito": {
