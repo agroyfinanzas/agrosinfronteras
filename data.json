@@ -1,7 +1,7 @@
 {
-  "fecha": "26/10/2026",
-  "hora": "18:26",
-  "timestamp": "2026-10-26T18:26:17.281695-03:00",
+  "fecha": "27/10/2026",
+  "hora": "12:10",
+  "timestamp": "2026-10-27T12:10:52.518243-03:00",
   "dolar": {
     "compra": 1510.0,
     "venta": 1560.0,
@@ -45,40 +45,40 @@
     }
   },
   "hacienda": {
-    "novillito": {
-      "min": 2900,
-      "max": 3360,
-      "promedio": 3050,
-      "fuente": "fallback"
-    },
     "novillo": {
-      "min": 2700,
-      "max": 3100,
-      "promedio": 2850,
-      "fuente": "fallback"
+      "min": 165.0,
+      "max": 4700.0,
+      "promedio": 3614,
+      "fuente": "MAG Cañuelas"
+    },
+    "novillito": {
+      "min": 693.0,
+      "max": 5100.0,
+      "promedio": 3671,
+      "fuente": "MAG Cañuelas"
     },
     "vaquillona": {
-      "min": 2800,
-      "max": 3200,
-      "promedio": 3000,
-      "fuente": "fallback"
+      "min": 713.0,
+      "max": 5100.0,
+      "promedio": 3625,
+      "fuente": "MAG Cañuelas"
     },
     "vaca": {
-      "min": 1700,
-      "max": 1920,
-      "promedio": 1800,
-      "fuente": "fallback"
+      "min": 765.0,
+      "max": 4500.0,
+      "promedio": 2848,
+      "fuente": "MAG Cañuelas"
+    },
+    "toro": {
+      "min": 3500.0,
+      "max": 3800.0,
+      "promedio": 3615,
+      "fuente": "MAG Cañuelas"
     },
     "ternero": {
       "min": 3200,
       "max": 3450,
       "promedio": 3300,
-      "fuente": "fallback"
-    },
-    "toro": {
-      "min": 1600,
-      "max": 1800,
-      "promedio": 1700,
       "fuente": "fallback"
     }
   },
@@ -94,8 +94,8 @@
     "trigo_urea": 55.0,
     "trigo_fosfato": 33.0,
     "trigo_glifosato_100l": 3.3,
-    "ternero_novillo": 1.16,
-    "maiz_kg_novillo": 0.092,
+    "ternero_novillo": 0.91,
+    "maiz_kg_novillo": 0.073,
     "soja_maiz": 1.64
   }
 }
