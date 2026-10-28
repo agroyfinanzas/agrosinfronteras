@@ -1,7 +1,7 @@
 {
   "fecha": "28/10/2026",
-  "hora": "12:46",
-  "timestamp": "2026-10-28T12:46:31.609721-03:00",
+  "hora": "18:31",
+  "timestamp": "2026-10-28T18:31:09.940393-03:00",
   "dolar": {
     "compra": 1510.0,
     "venta": 1560.0,
@@ -54,7 +54,7 @@
     "novillito": {
       "min": 368.0,
       "max": 5000.0,
-      "promedio": 3010,
+      "promedio": 3741,
       "fuente": "MAG Cañuelas"
     },
     "vaquillona": {
