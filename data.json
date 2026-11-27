@@ -1,33 +1,33 @@
 {
-  "fecha": "26/11/2026",
-  "hora": "15:51",
-  "timestamp": "2026-11-26T15:51:47.573659-03:00",
+  "fecha": "27/11/2026",
+  "hora": "00:30",
+  "timestamp": "2026-11-27T00:30:57.580600-03:00",
   "dolar": {
     "compra": 1575.0,
     "venta": 1625.0,
     "fuente": "DolarAPI · BNA Oficial"
   },
   "granos": {
-    "soja": {
-      "ars": 430000,
-      "usd_tn": 264.62,
-      "usd_qq": 26.46,
-      "mes": "Referencia",
-      "fuente": "fallback"
+    "trigo": {
+      "ars": 303000.0,
+      "usd_tn": 186.46,
+      "usd_qq": 18.65,
+      "mes": "Disponible",
+      "fuente": "Agrofy"
     },
     "maiz": {
-      "ars": 262675,
-      "usd_tn": 161.65,
-      "usd_qq": 16.16,
-      "mes": "Referencia",
-      "fuente": "fallback"
+      "ars": 271000.0,
+      "usd_tn": 166.77,
+      "usd_qq": 16.68,
+      "mes": "Disponible",
+      "fuente": "Agrofy"
     },
-    "trigo": {
-      "ars": 283412,
-      "usd_tn": 174.41,
-      "usd_qq": 17.44,
-      "mes": "Referencia",
-      "fuente": "fallback"
+    "soja": {
+      "ars": 574700.0,
+      "usd_tn": 353.66,
+      "usd_qq": 35.37,
+      "mes": "Disponible",
+      "fuente": "Agrofy"
     },
     "girasol": {
       "ars": 500000,
@@ -83,19 +83,19 @@
     }
   },
   "relaciones": {
-    "soja_urea": 37.8,
-    "soja_fosfato": 22.7,
-    "soja_glifosato_100l": 2.3,
-    "soja_semilla": 3.0,
-    "maiz_urea": 61.9,
-    "maiz_fosfato": 37.1,
-    "maiz_glifosato_100l": 3.7,
-    "maiz_semilla": 8.7,
-    "trigo_urea": 57.3,
-    "trigo_fosfato": 34.4,
-    "trigo_glifosato_100l": 3.4,
+    "soja_urea": 28.3,
+    "soja_fosfato": 17.0,
+    "soja_glifosato_100l": 1.7,
+    "soja_semilla": 2.3,
+    "maiz_urea": 60.0,
+    "maiz_fosfato": 36.0,
+    "maiz_glifosato_100l": 3.6,
+    "maiz_semilla": 8.4,
+    "trigo_urea": 53.6,
+    "trigo_fosfato": 32.2,
+    "trigo_glifosato_100l": 3.2,
     "ternero_novillo": 1.16,
-    "maiz_kg_novillo": 0.092,
-    "soja_maiz": 1.64
+    "maiz_kg_novillo": 0.095,
+    "soja_maiz": 2.12
   }
 }
